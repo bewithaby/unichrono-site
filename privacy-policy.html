@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy - Unichrono</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --ink: #1a1d29;
+    --muted: #555b6e;
+    --accent: #FF7043;
+    --rule: #e4e6ee;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0E1220;
+      --ink: #e8eaf2;
+      --muted: #9aa0b4;
+      --accent: #FFB74D;
+      --rule: #232a40;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+  h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 4px; }
+  .brand { color: var(--accent); font-weight: 600; letter-spacing: 0.02em; margin: 0 0 2px; }
+  .meta { color: var(--muted); font-size: 0.9rem; margin-bottom: 36px; }
+  h2 { font-size: 1.2rem; margin: 36px 0 8px; padding-top: 20px; border-top: 1px solid var(--rule); }
+  p, li { color: var(--ink); }
+  ul { padding-left: 22px; }
+  a { color: var(--accent); }
+  .summary {
+    border-left: 3px solid var(--accent);
+    padding: 2px 0 2px 16px;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+</style>
+</head>
+<body>
+<main>
+  <p class="brand">Unichrono</p>
+  <h1>Privacy Policy</h1>
+  <p class="meta">Effective 10 July 2026 &middot; Published by Spiny Valley</p>
+
+  <p class="summary">Short version: Unichrono collects no data. Nothing leaves your device.</p>
+
+  <h2>Who we are</h2>
+  <p>Unichrono is a world clock and widget app for Android (package name <code>com.spinyvalley.unichrono</code>), published by Spiny Valley. This policy explains what information the app handles and how.</p>
+
+  <h2>Data we collect</h2>
+  <p>None. Unichrono does not collect, store, transmit, sell, or share any personal data or usage data. Specifically, the app has:</p>
+  <ul>
+    <li>No internet access. The app does not request the network permission, so it is technically incapable of sending data anywhere.</li>
+    <li>No analytics, crash reporting, or advertising SDKs.</li>
+    <li>No accounts, sign-in, or user profiles.</li>
+    <li>No access to your location, contacts, files, camera, or microphone.</li>
+  </ul>
+
+  <h2>Data stored on your device</h2>
+  <p>Your chosen cities, clock labels, widget layouts, and app settings are stored locally on your device only. They never leave it, and they are deleted when you uninstall the app. Timezone calculations use the timezone database that ships with Android; no lookup ever happens over a network.</p>
+
+  <h2>Permissions the app uses</h2>
+  <ul>
+    <li><strong>Notifications (POST_NOTIFICATIONS):</strong> requested only if you turn on the optional quick-access clock notification. It is used solely to display your clocks in the notification shade and can be turned off at any time in the app or in system settings.</li>
+    <li><strong>Run at startup (RECEIVE_BOOT_COMPLETED):</strong> used only to restore the quick-access notification after a reboot, if you have enabled it.</li>
+  </ul>
+
+  <h2>Children</h2>
+  <p>Unichrono does not collect data from anyone, including children.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>If a future version of the app ever changes how data is handled, this policy will be updated before that version is released, and the effective date above will change.</p>
+
+  <h2>Contact</h2>
+  <p>Questions about this policy: <a href="mailto:bewithaby@gmail.com">bewithaby@gmail.com</a></p>
+</main>
+</body>
+</html>

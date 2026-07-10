@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unichrono - World Clock Widget</title>
+<style>
+  :root { --bg: #ffffff; --ink: #1a1d29; --muted: #555b6e; --accent: #FF7043; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0E1220; --ink: #e8eaf2; --muted: #9aa0b4; --accent: #FFB74D; }
+  }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: grid; place-items: center; min-height: 100vh;
+  }
+  main { text-align: center; padding: 24px; }
+  h1 { font-size: 2.2rem; margin: 0 0 8px; }
+  .accent { color: var(--accent); }
+  p { color: var(--muted); margin: 0 0 24px; }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Uni<span class="accent">chrono</span></h1>
+  <p>One unified place for all your times. A world clock widget for Android, by Spiny Valley.</p>
+  <a href="privacy-policy.html">Privacy Policy</a>
+</main>
+</body>
+</html>
