@@ -3,29 +3,127 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Unichrono - World Clock Widget</title>
+<title>Unichrono - World Clock Widget for Android</title>
+<meta name="description" content="Unichrono is a widget-first world clock for Android. Several places, all their times, live on your home screen. Offline, no accounts, no tracking.">
+<link rel="icon" href="img/icon.png">
+<meta property="og:title" content="Unichrono - World Clock Widget">
+<meta property="og:description" content="A widget-first world clock for Android. Several places, all their times, live on your home screen.">
+<meta property="og:image" content="img/icon.png">
+<meta property="og:type" content="website">
 <style>
-  :root { --bg: #ffffff; --ink: #1a1d29; --muted: #555b6e; --accent: #FF7043; }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #0E1220; --ink: #e8eaf2; --muted: #9aa0b4; --accent: #FFB74D; }
+  :root {
+    --bg: #ffffff; --card: #faf7f2; --ink: #1a1d29; --muted: #555b6e;
+    --line: #e5e0d8; --accent: #FF7043;
   }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0E1220; --card: #161b2c; --ink: #e8eaf2; --muted: #9aa0b4;
+      --line: #262d42; --accent: #FFB74D;
+    }
+  }
+  * { box-sizing: border-box; }
   body {
     margin: 0; background: var(--bg); color: var(--ink);
-    font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    display: grid; place-items: center; min-height: 100vh;
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
-  main { text-align: center; padding: 24px; }
-  h1 { font-size: 2.2rem; margin: 0 0 8px; }
-  .accent { color: var(--accent); }
-  p { color: var(--muted); margin: 0 0 24px; }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
   a { color: var(--accent); }
+
+  header { padding: 72px 0 40px; text-align: center; }
+  header img.logo { width: 84px; height: 84px; border-radius: 22px; }
+  h1 { font-size: clamp(2.2rem, 6vw, 3.1rem); margin: 20px 0 10px; letter-spacing: -.02em; }
+  .accent { color: var(--accent); }
+  .lede { color: var(--muted); font-size: 1.15rem; margin: 0 auto 28px; max-width: 34rem; }
+  .badge {
+    display: inline-block; font-size: .82rem; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--line); border-radius: 999px;
+    padding: 7px 16px; background: var(--card);
+  }
+  .byline { color: var(--muted); font-size: .95rem; margin-top: 18px; }
+
+  section { padding: 40px 0; }
+  h2 { font-size: 1.5rem; margin: 0 0 8px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); margin: 0 0 28px; }
+
+  .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .feat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  .feat h3 { margin: 0 0 6px; font-size: 1.05rem; }
+  .feat p { margin: 0; color: var(--muted); font-size: .97rem; }
+
+  .shots { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .shot { text-align: center; }
+  .shot img {
+    width: 100%; max-width: 300px; height: auto; border-radius: 18px; border: 1px solid var(--line);
+  }
+  .shot span { display: block; color: var(--muted); font-size: .9rem; margin-top: 10px; }
+
+  .note {
+    background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+    border-radius: 12px; padding: 20px 22px; color: var(--muted);
+  }
+  .note p { margin: 0 0 12px; }
+  .note p:last-child { margin: 0; }
+  .note b { color: var(--ink); }
+
+  footer {
+    border-top: 1px solid var(--line); margin-top: 40px; padding: 28px 0 56px; color: var(--muted);
+    font-size: .93rem;
+  }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; }
 </style>
 </head>
 <body>
-<main>
+
+<header><div class="wrap">
+  <img class="logo" src="img/icon.png" alt="Unichrono app icon">
   <h1>Uni<span class="accent">chrono</span></h1>
-  <p>One unified place for all your times. A world clock widget for Android, by Spiny Valley.</p>
-  <a href="privacy-policy.html">Privacy Policy</a>
-</main>
+  <p class="lede">One unified place for all your times. A world clock widget for Android that keeps ticking, on any device.</p>
+  <span class="badge">Coming to Google Play</span>
+  <p class="byline">By Spiny Valley</p>
+</div></header>
+
+<section><div class="wrap">
+  <h2>Why another world clock</h2>
+  <p class="sub">The category is crowded, but the same complaint keeps coming back: the widget freezes or drifts.</p>
+  <div class="note">
+    <p><b>Most world clock widgets refresh the time with background work.</b> Battery optimisation, Doze and OEM task killers shut that work down, so the widget quietly stops at whatever time it last showed.</p>
+    <p>Unichrono does not run anything in the background to keep time. The clock ticks from the system clock itself, so it stays live and correct with no process of ours running, on Samsung and Xiaomi included.</p>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>What it does</h2>
+  <p class="sub">Built for people whose family, team or clients are spread across timezones.</p>
+  <div class="grid">
+    <div class="feat"><h3>Home screen widget</h3><p>Several places at once, in a few sizes, always live. Add it, pick your cities, done.</p></div>
+    <div class="feat"><h3>Your labels, not city names</h3><p>Call it Home, Son, Daughter or Standup. Long names shorten gracefully instead of turning unreadable.</p></div>
+    <div class="feat"><h3>Correct DST, always</h3><p>Times come from the IANA timezone database that ships with Android, so daylight saving is handled for you.</p></div>
+    <div class="feat"><h3>Clocks in your notifications</h3><p>An optional ongoing notification keeps your times visible while you are in another app.</p></div>
+    <div class="feat"><h3>Light, dark, 12 or 24 hour</h3><p>Follows your system by default, or set it yourself.</p></div>
+    <div class="feat"><h3>Offline and private</h3><p>No network, no accounts, no ads, no tracking. The app has nothing to send anywhere.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>A look at it</h2>
+  <p class="sub">Screenshots from a real device.</p>
+  <div class="shots">
+    <div class="shot"><img src="img/widget.jpg" alt="Unichrono widget on an Android home screen showing three labelled clocks"><span>The widget on your home screen</span></div>
+    <div class="shot"><img src="img/clocks.jpg" alt="Unichrono app listing five cities with their local times and offsets"><span>Your clocks, with offsets</span></div>
+    <div class="shot"><img src="img/settings.jpg" alt="Unichrono settings screen with time format, theme and quick access options"><span>Format, theme and quick access</span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Under the hood</h2>
+  <p class="sub">Kotlin, Jetpack Compose and Glance. Room holds your clocks and each widget's settings. No backend, no third party SDKs, no analytics.</p>
+</div></section>
+
+<footer><div class="wrap">
+  <span>Unichrono by Spiny Valley</span>
+  <span><a href="privacy-policy.html">Privacy Policy</a></span>
+</div></footer>
+
 </body>
 </html>
