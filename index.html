@@ -15,12 +15,14 @@
     --bg: #ffffff; --card: #faf7f2; --ink: #1a1d29; --muted: #555b6e;
     --line: #e5e0d8; --accent: #FF7043;
     --hero-1: #fff4ea; --hero-2: #ffffff; --on-accent: #ffffff;
+    --chip: #fff1e9; --shadow: rgba(26, 29, 41, .10);
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #0E1220; --card: #161b2c; --ink: #e8eaf2; --muted: #9aa0b4;
       --line: #262d42; --accent: #FFB74D;
       --hero-1: #171d31; --hero-2: #0E1220; --on-accent: #1a1200;
+      --chip: #23283c; --shadow: rgba(0, 0, 0, .35);
     }
   }
   * { box-sizing: border-box; }
@@ -67,9 +69,23 @@
   .sub { color: var(--muted); margin: 0 0 28px; }
 
   .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-  .feat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+  .feat {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 24px 22px;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  .feat:hover { transform: translateY(-3px); box-shadow: 0 14px 30px var(--shadow); border-color: var(--accent); }
+  .feat .ico {
+    width: 46px; height: 46px; border-radius: 14px; background: var(--chip); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+  }
+  .feat .ico svg { width: 24px; height: 24px; }
   .feat h3 { margin: 0 0 6px; font-size: 1.05rem; }
   .feat p { margin: 0; color: var(--muted); font-size: .97rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .feat { transition: none; }
+    .feat:hover { transform: none; }
+  }
 
   .shots { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
   .shot { text-align: center; }
@@ -125,12 +141,12 @@
   <h2>What it does</h2>
   <p class="sub">Built for people whose family, team or clients are spread across timezones.</p>
   <div class="grid">
-    <div class="feat"><h3>Home screen widget</h3><p>Several places at once, in a few sizes, always live. Add it, pick your cities, done.</p></div>
-    <div class="feat"><h3>Your labels, not city names</h3><p>Call it Home, Son, Daughter or Standup. Long names shorten gracefully instead of turning unreadable.</p></div>
-    <div class="feat"><h3>Correct DST, always</h3><p>Times come from the IANA timezone database that ships with Android, so daylight saving is handled for you.</p></div>
-    <div class="feat"><h3>Clocks in your notifications</h3><p>An optional ongoing notification keeps your times visible while you are in another app.</p></div>
-    <div class="feat"><h3>Light, dark, 12 or 24 hour</h3><p>Follows your system by default, or set it yourself.</p></div>
-    <div class="feat"><h3>Offline and private</h3><p>No network, no accounts, no ads, no tracking. The app has nothing to send anywhere.</p></div>
+    <div class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg></div><h3>Home screen widget</h3><p>Several places at once, in a few sizes, always live. Add it, pick your cities, done.</p></div>
+    <div class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.83 0l-7.16-7.17A2 2 0 0 1 2.83 12V4.83A2 2 0 0 1 4.83 2.83H12a2 2 0 0 1 1.43.6l7.17 7.16a2 2 0 0 1 0 2.83Z"/><circle cx="7.8" cy="7.8" r="1.3"/></svg></div><h3>Your labels, not city names</h3><p>Call it Home, Son, Daughter or Standup. Long names shorten gracefully instead of turning unreadable.</p></div>
+    <div class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18Z"/><path d="M3.4 9h17.2M3.4 15h17.2"/></svg></div><h3>Correct DST, always</h3><p>Times come from the IANA timezone database that ships with Android, so daylight saving is handled for you.</p></div>
+    <div class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 6-2.5 7-2.5 7h17S18 14 18 8Z"/><path d="M13.7 19.5a2 2 0 0 1-3.4 0"/></svg></div><h3>Clocks in your notifications</h3><p>An optional ongoing notification keeps your times visible while you are in another app.</p></div>
+    <div class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 0 0 16Z" fill="currentColor" stroke="none"/><path d="M12 1.5v1.2M12 21.3v1.2M22.5 12h-1.2M2.7 12H1.5"/></svg></div><h3>Light, dark, 12 or 24 hour</h3><p>Follows your system by default, or set it yourself.</p></div>
+    <div class="feat"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.8 4.5 6v6c0 4.6 3.2 7.9 7.5 9.2 4.3-1.3 7.5-4.6 7.5-9.2V6Z"/><path d="M9.2 12.2 11.3 14.3l3.8-3.9"/></svg></div><h3>Offline and private</h3><p>No network, no accounts, no ads, no tracking. The app has nothing to send anywhere.</p></div>
   </div>
 </div></section>
 
