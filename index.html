@@ -8,7 +8,7 @@
 <link rel="icon" href="img/icon.png">
 <meta property="og:title" content="Unichrono - World Clock Widget">
 <meta property="og:description" content="A widget-first world clock for Android. Several places, all their times, live on your home screen.">
-<meta property="og:image" content="img/icon.png">
+<meta property="og:image" content="img/featured.jpg">
 <meta property="og:type" content="website">
 <style>
   :root {
@@ -36,7 +36,7 @@
   .accent { color: var(--accent); }
   .lede { color: var(--muted); font-size: 1.15rem; margin: 0 auto 28px; max-width: 34rem; }
   .badge {
-    display: inline-block; font-size: .82rem; letter-spacing: .08em; text-transform: uppercase;
+    display: inline-block; text-decoration: none; font-size: .82rem; letter-spacing: .08em; text-transform: uppercase;
     color: var(--accent); border: 1px solid var(--line); border-radius: 999px;
     padding: 7px 16px; background: var(--card);
   }
@@ -51,10 +51,10 @@
   .feat h3 { margin: 0 0 6px; font-size: 1.05rem; }
   .feat p { margin: 0; color: var(--muted); font-size: .97rem; }
 
-  .shots { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .shots { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
   .shot { text-align: center; }
   .shot img {
-    width: 100%; max-width: 300px; height: auto; border-radius: 18px; border: 1px solid var(--line);
+    width: 100%; max-width: 340px; height: auto; border-radius: 18px; border: 1px solid var(--line);
   }
   .shot span { display: block; color: var(--muted); font-size: .9rem; margin-top: 10px; }
 
@@ -79,8 +79,8 @@
   <img class="logo" src="img/icon.png" alt="Unichrono app icon">
   <h1>Uni<span class="accent">chrono</span></h1>
   <p class="lede">One unified place for all your times. A world clock widget for Android that keeps ticking, on any device.</p>
-  <span class="badge">Coming to Google Play</span>
-  <p class="byline">By Spiny Valley</p>
+  <a class="badge" href="https://play.google.com/store/apps/details?id=com.spinyvalley.unichrono">Get it on Google Play</a>
+  <p class="byline">By Spiny Valley Labs</p>
 </div></header>
 
 <section><div class="wrap">
@@ -107,11 +107,12 @@
 
 <section><div class="wrap">
   <h2>A look at it</h2>
-  <p class="sub">Screenshots from a real device.</p>
+  <p class="sub">Straight from the Google Play listing.</p>
   <div class="shots">
-    <div class="shot"><img src="img/widget.jpg" alt="Unichrono widget on an Android home screen showing three labelled clocks"><span>The widget on your home screen</span></div>
-    <div class="shot"><img src="img/clocks.jpg" alt="Unichrono app listing five cities with their local times and offsets"><span>Your clocks, with offsets</span></div>
-    <div class="shot"><img src="img/settings.jpg" alt="Unichrono settings screen with time format, theme and quick access options"><span>Format, theme and quick access</span></div>
+    <div class="shot"><img src="img/widget-labels.jpg" width="640" height="1280" loading="lazy" alt="Unichrono widget on an Android home screen showing clocks labelled Mom, NYC Office, Dev Team and Sarah"><span>Your cities, under your own labels</span></div>
+    <div class="shot"><img src="img/cities.jpg" width="640" height="1280" loading="lazy" alt="Unichrono app listing Melbourne, Dubai, Paris, Rio de Janeiro and Los Angeles with local times and offsets"><span>Every timezone you care about, in one list</span></div>
+    <div class="shot"><img src="img/lock-screen.jpg" width="640" height="1280" loading="lazy" alt="Unichrono clocks for Sydney and Chicago shown on an Android lock screen"><span>Your times without unlocking the phone</span></div>
+    <div class="shot"><img src="img/quick-access.jpg" width="640" height="1280" loading="lazy" alt="Unichrono clocks in the Android notification shade, beside the app settings screen"><span>Quick access from the notification shade</span></div>
   </div>
 </div></section>
 
@@ -121,7 +122,7 @@
 </div></section>
 
 <footer><div class="wrap">
-  <span>Unichrono by Spiny Valley</span>
+  <span>Unichrono by Spiny Valley Labs</span>
   <span><a href="privacy-policy.html">Privacy Policy</a></span>
 </div></footer>
 
