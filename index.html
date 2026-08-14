@@ -14,11 +14,13 @@
   :root {
     --bg: #ffffff; --card: #faf7f2; --ink: #1a1d29; --muted: #555b6e;
     --line: #e5e0d8; --accent: #FF7043;
+    --hero-1: #fff4ea; --hero-2: #ffffff; --on-accent: #ffffff;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #0E1220; --card: #161b2c; --ink: #e8eaf2; --muted: #9aa0b4;
       --line: #262d42; --accent: #FFB74D;
+      --hero-1: #171d31; --hero-2: #0E1220; --on-accent: #1a1200;
     }
   }
   * { box-sizing: border-box; }
@@ -30,17 +32,35 @@
   .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
   a { color: var(--accent); }
 
-  header { padding: 72px 0 40px; text-align: center; }
-  header img.logo { width: 84px; height: 84px; border-radius: 22px; }
-  h1 { font-size: clamp(2.2rem, 6vw, 3.1rem); margin: 20px 0 10px; letter-spacing: -.02em; }
-  .accent { color: var(--accent); }
-  .lede { color: var(--muted); font-size: 1.15rem; margin: 0 auto 28px; max-width: 34rem; }
-  .badge {
-    display: inline-block; text-decoration: none; font-size: .82rem; letter-spacing: .08em; text-transform: uppercase;
-    color: var(--accent); border: 1px solid var(--line); border-radius: 999px;
-    padding: 7px 16px; background: var(--card);
+  header {
+    background: linear-gradient(180deg, var(--hero-1), var(--hero-2));
+    border-bottom: 1px solid var(--line); padding: 64px 0 60px;
   }
-  .byline { color: var(--muted); font-size: .95rem; margin-top: 18px; }
+  header .wrap { display: grid; gap: 40px; align-items: center; grid-template-columns: 1fr 1fr; }
+  header img.logo { width: 64px; height: 64px; border-radius: 18px; }
+  h1 { font-size: clamp(2.2rem, 6vw, 3.1rem); margin: 18px 0 6px; letter-spacing: -.02em; }
+  .accent { color: var(--accent); }
+  .tagline { font-size: clamp(1.25rem, 3vw, 1.6rem); font-weight: 600; margin: 0 0 14px; letter-spacing: -.01em; }
+  .lede { color: var(--muted); font-size: 1.1rem; margin: 0 0 26px; max-width: 30rem; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-block; text-decoration: none; font-size: .95rem; font-weight: 600;
+    border-radius: 999px; padding: 12px 22px; border: 1px solid var(--accent);
+    background: var(--accent); color: var(--on-accent);
+  }
+  .btn.ghost { background: transparent; color: var(--accent); border-color: var(--line); }
+  .byline { color: var(--muted); font-size: .95rem; margin-top: 20px; }
+
+  .hero-art img {
+    width: 100%; height: auto; border-radius: 22px; border: 1px solid var(--line);
+    box-shadow: 0 22px 50px rgba(26, 29, 41, .16);
+  }
+
+  @media (max-width: 820px) {
+    header { padding: 48px 0 44px; }
+    header .wrap { grid-template-columns: 1fr; gap: 32px; }
+    .hero-art { order: -1; }
+  }
 
   section { padding: 40px 0; }
   h2 { font-size: 1.5rem; margin: 0 0 8px; letter-spacing: -.01em; }
@@ -76,14 +96,23 @@
 <body>
 
 <header><div class="wrap">
-  <img class="logo" src="img/icon.png" alt="Unichrono app icon">
-  <h1>Uni<span class="accent">chrono</span></h1>
-  <p class="lede">One unified place for all your times. A world clock widget for Android that keeps ticking, on any device.</p>
-  <a class="badge" href="https://play.google.com/store/apps/details?id=com.spinyvalley.unichrono">Get it on Google Play</a>
-  <p class="byline">By Spiny Valley Labs</p>
+  <div class="hero-copy">
+    <img class="logo" src="img/icon.png" alt="Unichrono app icon">
+    <h1>Uni<span class="accent">chrono</span></h1>
+    <p class="tagline">Every timezone. <span class="accent">Always right.</span></p>
+    <p class="lede">One unified place for all your times. A world clock widget for Android that keeps ticking, on any device.</p>
+    <div class="cta">
+      <a class="btn" href="https://play.google.com/store/apps/details?id=com.spinyvalley.unichrono">Get it on Google Play</a>
+      <a class="btn ghost" href="#why">Why it never freezes</a>
+    </div>
+    <p class="byline">By Spiny Valley Labs</p>
+  </div>
+  <div class="hero-art">
+    <img src="img/hero.jpg" width="800" height="766" alt="The Unichrono widget on an Android home screen showing Canberra, New York, Munich and Bangalore with their local times">
+  </div>
 </div></header>
 
-<section><div class="wrap">
+<section id="why"><div class="wrap">
   <h2>Why another world clock</h2>
   <p class="sub">The category is crowded, but the same complaint keeps coming back: the widget freezes or drifts.</p>
   <div class="note">
