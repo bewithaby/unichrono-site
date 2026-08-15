@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Privacy Policy - Unichrono</title>
+<link rel="icon" href="img/icon.png">
 <style>
   :root {
     --bg: #ffffff;
@@ -11,6 +12,10 @@
     --muted: #555b6e;
     --accent: #FF7043;
     --rule: #e4e6ee;
+    --line: #e4e6ee;
+    --chip: #fff1e9;
+    --on-accent: #ffffff;
+    --nav-bg: rgba(255, 255, 255, .88);
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -19,8 +24,34 @@
       --muted: #9aa0b4;
       --accent: #FFB74D;
       --rule: #232a40;
+      --line: #232a40;
+      --chip: #23283c;
+      --on-accent: #1a1200;
+      --nav-bg: rgba(14, 18, 32, .88);
     }
   }
+
+  /* ---------- shared top bar ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 40; backdrop-filter: saturate(180%) blur(12px);
+    background: var(--nav-bg); border-bottom: 1px solid var(--line);
+  }
+  .topbar .inner {
+    max-width: 1180px; margin: 0 auto; padding: 10px 24px;
+    display: flex; align-items: center; gap: 18px;
+  }
+  .brandlink { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-weight: 700; letter-spacing: -.01em; }
+  .brandlink img { width: 30px; height: 30px; border-radius: 9px; }
+  .brandlink .accent { color: var(--accent); }
+  .topnav { margin-left: auto; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .topnav a {
+    text-decoration: none; color: var(--muted); font-size: .93rem; font-weight: 600;
+    padding: 7px 12px; border-radius: 999px;
+  }
+  .topnav a:hover { color: var(--ink); background: var(--chip); }
+  .topnav a.cta { background: var(--accent); color: var(--on-accent); }
+  .topnav a.here { color: var(--ink); background: var(--chip); }
+
   * { box-sizing: border-box; }
   body {
     margin: 0;
@@ -45,6 +76,17 @@
 </style>
 </head>
 <body>
+
+<div class="topbar"><div class="inner">
+  <a class="brandlink" href="index.html"><img src="img/icon.png" alt=""><span>Uni<span class="accent">chrono</span></span></a>
+  <div class="topnav">
+    <a href="index.html">Home</a>
+    <a href="help.html">Help</a>
+    <a href="privacy-policy.html" class="here">Privacy</a>
+    <a class="cta" href="https://play.google.com/store/apps/details?id=com.spinyvalley.unichrono">Get the app</a>
+  </div>
+</div></div>
+
 <main>
   <p class="brand">Unichrono</p>
   <h1>Privacy Policy</h1>
