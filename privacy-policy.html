@@ -90,30 +90,33 @@
 <main>
   <p class="brand">Unichrono</p>
   <h1>Privacy Policy</h1>
-  <p class="meta">Effective 10 July 2026 &middot; Published by Spiny Valley</p>
+  <p class="meta">Effective 23 August 2026 &middot; Published by Spiny Valley</p>
 
-  <p class="summary">Short version: Unichrono collects no data. Nothing leaves your device.</p>
+  <p class="summary">Short version: Unichrono collects no data, on Android or iPhone. Nothing leaves your device.</p>
 
   <h2>Who we are</h2>
-  <p>Unichrono is a world clock and widget app for Android (package name <code>com.spinyvalley.unichrono</code>), published by Spiny Valley. This policy explains what information the app handles and how.</p>
+  <p>Unichrono is a world clock and widget app, published by Spiny Valley: on Android (package name <code>com.spinyvalley.unichrono</code>) and on iPhone (bundle IDs <code>com.spinyvalley.unichrono</code> and <code>com.spinyvalley.unichrono.widgets</code> for the widget extension). This policy covers both, and applies equally to each unless a section says otherwise.</p>
 
   <h2>Data we collect</h2>
   <p>None. Unichrono does not collect, store, transmit, sell, or share any personal data or usage data. Specifically, the app has:</p>
   <ul>
-    <li>No internet access. The app does not request the network permission, so it is technically incapable of sending data anywhere.</li>
-    <li>No analytics, crash reporting, or advertising SDKs.</li>
+    <li>No analytics, crash reporting, or advertising SDKs, on either platform.</li>
     <li>No accounts, sign-in, or user profiles.</li>
     <li>No access to your location, contacts, files, camera, or microphone.</li>
+    <li>On Android: no internet access. The app does not request the network permission, so it is technically incapable of sending data anywhere.</li>
+    <li>On iPhone: the app makes no network calls of its own. The only network activity on the device is <strong>Unichrono Pro</strong>, an optional one-time in-app purchase processed entirely by Apple's App Store &mdash; Apple handles your payment details directly and we never see or receive them. The app only stores, on your device, whether Pro is unlocked.</li>
   </ul>
 
   <h2>Data stored on your device</h2>
-  <p>Your chosen cities, clock labels, widget layouts, and app settings are stored locally on your device only. They never leave it, and they are deleted when you uninstall the app. Timezone calculations use the timezone database that ships with Android; no lookup ever happens over a network.</p>
+  <p>Your chosen cities, clock labels, widget layouts, and app settings are stored locally on your device only. They never leave it, and they are deleted when you uninstall the app. Timezone calculations use the timezone database that ships with the operating system; no lookup ever happens over a network. On iPhone, this data is kept in a shared container so your Home Screen and Lock Screen widgets can read it &mdash; that container stays on your device and is never transmitted anywhere.</p>
 
   <h2>Permissions the app uses</h2>
+  <p><strong>Android:</strong></p>
   <ul>
     <li><strong>Notifications (POST_NOTIFICATIONS):</strong> requested only if you turn on the optional quick-access clock notification. It is used solely to display your clocks in the notification shade and can be turned off at any time in the app or in system settings.</li>
     <li><strong>Run at startup (RECEIVE_BOOT_COMPLETED):</strong> used only to restore the quick-access notification after a reboot, if you have enabled it.</li>
   </ul>
+  <p><strong>iPhone:</strong> no permissions are requested. Home Screen and Lock Screen widgets are provided through Apple's WidgetKit, which needs no extra access grant from you.</p>
 
   <h2>Children</h2>
   <p>Unichrono does not collect data from anyone, including children.</p>
