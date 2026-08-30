@@ -90,7 +90,7 @@
 <main>
   <p class="brand">Unichrono</p>
   <h1>Privacy Policy</h1>
-  <p class="meta">Effective 23 August 2026 &middot; Published by Spiny Valley</p>
+  <p class="meta">Effective 30 August 2026 &middot; Published by Spiny Valley</p>
 
   <p class="summary">Short version: Unichrono collects no data, on Android or iPhone. Nothing leaves your device.</p>
 
@@ -116,7 +116,14 @@
     <li><strong>Notifications (POST_NOTIFICATIONS):</strong> requested only if you turn on the optional quick-access clock notification. It is used solely to display your clocks in the notification shade and can be turned off at any time in the app or in system settings.</li>
     <li><strong>Run at startup (RECEIVE_BOOT_COMPLETED):</strong> used only to restore the quick-access notification after a reboot, if you have enabled it.</li>
   </ul>
-  <p><strong>iPhone:</strong> no permissions are requested. Home Screen and Lock Screen widgets are provided through Apple's WidgetKit, which needs no extra access grant from you.</p>
+  <p><strong>iPhone:</strong> Home Screen and Lock Screen widgets are provided through Apple's WidgetKit, which needs no access grant from you. Three optional features do ask, and each is requested only at the moment you first use that feature &mdash; never at launch. Declining any of them leaves the rest of the app working normally.</p>
+  <ul>
+    <li><strong>Notifications:</strong> requested when you create your first spoken city alert, or turn on the time announcer. Used only to deliver those alerts on your device at the times you set. Nothing is sent anywhere.</li>
+    <li><strong>Calendar (write only):</strong> requested when you first use &ldquo;Add to Calendar&rdquo; on the plan board. This is Apple's write-only access: the app can add the event you asked for and <em>cannot read any event in your calendar</em>. Full calendar access is never requested.</li>
+    <li><strong>Alarms:</strong> requested when you first use &ldquo;Set alarm&rdquo; on the plan board, on iPhones running iOS 26.1 or later. The alarm is scheduled with Apple's AlarmKit and rings on your device only.</li>
+  </ul>
+  <p>Spoken alerts and the time announcer are read aloud by the system's built-in speech voice on your device. This needs no permission, involves no recording, and does not use the microphone.</p>
+  <p>Sunrise, sunset and daylight times are calculated on your device from the coordinates of the cities you added, which ship inside the app. Unichrono does not use location services on either platform.</p>
 
   <h2>Children</h2>
   <p>Unichrono does not collect data from anyone, including children.</p>
