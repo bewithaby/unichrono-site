@@ -133,7 +133,6 @@ h2{font-size:clamp(1.75rem,3.2vw,2.75rem);line-height:1.12;font-weight:600;lette
 .cam{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:13px;height:13px;border-radius:50%;
   background:#080a10;border:1px solid #262b3d;z-index:40}
 .cam::after{content:"";position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3b4250,#10131a 70%)}
-.phone-cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--ink3);text-transform:uppercase;text-align:center}
 /* animated finger */
 .finger{position:absolute;z-index:60;width:34px;height:34px;border-radius:50%;pointer-events:none;opacity:0;
   background:radial-gradient(circle at 34% 30%,color-mix(in oklab,var(--ink) 92%,transparent),color-mix(in oklab,var(--ink) 34%,transparent) 72%);
@@ -388,10 +387,18 @@ h2{font-size:clamp(1.75rem,3.2vw,2.75rem);line-height:1.12;font-weight:600;lette
 .fbcard .btn{margin-top:auto}
 
 /* ============ get / cta ============ */
-.getbox{text-align:center;padding:clamp(34px,5vw,54px) clamp(20px,4vw,44px);border:1px solid var(--line);border-radius:24px;background:var(--panel);margin-top:30px}
-.getbox .big{font-size:clamp(2.6rem,7vw,4rem);font-weight:600;letter-spacing:-.04em;line-height:1;margin-bottom:10px}
-.getbox .once{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--accent);text-transform:uppercase}
-.getbox .cta2{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.getgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;margin-top:30px}
+.gcard{border:1px solid var(--line);border-radius:22px;padding:30px 28px;background:var(--panel);display:flex;flex-direction:column;align-items:flex-start}
+.gcard.lead{border-color:color-mix(in oklab,var(--accent) 55%,transparent);background:color-mix(in oklab,var(--accent) 5%,var(--panel))}
+.gcard .plat{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--ink2);text-transform:uppercase}
+.gcard .plat svg{width:15px;height:15px;color:var(--accent)}
+.gcard .big{font-size:clamp(2.3rem,5.5vw,3.3rem);font-weight:600;letter-spacing:-.04em;line-height:1;margin:20px 0 8px}
+.gcard .was{font-size:.42em;color:var(--ink3);text-decoration:line-through;text-decoration-thickness:1.5px;vertical-align:middle;letter-spacing:-.02em}
+.gcard .once{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;line-height:1.7}
+.gcard .once b{color:var(--ink);font-weight:500}
+.gcard .gp{font-size:14.5px;color:var(--ink2);line-height:1.65;margin:18px 0 24px}
+.gcard .store{margin-top:auto}
+.gcard .gfoot{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--ink3);text-transform:uppercase;margin-top:12px}
 .price-note{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--ink3);text-transform:uppercase;margin-top:22px;line-height:2}
 
 /* ============ footer ============ */
@@ -497,7 +504,6 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
           <div class="hbar"></div>
         </div>
       </div>
-      <p class="phone-cap">Live — running on your device's clock</p>
     </div>
   </div>
 </section>
@@ -535,7 +541,6 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
             <div class="hbar"></div>
           </div>
         </div>
-        <p class="phone-cap">A name you actually use, not a timezone</p>
       </div>
     </div>
   </div>
@@ -557,7 +562,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
           <div class="wk"><div><b>Analog</b><p>A real dial with a sweeping hand. Line a few up and your desk looks like an airport wall.</p></div></div>
           <div class="wk"><div><b>Sun Clock</b><p>Sunrise, sunset and the arc between. How much daylight is left where you're headed.</p></div></div>
         </div>
-        <div class="watch rv" style="--d:.24s"><i></i>The home screen below is cycling through them</div>
+        <div class="watch rv" style="--d:.24s"><i></i>The gallery inside the app previews every widget. Take your time.</div>
       </div>
       <div class="pw-wrap rv" style="--d:.1s">
         <div class="phone">
@@ -622,7 +627,6 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
             <div class="hbar"></div>
           </div>
         </div>
-        <p class="phone-cap">Live widgets, real times, cycling</p>
       </div>
     </div>
   </div>
@@ -634,7 +638,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
     <div class="shead rv"><span class="knum">03</span><span class="klabel">Time travel</span><span class="kline"></span></div>
     <div class="dg">
       <div>
-        <h2 class="rv">Time travel — and every city comes along.</h2>
+        <h2 class="rv">Time travel – and every city comes along.</h2>
         <p class="lede rv" style="--d:.08s;margin-top:22px">Every long-distance life runs on one question: <b>is now a good time?</b></p>
         <p class="lede rv" style="--d:.12s">Drag the slider and every city answers at once — who's asleep, who's at lunch, whose Tuesday hasn't even started. Slide to Saturday evening and find the one hour that works for the whole team.</p>
         <p class="lede rv" style="--d:.16s">The app goes further — a hundred years in each direction, so you can plan a wedding in <b id="yr5">2031</b> and daylight saving is already handled, even there.</p>
@@ -675,7 +679,6 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
             <div class="hbar"></div>
           </div>
         </div>
-        <p class="phone-cap">One instant, every city, no arithmetic</p>
       </div>
     </div>
   </div>
@@ -692,7 +695,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
         <p class="lede rv" style="--d:.12s">Set an alarm for 7 a.m. in Tokyo, a calendar event for New York, or have Unichrono announce the time every hour — or once, at a time you choose.</p>
         <p class="lede rv" style="--d:.16s">Then there's the city alert: name it <b>“Remind Mom about Medicine,”</b> and when 9:00 PM arrives in Mumbai, Unichrono tells you: <b>“Remind Mom about Medicine. It's 9:00 PM in Mumbai.”</b></p>
         <p class="lede rv" style="--d:.2s">Once, or every day. Pick the city, set the time, give it a name. Unichrono takes care of the rest.</p>
-        <div class="watch rv" style="--d:.24s"><i></i>Alarm → calendar → announcer → city alert</div>
+        <div class="watch rv" style="--d:.24s"><i></i>Three ways to act on their time: alarm, calendar, city alert.</div>
       </div>
       <div class="pw-wrap rv" style="--d:.1s">
         <div class="phone">
@@ -722,7 +725,6 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
             <div class="hbar"></div>
           </div>
         </div>
-        <p class="phone-cap">Their clock, your reminder</p>
       </div>
     </div>
   </div>
@@ -738,7 +740,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
         <p class="lede rv" style="--d:.08s;margin-top:22px">You'll glance at these widgets more than almost anything else on your phone, so they should feel like yours.</p>
         <p class="lede rv" style="--d:.12s">Show seconds when you need them, hide them when you want calm. Choose 12-hour or 24-hour time. Add flags and city names so a glance tells you everything. Go Dark or Light, then pick any colour to make each widget fit your wallpaper, not fight it.</p>
         <p class="lede rv" style="--d:.16s">One setting styles them all. Or let every widget have a personality of its own.</p>
-        <div class="watch rv" style="--d:.2s"><i></i>The settings screen is trying options for you</div>
+        <div class="watch rv" style="--d:.2s"><i></i>Default is just the factory's opinion.</div>
       </div>
       <div class="pw-wrap rv" style="--d:.1s">
         <div class="phone">
@@ -784,7 +786,6 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
             <div class="hbar"></div>
           </div>
         </div>
-        <p class="phone-cap">One setting for all, or one per widget</p>
       </div>
     </div>
   </div>
@@ -834,22 +835,32 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
 <!-- ================= GET ================= -->
 <section id="get">
   <div class="wrap">
-    <div class="getbox rv">
-      <div class="once">Android &amp; iPhone</div>
-      <div class="big grad">Free</div>
-      <p class="lede" style="margin:0 auto">Every city, every widget, every feature. No subscription, no ads, no account, nothing to restore.</p>
-      <div class="cta2">
+    <div class="getgrid">
+      <div class="gcard rv">
+        <div class="plat"><svg viewBox="0 0 512 512" fill="currentColor"><path d="M325.3 234.3 104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>Android</div>
+        <div class="big grad">Free</div>
+        <div class="once">Permanently. No paywall, ever.</div>
+        <p class="gp">Every city, every widget, every feature. No subscription, no ads, no account, nothing to restore.</p>
         <a class="store" href="https://play.google.com/store/apps/details?id=com.spinyvalley.unichrono" target="_blank" rel="noopener">
           <svg viewBox="0 0 512 512" fill="currentColor"><path d="M325.3 234.3 104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>
           <span><span class="t1">Get it on</span><span class="t2">Google Play</span></span>
         </a>
+        <span class="gfoot">Android 8.0 and newer</span>
+      </div>
+
+      <div class="gcard lead rv" style="--d:.1s">
+        <div class="plat"><svg viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>iPhone &amp; iPad</div>
+        <div class="big"><span class="was">$2.99</span> <span class="grad">Free</span></div>
+        <div class="once">Until 31 December — <b id="daysLeft">then $2.99</b></div>
+        <p class="gp">The full app, unlocked for keeps. Install it before the year turns, tap the free unlock inside, and it stays yours — no card, no subscription, no expiry.</p>
         <a class="store" href="https://apps.apple.com/app/id6804218446" target="_blank" rel="noopener">
           <svg viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
           <span><span class="t1">Download on the</span><span class="t2">App Store</span></span>
         </a>
+        <span class="gfoot">One unlock covers iPhone and iPad</span>
       </div>
-      <p class="price-note">Android 8.0 and newer · New to it? Start with the <a href="help.html" style="color:var(--accent)">user guide</a></p>
     </div>
+    <p class="price-note">New to it? Start with the <a href="help.html" style="color:var(--accent)">user guide</a></p>
   </div>
 </section>
 </main>
@@ -883,6 +894,11 @@ const FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSfkLn1u8HtQGUt3pq6FzM3z
 document.getElementById('fbReq').href=FORM_URL;
 document.getElementById('fbBug').href=FORM_URL;
 document.getElementById('yr5').textContent=new Date().getFullYear()+5;
+(function(){
+  var el=document.getElementById('daysLeft'); if(!el)return;
+  var cutoff=Date.UTC(2027,0,1), days=Math.ceil((cutoff-Date.now())/86400000);
+  el.textContent=days>1?days+' days left':(days===1?'last day':'then $2.99');
+})();
 
 /* ================= data ================= */
 const RAW=[
