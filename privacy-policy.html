@@ -40,7 +40,7 @@
     <span class="kicker">Privacy Policy</span>
     <h1>Nothing leaves <span class="grad">your device.</span></h1>
     <p><strong>Short version:</strong> Unichrono collects no data, on Android or iPhone. There is no account, no analytics and — on Android — no network permission at all.</p>
-    <p class="meta">Effective 15 September 2026 · Published by Spiny Valley Labs</p>
+    <p class="meta">Effective 19 September 2026 · Published by Spiny Valley Labs</p>
   </div>
 </div>
 
@@ -51,7 +51,9 @@
       <a href="#who">Who we are</a>
       <a href="#collect">Data we collect</a>
       <a href="#device">Data on your device</a>
+      <a href="#feedback-form">Feedback form</a>
       <a href="#perms">Permissions</a>
+      <a href="#rating">Rating prompt</a>
       <a href="#children">Children</a>
       <a href="#changes">Changes</a>
       <a href="#contact">Contact</a>
@@ -74,11 +76,27 @@
         <li><strong>On Android:</strong> no internet access. The app does not request the network permission, so it is technically incapable of sending data anywhere.</li>
         <li><strong>On iPhone:</strong> the app makes no network calls of its own. The only network activity on the device is Unichrono Pro, an optional one-time in-app purchase processed entirely by Apple's App Store — Apple handles your payment details directly and we never see or receive them. The app only stores, on your device, whether Pro is unlocked.</li>
       </ul>
+      <p>There is one way to send us something, and you have to choose it: the <strong>Send feedback</strong> button in Settings, which opens a form in your browser. Nothing is collected in the background, and nothing is sent unless you fill that form in and submit it. <a href="#feedback-form">What it includes is set out below.</a></p>
     </section>
 
     <section id="device">
       <h2>Data stored on your device</h2>
       <p>Your chosen cities, clock labels, widget layouts, and app settings are stored locally on your device only. They never leave it, and they are deleted when you uninstall the app. Timezone calculations use the timezone database that ships with the operating system; no lookup ever happens over a network. On iPhone, this data is kept in a shared container so your Home Screen and Lock Screen widgets can read it — that container stays on your device and is never transmitted anywhere.</p>
+    </section>
+
+    <section id="feedback-form">
+      <h2>If you send feedback</h2>
+      <p>Settings has a <strong>Send feedback</strong> button, for feature requests, bug reports and general comments. It is the one place in Unichrono where information can leave your device, and only if you choose to use it.</p>
+      <p>Tapping it <strong>opens a Google Form in your browser</strong>. The app itself does not send anything, and does not talk to Google: it hands the link to your browser and stops there. On Android this is why the app still has no internet permission: the browser makes the request, not Unichrono.</p>
+      <p>The form arrives with four pieces of context already filled in, so a bug report says which build it came from:</p>
+      <ul>
+        <li>The app version.</li>
+        <li>Your device model (for example <code>Pixel 8</code> or <code>iPhone12,3</code>). This is the model of phone, not an identifier for your phone.</li>
+        <li>Your operating system version.</li>
+        <li>Whether you are on Android or iPhone.</li>
+      </ul>
+      <p>They are ordinary visible boxes on the form, not hidden fields, so you can read them and <strong>clear any of them before submitting</strong>. None of them are required. Nothing is sent until you press submit, and closing the browser sends nothing at all.</p>
+      <p>What you submit goes to Google, who run the form, and lands in a spreadsheet only we can read. Google's handling of it is covered by the <a href="https://policies.google.com/privacy" rel="noopener">Google Privacy Policy</a>. Giving your email address is optional and exists only so we can reply; we use it for nothing else, and we do not add it to any mailing list. Your cities, labels, widgets and settings are never part of a submission.</p>
     </section>
 
     <section id="perms">
@@ -102,6 +120,11 @@
         <p>Spoken alerts and the time announcer are read aloud by the system's built-in speech voice on your device. This needs no permission, involves no recording, and does not use the microphone.</p>
         <p>Sunrise, sunset and daylight times are calculated on your device from the coordinates of the cities you added, which ship inside the app. Unichrono does not use location services on either platform.</p>
       </div>
+    </section>
+
+    <section id="rating">
+      <h2>The rating prompt</h2>
+      <p>After you have used Unichrono for a while, it may ask once whether you would like to rate it, and offers "Already rated" so it can stop asking. That choice is a setting stored on your device, exactly like your cities are. Neither Google Play nor the App Store tells an app whether you have actually rated it, which is the whole reason the app has to ask you rather than check, and it is also why nothing about your rating or your review is visible to us here.</p>
     </section>
 
     <section id="children">

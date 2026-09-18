@@ -61,6 +61,7 @@
       <a href="#android">Android: settings</a>
       <a href="#iphone">iPhone: settings</a>
       <a href="#trouble">Troubleshooting</a>
+      <a href="#feedback-inapp">Feedback &amp; rating</a>
       <a href="#privacy">Privacy &amp; data</a>
       <a href="#stuck">Still stuck?</a>
     </div>
@@ -134,7 +135,7 @@
     <section id="plan">
       <h2>Alarms and meetings</h2>
       <p class="sub">One instant, every city, then turn it into something real.</p>
-      <p>The plan icon in the top bar asks whether you are setting an <strong>alarm</strong> or a <strong>meeting</strong>, then opens that board.</p>
+      <p>The plan icon in the top bar opens a short menu: <strong>Alarm</strong>, <strong>Meeting</strong>, or <strong>City alerts</strong>. The first two open that board; the third opens your list of alerts. All three are the same kind of thing: something that happens at a time you choose, which is why they share one icon rather than crowding the bar.</p>
       <h3>How the board works</h3>
       <ul>
         <li>Every city you keep is listed at the same moment in time. Change the time in any row and the others follow, so you can think in whichever city you think in.</li>
@@ -161,13 +162,13 @@
       <h2>City alerts</h2>
       <p class="sub">Be told when a chosen time arrives somewhere else.</p>
       <ol>
-        <li>Open <strong>Alerts</strong> (the bell) and add one.</li>
+        <li>Open the <strong>plan icon → City alerts</strong>. That opens the list of alerts you already have; the <strong>+</strong> on it creates a new one.</li>
         <li>Choose a city — from your list or from the full search.</li>
         <li>Pick the time in <em>that city's</em> local clock, and give it a label such as <em>Remind Mom about Medicine</em>.</li>
         <li>Choose the repeat: once on a date, every day, or the weekdays you select.</li>
         <li>Choose how it arrives: a silent notification, or spoken aloud with a buzz.</li>
       </ol>
-      <p>The row then shows the city, the time there, the repeat, and what that works out to in your own time. Alerts are rescheduled automatically after a reboot.</p>
+      <p>The list shows each alert's city, the time there, the repeat, and what that works out to in your own time, with a switch to turn it off without deleting it. Alerts are rescheduled automatically after a reboot.</p>
       <div class="note">
         <p><strong>Permissions.</strong> Notifications must be allowed or an alert has no way to reach you; the screen offers a shortcut to that setting. On Android, if exact alarms are not permitted you will see <em>Alerts may arrive a few minutes late</em> and an <strong>Allow exact alarms</strong> button.</p>
         <p><strong>Silent phone.</strong> A spoken alert only vibrates when the ringer is off, and stays fully quiet in Do Not Disturb / a Focus. Unichrono never talks over a silenced phone.</p>
@@ -364,10 +365,30 @@
       <p>It needs Android 12 or newer. Below that, Android cannot give an analog face its own timezone, so it could only ever show your local time.</p>
     </section>
 
+    <section id="feedback-inapp">
+      <h2>Sending feedback, and the rating prompt</h2>
+
+      <h3>Send feedback</h3>
+      <p><strong>Settings → Help → Send feedback</strong> opens a short form in your browser. It is one form for three things, and its first question is which one you are doing:</p>
+      <ul>
+        <li><strong>Feature request</strong>: a widget you wish existed, a city that is missing, a setting that should be there. What you would use it for is the part that decides.</li>
+        <li><strong>Bug report</strong>: a wrong time, a widget that will not place, an alert that stayed silent.</li>
+        <li><strong>Something else</strong>: anything that is neither, including telling us something works well.</li>
+      </ul>
+      <p>The app version, your phone model and your OS version arrive already filled in, so you do not have to go looking for them. They are ordinary boxes on the form and you can clear any of them before sending. Nothing is sent until you press submit, and the app itself never talks to the internet: it hands the link to your browser and stops there. Your email is optional and exists only so we can reply.</p>
+      <p>The same form is on this site, on the <a href="index.html#feedback">feedback page</a>, if you would rather not go through the app.</p>
+
+      <h3>The rating prompt</h3>
+      <p>Once you have used Unichrono for a while, it may ask whether you would like to rate it: on Android as you leave the app, on iPhone the next time you open it. It has three answers, and <strong>"Already rated" stops it for good</strong>.</p>
+      <p>That button exists because neither Google Play nor the App Store will tell an app whether you have actually rated it. There is no way for Unichrono to check, so it has to take your word for it, which it does, permanently. "Not now" is not permanent, but the prompt is capped at three appearances over the life of the install and spaces them weeks apart.</p>
+      <p>Rating is entirely optional and nothing in the app is held back if you never do it.</p>
+    </section>
+
     <section id="privacy">
       <h2>Privacy and data</h2>
       <ul>
         <li>On Android the app has <strong>no network permission</strong>. It cannot send anything anywhere, and the city data ships inside the app rather than being fetched.</li>
+        <li>The one thing that can leave your device is a <a href="#feedback-inapp">feedback form you fill in yourself</a>, which opens in your browser rather than being sent by the app.</li>
         <li>No accounts, no ads, no analytics, no tracking SDKs, on either platform.</li>
         <li>Your cities, labels, widget settings and alerts are stored on the device only, and go when the app goes.</li>
         <li>The permissions it does ask for are the obvious ones, requested only when you first use the feature that needs them.</li>
