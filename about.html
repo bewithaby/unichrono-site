@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>About — Unichrono</title>
+<meta name="description" content="Why Unichrono exists, the problem it solves, the philosophy behind it, and where it is going.">
+<link rel="icon" href="img/icon.png">
+<meta name="theme-color" content="#0E1220">
+<meta property="og:title" content="About Unichrono">
+<meta property="og:description" content="A world clock built for people who live across timezones — why it exists and what it refuses to do.">
+<meta property="og:image" content="img/featured.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/uc.css">
+</head>
+<body>
+
+<header>
+  <div class="wrap hd">
+    <a class="logo" href="index.html"><img src="img/icon.png" alt="">Unichrono</a>
+    <button class="menub" id="menub" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav id="nav">
+      <a href="index.html">Home</a>
+      <a href="about.html" class="here">About</a>
+      <a href="help.html">Help</a>
+      <a href="privacy-policy.html">Privacy</a>
+      <a href="index.html#feedback">Feedback</a>
+      <a class="btn" href="index.html#get">Get the app</a>
+    </nav>
+    <a class="btn" href="index.html#get">Get the app</a>
+  </div>
+</header>
+
+<div class="phead">
+  <div class="wrap">
+    <span class="kicker">About</span>
+    <h1>A clock for people whose lives <span class="grad">don't fit one timezone.</span></h1>
+    <p>Unichrono is a world clock and widget app for Android and iPhone, made by Spiny Valley Labs. It is small, it is free, and it is built around a single promise: the time you glance at is always right.</p>
+    <p class="meta">Spiny Valley Labs · Android &amp; iPhone · 34,804 cities</p>
+  </div>
+</div>
+
+<div class="wrap cols">
+  <aside class="toc">
+    <b>On this page</b>
+    <div class="toc-grid">
+      <a href="#why">Why it exists</a>
+      <a href="#problem">The problem</a>
+      <a href="#philosophy">The philosophy</a>
+      <a href="#who">Who makes it</a>
+      <a href="#vision">Where it's going</a>
+      <a href="#say">Say something</a>
+    </div>
+  </aside>
+
+  <main>
+    <section id="why">
+      <h2>Why Unichrono exists</h2>
+      <p>It started with a widget that lied.</p>
+      <p>Most world-clock widgets redraw the time using background work. Android's battery optimisation, Doze, and the aggressive task killers that ship on many phones eventually shut that work down — and the widget quietly freezes at whatever time it last showed. You don't get an error. You get a wrong time you have no reason to distrust, right up until you call someone at 3 a.m.</p>
+      <p>That is a strange failure for a clock. A clock that is sometimes wrong is worse than no clock, because you stop checking.</p>
+      <p>Unichrono was built to prove the honest version was possible: a widget that runs <strong>nothing</strong> in the background, ticks straight from the system clock with each city's timezone attached, and therefore cannot freeze, cannot drift, and costs no battery. Everything else in the app grew out of that one idea.</p>
+    </section>
+
+    <section id="problem">
+      <h2>The problem it solves</h2>
+      <p>If everyone you care about lives in one timezone, you do not need this app. Unichrono is for the other situation:</p>
+      <ul>
+        <li><strong>Families split across countries.</strong> Is it too late to call Mum? Has Dad had his medicine yet?</li>
+        <li><strong>Distributed teams.</strong> Which single hour on Thursday works for Berlin, Bengaluru and San Francisco without wrecking someone's evening?</li>
+        <li><strong>Travellers.</strong> You land, your phone changes timezone, and suddenly every alarm you set means something different.</li>
+        <li><strong>Anyone who does the arithmetic in their head</strong> — and gets it wrong twice a year, when one of the two places changes its clocks and the other doesn't.</li>
+      </ul>
+      <p>The underlying problem is not arithmetic. It's that timezones are the wrong unit for a human question. You don't think "UTC+5:30". You think <em>Mom</em>. Unichrono lets you name a place after the person, then answers in those terms — on the home screen, in the planner, and in an alert that says the thing out loud.</p>
+    </section>
+
+    <section id="philosophy">
+      <h2>The philosophy</h2>
+      <h3>The clock must never be wrong</h3>
+      <p>Every design decision loses to this one. No background refresh, no cached "last known" time, no server that can go down. The widget reads the operating system's own clock and the timezone rules that ship with it, which is the same source your phone's lock screen uses.</p>
+      <h3>Glance, don't unlock</h3>
+      <p>Success is you never opening the app. The widgets and the notification are the product; the app is where you set them up and where the deeper tools live.</p>
+      <h3>No account, no network, nothing collected</h3>
+      <p>A clock does not need a server, so it doesn't have one. On Android the app does not even request the internet permission — it is technically incapable of sending anything anywhere. There is no analytics, no ads, no sign-in, nothing to breach and nothing to sell. That is a structural choice, not a policy promise.</p>
+      <h3>Your names, your colours</h3>
+      <p>The app adapts to you rather than the other way round: rename any city, set 12- or 24-hour time per taste, pick colours per widget so it matches your wallpaper instead of fighting it.</p>
+      <h3>Free, and honest about it</h3>
+      <p>Unichrono is free on Android and iPhone. No subscription, no ads, no feature held hostage. It is a small app that does one thing completely.</p>
+    </section>
+
+    <section id="who">
+      <h2>Who makes it</h2>
+      <p>Unichrono is designed, built and maintained by <strong>Spiny Valley Labs</strong>, an independent one-studio operation. There is no growth team, no investor deck and no roadmap written by someone who doesn't use the app.</p>
+      <p>Practically, that means two things. Replies are human and occasionally slow. And the feature list is short on purpose — anything that would add a server, an account or a tracker does not get built, however often it is asked for.</p>
+      <p>City data comes from <a href="https://www.geonames.org/" target="_blank" rel="noopener">GeoNames.org</a>, licensed CC BY 4.0. Timezone rules come from the IANA database that ships with your operating system.</p>
+    </section>
+
+    <section id="vision">
+      <h2>Where it's going</h2>
+      <p>The direction is depth, not surface area. Unichrono will keep being a world clock — it is not going to become a calendar, a chat app or a productivity suite.</p>
+      <ul>
+        <li><strong>Parity across platforms.</strong> A feature ships to Android and iPhone. The two apps should feel like the same product.</li>
+        <li><strong>Better answers to "is now a good time?"</strong> The planner and the availability view are where the app is most useful and least finished.</li>
+        <li><strong>More ways to glance.</strong> Lock screen, notification shade, quick settings — anywhere a time can appear without opening anything.</li>
+        <li><strong>Still no server.</strong> If a feature needs one, it needs a very good reason, and it will probably lose.</li>
+      </ul>
+      <p>What gets built next is mostly decided by what people ask for, which is the least ceremonious part of this whole thing: a form, no sign-in, straight to the person writing the code.</p>
+    </section>
+
+    <section id="say">
+      <h2>Say something</h2>
+      <p>Missing a city, a widget you wish existed, or something plainly broken — all of it goes to the same place.</p>
+      <p>
+        <a class="btn" id="formBtn" href="#" target="_blank" rel="noopener">Open the form</a>
+        <a class="btn ghost" href="help.html" style="margin-left:8px">Read the user guide</a>
+      </p>
+      <p class="sub" style="margin-top:16px">Or email <a href="mailto:bewithaby@gmail.com">bewithaby@gmail.com</a>.</p>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <div class="wrap frow">
+    <span>© 2026 Spiny Valley Labs</span>
+    <span class="flinks">
+      <a href="index.html">Home</a><a href="help.html">Help</a><a href="privacy-policy.html">Privacy</a><a href="index.html#feedback">Feedback</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+document.getElementById('formBtn').href='https://docs.google.com/forms/d/e/1FAIpQLSfkLn1u8HtQGUt3pq6FzM3zjkY_e4xu65hsounqiDEd0CL66Q/viewform';
+var mb=document.getElementById('menub'),nv=document.getElementById('nav');
+mb.addEventListener('click',function(){var o=nv.classList.toggle('open');mb.setAttribute('aria-expanded',o?'true':'false');});
+nv.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){nv.classList.remove('open');});});
+</script>
+</body>
+</html>
