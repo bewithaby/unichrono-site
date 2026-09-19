@@ -50,7 +50,7 @@ h1{font-size:clamp(2.1rem,5vw,3.6rem);line-height:1.06;font-weight:600;letter-sp
 .meta{font-family:var(--mono);font-size:10px;letter-spacing:.18em;color:var(--ink3);text-transform:uppercase;margin-top:18px}
 
 /* ---- layout ---- */
-.cols{display:grid;grid-template-columns:230px minmax(0,1fr);gap:clamp(26px,5vw,64px);padding:clamp(34px,5vw,56px) 0 90px;align-items:start}
+.cols{display:grid;grid-template-columns:230px minmax(0,1fr);gap:clamp(26px,5vw,64px);padding-block:clamp(34px,5vw,56px) 90px;align-items:start}
 .cols>*{min-width:0}
 main{min-width:0}
 .toc{position:sticky;top:84px;font-family:var(--mono);font-size:11px;letter-spacing:.06em}
