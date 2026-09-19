@@ -1,0 +1,56 @@
+# Unichrono
+
+> A world clock app for Android and iPhone, built around home-screen widgets
+> that show several cities at once. Free on both platforms. Works entirely
+> offline: no accounts, no analytics, no network calls of its own.
+
+Unichrono is published by Spiny Valley Labs. It exists because most world
+clock widgets eventually freeze: they redraw the time using background work,
+and Android's battery optimisation, Doze, and the task killers that ship on
+many phones shut that work down. The widget then shows a wrong time with no
+indication anything is wrong. Unichrono runs nothing in the background. Each
+widget reads the phone's own clock with a timezone attached, so it cannot
+freeze, cannot drift, and costs no battery.
+
+## Facts
+
+- Platforms: Android 8.0 and later; iPhone and iPad on iOS 17 and later.
+- Price: free on Android, permanently, with no paywall and no ads. Free on
+  iPhone, where an optional one-time Pro unlock exists and is currently given
+  away from inside the app.
+- Cities: 34,804, bundled in the app rather than fetched, from GeoNames
+  (CC BY 4.0).
+- Widget styles: nine, including a full city list, a single hero city, three
+  cities at a glance, meeting availability, sunrise and sunset, and an analog
+  face. The analog widget needs Android 12 or later.
+- Data: cities, labels, widget setups and alerts are stored on the device and
+  deleted with the app. Nothing is collected or transmitted.
+- Timezones and DST come from the database that ships with the operating
+  system, so they update with it.
+
+## Features
+
+- Home-screen and Lock Screen widgets showing several cities at once.
+- Time travel: drag a ruler and every city re-bases to that moment.
+- A plan board for alarms and meetings, showing one instant in every city, and
+  handing it to the phone's alarm, a calendar event, or a share sheet.
+- City alerts: a notification, a vibration and a spoken line at a time you
+  choose in another city's clock.
+- A time announcer that speaks the local time hourly or once a day.
+- An optional ongoing notification showing the clocks while other apps are open.
+
+## Pages
+
+- [Home](https://unichrono.app/): what the app does, with live demonstrations.
+- [User guide](https://unichrono.app/help.html): every feature explained, a
+  settings reference for both platforms, and troubleshooting for the common
+  failures.
+- [About](https://unichrono.app/about.html): why the app exists and what it
+  deliberately refuses to do.
+- [Privacy policy](https://unichrono.app/privacy-policy.html): what is stored,
+  what is asked for, and the one thing that can leave the device.
+
+## Get it
+
+- [Google Play](https://play.google.com/store/apps/details?id=com.spinyvalley.unichrono)
+- [App Store](https://apps.apple.com/app/id6804218446)

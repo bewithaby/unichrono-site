@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>User guide — Unichrono</title>
 <meta name="description" content="How to use Unichrono: cities, renaming, widgets, time travel, the plan board, city alerts, spoken time, and where every setting lives on Android and on iPhone.">
+<link rel="canonical" href="https://unichrono.app/help.html">
 <link rel="icon" href="img/icon.png">
 <meta name="theme-color" content="#0E1220">
 <meta property="og:title" content="Unichrono user guide — Android and iPhone">
@@ -17,6 +18,95 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/uc.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "@id": "https://unichrono.app/help.html#faq",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "My widget shows the wrong time",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Unichrono reads your phone's clock and applies each city's timezone rules from the database the OS ships. If every city is off by the same amount, the phone's own clock is wrong — turn on automatic date and time. If one city looks wrong right around a daylight-saving change, install the latest system update, since the timezone rules come with it."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "The launcher says \"Couldn't add widget\" (Android)",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Some launchers refuse a widget dropped onto a spot too small for it. Free up a bigger area and try again, or add it from the in-app widget gallery, which asks the launcher to place it for you."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "My widget lost a city, or shows \"+2 more\"",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It ran out of room. The widget shrinks its text first and only then hides the overflow, so the cities you do see are never clipped. Make it wider or taller, or switch its row detail to Compact."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "The clocks notification disappeared (Android)",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Almost always the phone's battery manager removed it. See Keeping it reliable . Re-enabling it brings it back immediately."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "My alerts arrive a few minutes late (Android)",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Exact alarms are not permitted for the app. Open the alerts screen and tap Allow exact alarms ; the banner disappears once granted."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "An alert stayed silent",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Check that notifications are allowed for Unichrono, and that the phone is not silenced or in Do Not Disturb / a Focus. Spoken alerts deliberately only vibrate when the ringer is off."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "\"Set alarm\" is greyed out (Android)",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Android's alarm handoff carries an hour and a minute but no date, so it always means the next time that hour comes round. When the moment you picked would ring on the wrong day, Unichrono disables the button instead of setting a misleading alarm. Use a calendar event or a city alert."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "I can't set an alarm on my iPhone",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Scheduled alarms use Apple's AlarmKit, which needs iOS 26.1 or later. On older versions, use a calendar event or a city alert instead."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Renaming a city did not change my widget",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "That is intentional — widgets keep their own labels so an in-app rename cannot rewrite a widget you already set up. Edit the labels in that widget's own setup."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "The Analog widget is not available on my phone",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It needs Android 12 or newer. Below that, Android cannot give an analog face its own timezone, so it could only ever show your local time."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 

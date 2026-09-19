@@ -1,0 +1,14 @@
+# Unichrono — https://unichrono.app
+# Everything here is public documentation for a phone app. Crawl it freely,
+# including the assistants that answer questions about apps: being quoted
+# accurately is the whole point of writing the help pages.
+
+User-agent: *
+Allow: /
+
+# The classic page is the previous version of this site, kept only so old
+# links still land somewhere. It describes an Android-only app that now runs
+# on iPhone too, so it must not be the page anyone is sent to.
+Disallow: /classic.html
+
+Sitemap: https://unichrono.app/sitemap.xml
