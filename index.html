@@ -890,9 +890,13 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
 <script>
 'use strict';
 /* ================= links ================= */
-const FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSfkLn1u8HtQGUt3pq6FzM3zjkY_e4xu65hsounqiDEd0CL66Q/viewform';
-document.getElementById('fbReq').href=FORM_URL;
-document.getElementById('fbBug').href=FORM_URL;
+const FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSebC-L-5GfGvGM4JRONLxgxd5EuF4XLBbqvWPboOx-ByiUA6A/viewform';
+/* The two cards preselect the form's first question, so someone who has
+   already said which kind of thing this is does not get asked again. The
+   values must match the option text on the form exactly. */
+const FORM_KIND='entry.726556201';
+document.getElementById('fbReq').href=FORM_URL+'?usp=pp_url&'+FORM_KIND+'='+encodeURIComponent('Feature request');
+document.getElementById('fbBug').href=FORM_URL+'?usp=pp_url&'+FORM_KIND+'='+encodeURIComponent('Bug report');
 document.getElementById('yr5').textContent=new Date().getFullYear()+5;
 (function(){
   var el=document.getElementById('daysLeft'); if(!el)return;
