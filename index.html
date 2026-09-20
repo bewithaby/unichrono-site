@@ -116,10 +116,13 @@ h2{font-size:clamp(1.75rem,3.2vw,2.75rem);line-height:1.12;font-weight:600;lette
 /* ============ demo grid ============ */
 .dg{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(26px,5vw,72px);align-items:center}
 .dg.flip .pw-wrap{order:-1}
+/* points at the phone: sideways beside the text, down when it stacks below */
+.point::before{content:"\1F449";display:inline-block}
 @media(max-width:960px){
   .hero-grid,.dg{grid-template-columns:1fr}
   .dg.flip .pw-wrap{order:2}
   .pw-wrap{margin-top:30px}
+  .point::before{content:"\1F447"}
 }
 
 /* ============ phone frame ============ */
@@ -589,7 +592,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
     <div class="dg">
       <div>
         <h2 class="rv">Home is a timezone. Take it with you.</h2>
-        <p class="lede rv" style="--d:.06s;margin-top:22px"><b>Watch the phone 👉</b></p>
+        <p class="lede rv" style="--d:.06s;margin-top:22px"><b>Watch the phone <span class="point" aria-hidden="true"></span></b></p>
         <p class="lede rv" style="--d:.08s">Type a city. Find it among <b>34,804 cities</b>. Then give it a name that means something to you: Mom, Sarah, Boss, Dev Team…</p>
         <p class="lede rv" style="--d:.12s">Because you don't think in timezones, you think in people. Call a city whatever you want, and that name follows it into every widget.</p>
         <p class="lede rv" style="--d:.16s">Daylight saving? Unichrono adjusts automatically, so you don't have to think about it. Just glance, and the time is right.</p>
