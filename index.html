@@ -61,7 +61,7 @@ img{max-width:100%}
 .wrap{max-width:var(--wrap);margin:0 auto;padding:0 clamp(18px,4vw,44px)}
 main{padding-top:62px}
 section{padding:clamp(58px,8vw,110px) 0;scroll-margin-top:78px}
-#clocks,#widgets,#travel,#alarms,#themes,#privacy,#feedback,#get{border-top:1px solid var(--line)}
+#clocks,#widgets,#travel,#alarms,#themes,#story,#privacy,#feedback,#get{border-top:1px solid var(--line)}
 .rv{opacity:0;transform:translateY(18px);transition:opacity .7s ease var(--d,0s),transform .7s ease var(--d,0s)}
 .rv.in{opacity:1;transform:none}
 .grad{background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -452,6 +452,16 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
 }
 @media(max-width:400px){.phone{width:min(300px,92vw);height:600px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* ---- story video: poster + play; the YouTube player loads only on tap ---- */
+.vwrap{position:relative;width:min(340px,86vw);aspect-ratio:9/16;border-radius:30px;overflow:hidden;background:var(--night);border:1px solid var(--line);box-shadow:0 30px 70px -30px rgba(0,0,0,.7)}
+.vposter{all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;height:100%;position:relative}
+.vposter img{display:block;width:100%;height:100%;object-fit:cover}
+.vplay{position:absolute;left:50%;top:50%;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;box-shadow:0 12px 32px rgba(0,0,0,.5);transition:transform .2s ease}
+.vplay svg{width:28px;height:28px;margin-left:4px}
+.vposter:hover .vplay,.vposter:focus-visible .vplay{transform:scale(1.08)}
+.vposter:focus-visible{outline:2px solid var(--accent);outline-offset:-4px;border-radius:30px}
+.vdur{position:absolute;right:14px;bottom:14px;padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.6);color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.08em}
+.vwrap iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 </style>
 <script type="application/ld+json">
 {
@@ -533,7 +543,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
     <nav id="nav">
-      <a href="#clocks">Cities</a><a href="#widgets">Widgets</a><a href="#travel">Time travel</a><a href="#alarms">Alarms</a><a href="#themes">Make it yours</a><a href="about.html">About</a><a href="help.html">Help</a><a href="#feedback">Feedback</a>
+      <a href="#clocks">Cities</a><a href="#widgets">Widgets</a><a href="#travel">Time travel</a><a href="#alarms">Alarms</a><a href="#themes">Make it yours</a><a href="#story">Story</a><a href="about.html">About</a><a href="help.html">Help</a><a href="#feedback">Feedback</a>
       <a class="btn" href="#get">Get the app</a>
     </nav>
     <a class="btn" href="#get">Get the app</a>
@@ -868,10 +878,36 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
   </div>
 </section>
 
-<!-- ================= 06 PRIVACY ================= -->
+<!-- ================= 06 STORY (video) ================= -->
+<section id="story">
+  <div class="wrap">
+    <div class="shead rv"><span class="knum">06</span><span class="klabel">The story</span><span class="kline"></span></div>
+    <div class="dg flip">
+      <div>
+        <h2 class="rv">Distance was never the hard part. Time was.</h2>
+        <p class="lede rv" style="--d:.08s;margin-top:22px">Unichrono began with parents whose children live abroad — check the clock, do the maths, hesitate, decide it's too late to call.</p>
+        <p class="lede rv" style="--d:.12s">It grew into a planner for anyone whose people are spread across timezones: <b>his morning, her evening, same moment.</b></p>
+        <p class="lede rv" style="--d:.16s">You already know who to call. Now you know&nbsp;when.</p>
+        <div class="watch rv" style="--d:.2s"><i></i>People are AI-generated · app screens are real recordings</div>
+      </div>
+      <div class="pw-wrap rv" style="--d:.1s">
+        <div class="vwrap" id="storyVideo">
+          <button class="vposter" type="button" data-yt="mwwGcCf-njQ" aria-label="Play the Unichrono story, 1 minute 18 seconds, on YouTube">
+            <img src="img/story-poster.jpg" width="720" height="1280" loading="lazy" decoding="async" alt="His 9 AM. Her 6 PM. Same moment. A London man and a Sydney woman laughing on the same call.">
+            <span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></span>
+            <span class="vdur" aria-hidden="true">1:18</span>
+          </button>
+          <noscript><a href="https://www.youtube.com/shorts/mwwGcCf-njQ" style="position:absolute;inset:auto 0 0;padding:12px;text-align:center;color:#fff;background:rgba(0,0,0,.6)">Watch on YouTube</a></noscript>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 07 PRIVACY ================= -->
 <section id="privacy">
   <div class="wrap">
-    <div class="shead rv"><span class="knum">06</span><span class="klabel">What it doesn't do</span><span class="kline"></span></div>
+    <div class="shead rv"><span class="knum">07</span><span class="klabel">What it doesn't do</span><span class="kline"></span></div>
     <h2 class="rv">No account. No network. Nothing to leak.</h2>
     <p class="lede rv" style="--d:.06s;margin-top:20px">A clock does not need a server.</p>
     <p class="lede rv" style="--d:.1s">Unichrono ships all cities and every timezone rule inside the app — so it works in airplane mode, in a basement, and on the day other apps stop working because somebody's server went down.</p>
@@ -886,10 +922,10 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
   </div>
 </section>
 
-<!-- ================= 07 FEEDBACK ================= -->
+<!-- ================= 08 FEEDBACK ================= -->
 <section id="feedback">
   <div class="wrap">
-    <div class="shead rv"><span class="knum">07</span><span class="klabel">Requests, bugs &amp; anything else</span><span class="kline"></span></div>
+    <div class="shead rv"><span class="knum">08</span><span class="klabel">Requests, bugs &amp; anything else</span><span class="kline"></span></div>
     <h2 class="rv">Missing a city? Found something broken? Just want to say something?</h2>
     <p class="lede rv" style="--d:.06s;margin-top:20px">Unichrono is built by one small studio, and the list of what to build next is mostly written by the people using it. The form takes a minute, needs no sign-in, and goes straight to the person who writes the code.</p>
     <div class="fb">
@@ -972,6 +1008,19 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
 
 <script>
 'use strict';
+/* ================= story video ================= */
+/* The poster is the page's; YouTube (and its cookies) arrive only when the
+   visitor asks for the video. */
+document.querySelectorAll('.vposter[data-yt]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const f=document.createElement('iframe');
+    f.src='https://www.youtube-nocookie.com/embed/'+btn.dataset.yt+'?autoplay=1&playsinline=1&rel=0';
+    f.title='Unichrono: the story';
+    f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen=true;
+    btn.replaceWith(f);
+  },{once:true});
+});
 /* ================= links ================= */
 const FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSebC-L-5GfGvGM4JRONLxgxd5EuF4XLBbqvWPboOx-ByiUA6A/viewform';
 /* The two cards preselect the form's first question, so someone who has
