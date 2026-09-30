@@ -153,6 +153,7 @@
       <a href="#setup">Widget setup options</a>
       <a href="#android">Android: settings</a>
       <a href="#iphone">iPhone: settings</a>
+      <a href="#mac">Mac: settings</a>
       <a href="#trouble">Troubleshooting</a>
       <a href="#feedback-inapp">Feedback &amp; rating</a>
       <a href="#privacy">Privacy &amp; data</a>
@@ -168,11 +169,11 @@
         <li><strong>Open the app.</strong> Your own city is added on first launch, so the list is never empty. A short tour explains the main ideas, and you can replay it from Settings.</li>
         <li><strong>Add the places you care about.</strong> Tap <code>+</code>, search by city or country, tap a result. There are 34,804 cities, ranked so the big ones come first.</li>
         <li><strong>Rename them.</strong> Open a city and rename it: <em>Mom</em>, <em>NYC office</em>, <em>Standup</em>. Your name is what the app, the widgets and the alerts use.</li>
-        <li><strong>Put a widget on the home screen.</strong> On Android: long-press an empty spot → <strong>Widgets</strong> → <strong>Unichrono</strong>, or use the in-app widget gallery. On iPhone: long-press the home screen → <strong>+</strong> → search <strong>Unichrono</strong>.</li>
+        <li><strong>Put a widget on the home screen.</strong> On Android: long-press an empty spot → <strong>Widgets</strong> → <strong>Unichrono</strong>, or use the in-app widget gallery. On iPhone: long-press the home screen → <strong>+</strong> → search <strong>Unichrono</strong>. On Mac: right-click the desktop → <strong>Edit Widgets</strong> → search <strong>Unichrono</strong>.</li>
         <li><strong>Set that widget up.</strong> Pick its cities, format and colours. From then on it keeps itself correct with no further input.</li>
       </ol>
       <div class="note">
-        <p><strong>What you need.</strong> Android 8.0 or newer (the analog widget needs Android 12+, because only from that version can Android give an analog face its own timezone). On iPhone, a recent version of iOS; scheduled alarms use Apple's AlarmKit and need iOS 26.1 or later.</p>
+        <p><strong>What you need.</strong> Android 8.0 or newer (the analog widget needs Android 12+, because only from that version can Android give an analog face its own timezone). On iPhone, a recent version of iOS; scheduled alarms use Apple's AlarmKit and need iOS 26.1 or later. On Mac, macOS 14 Sonoma or later; the app lives in the menu bar, <a href="#mac">see below</a>.</p>
       </div>
     </section>
 
@@ -434,6 +435,41 @@
       </div>
     </section>
 
+    <section id="mac">
+      <h2><span class="plat"><svg viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>Mac</span> — where every setting lives</h2>
+      <p class="sub">Unichrono lives in the menu bar, with no Dock icon. Click its clock → <strong>Settings</strong>.</p>
+      <div class="tw"><table>
+        <tr><th>Section</th><th>Setting</th><th>What it does</th><th>Default</th></tr>
+        <tr><td>Display</td><td>Hour format: System / 12-hour / 24-hour</td><td>How every time is written</td><td>System</td></tr>
+        <tr><td>Display</td><td>Show seconds</td><td>Seconds on the clocks in the panel</td><td>Off</td></tr>
+        <tr><td>Display</td><td>Country flags</td><td>A flag before each city name</td><td>On</td></tr>
+        <tr><td>Display</td><td>Appearance: System / Light / Dark</td><td>The app's own look</td><td>System</td></tr>
+        <tr><td>General</td><td>Launch at login</td><td>Starts Unichrono when you log in, so the menu bar clock, alerts and announcer are always there</td><td>On (asked on first launch)</td></tr>
+        <tr><td>Time announcer</td><td>Announce the time + Hourly / Daily</td><td>Your own time, spoken aloud on this Mac</td><td>Off</td></tr>
+        <tr><td>Your clocks</td><td>Export clocks… / Import clocks…</td><td>Saves your city list to a file that also opens on iPhone, iPad and Android</td><td>—</td></tr>
+        <tr><td>Widgets</td><td>Widget gallery…</td><td>Previews of every widget before you place one</td><td>—</td></tr>
+        <tr><td>Unichrono Pro</td><td>Unlock Unichrono Pro…</td><td>One purchase covers iPhone, iPad and Mac</td><td>—</td></tr>
+        <tr><td>Help</td><td>Help and troubleshooting · Privacy policy</td><td>This page, and the privacy policy</td><td>—</td></tr>
+      </table></div>
+
+      <h3>The menu bar panel</h3>
+      <p>Click the clock in the menu bar to open the panel: every city with its time, day and offset, and the time-travel ruler along the bottom. Drag the ruler and every clock moves together. The buttons underneath open <strong>Cities</strong>, <strong>Plan</strong> (<em>Reminder…</em>, <em>Meeting…</em>, <em>Alerts…</em>), <strong>Widgets</strong> and <strong>Settings</strong>.</p>
+      <p>The menu bar itself shows up to three cities. Choose them in <strong>Cities</strong> with the <em>Show in menu bar</em> tick.</p>
+
+      <h3>Reminders and meetings</h3>
+      <p>The plan board works as it does on iPhone, with two Mac differences. <strong>Set reminder</strong> saves a one-time city alert: a notification at that moment, listed under <em>Alerts…</em>. <strong>Add to Calendar</strong> hands the meeting to Apple's Calendar app as a standard event file, and Calendar asks you to confirm it, so Unichrono never needs access to your calendar. <strong>Copy</strong> puts the meeting, with every city's time, on the clipboard.</p>
+
+      <h3>Widgets on Mac</h3>
+      <p>Right-click the desktop → <strong>Edit Widgets</strong> → search <strong>Unichrono</strong>, and drag a widget onto the desktop or into Notification Centre. Right-click a placed widget → <strong>Edit</strong> to choose its cities, colour and format.</p>
+
+      <h3>Permissions</h3>
+      <p>Only one: <strong>Notifications</strong>, asked the first time you save a city alert or reminder. Unichrono opens or saves a file only when you pick one yourself with Export or Import.</p>
+
+      <div class="note">
+        <p><strong>Speech on Mac.</strong> Spoken alerts and the time announcer are spoken live by the system voice while Unichrono is running, even during a Focus. If Unichrono isn't running, a city alert still arrives as a notification, just without the voice, and the announcer stays silent. That is why <em>Launch at login</em> is on by default.</p>
+      </div>
+    </section>
+
     <section id="trouble">
       <h2>Troubleshooting</h2>
       <h3>My widget shows the wrong time</h3>
@@ -452,6 +488,10 @@
       <p>Android's alarm handoff carries an hour and a minute but no date, so it always means the next time that hour comes round. When the moment you picked would ring on the wrong day, Unichrono disables the button instead of setting a misleading alarm. Use a calendar event or a city alert.</p>
       <h3>I can't set an alarm on my iPhone</h3>
       <p>Scheduled alarms use Apple's AlarmKit, which needs iOS 26.1 or later. On older versions, use a calendar event or a city alert instead.</p>
+      <h3>I can't find Unichrono on my Mac</h3>
+      <p>It has no Dock icon and no main window: look for its clock in the menu bar, top right. When the menu bar is crowded, macOS hides the items that don't fit, so quit an app that has its own menu bar icon, or show fewer cities there.</p>
+      <h3>My Mac didn't speak an alert</h3>
+      <p>Speech on Mac needs Unichrono to be running. Turn on <em>Launch at login</em> in Settings, and check the Mac's volume isn't muted.</p>
       <h3>Renaming a city did not change my widget</h3>
       <p>That is intentional — widgets keep their own labels so an in-app rename cannot rewrite a widget you already set up. Edit the labels in that widget's own setup.</p>
       <h3>The Analog widget is not available on my phone</h3>

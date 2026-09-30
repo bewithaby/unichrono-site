@@ -1,7 +1,7 @@
 # Unichrono
 
-> A world clock app for Android and iPhone, built around home-screen widgets
-> that show several cities at once. Free on both platforms. Works entirely
+> A world clock app for Android, iPhone, iPad and Mac, built around widgets
+> that show several cities at once. Free on Android, free to download on Apple devices. Works entirely
 > offline: no accounts, no analytics, no network calls of its own.
 
 Unichrono is published by Spiny Valley Labs. It exists because most world
@@ -14,10 +14,12 @@ freeze, cannot drift, and costs no battery.
 
 ## Facts
 
-- Platforms: Android 8.0 and later; iPhone and iPad on iOS 17 and later.
+- Platforms: Android 8.0 and later; iPhone and iPad on iOS 17 and later;
+  Mac on macOS 14 Sonoma and later, as a menu bar app with desktop widgets.
 - Price: free on Android, permanently, with no paywall and no ads. Free on
   iPhone, where an optional one-time Pro unlock exists and is currently given
-  away from inside the app.
+  away from inside the app. The same unlock covers iPad and Mac; on Mac it is
+  a one-time purchase (the free giveaway button is iPhone and iPad only).
 - Cities: 34,804, bundled in the app rather than fetched, from GeoNames
   (CC BY 4.0).
 - Widget styles: nine, including a full city list, a single hero city, three
@@ -37,13 +39,17 @@ freeze, cannot drift, and costs no battery.
 - City alerts: a notification, a vibration and a spoken line at a time you
   choose in another city's clock.
 - A time announcer that speaks the local time hourly or once a day.
-- An optional ongoing notification showing the clocks while other apps are open.
+- An optional ongoing notification showing the clocks while other apps are open
+  (Android).
+- On Mac: the clocks live in the menu bar; one click opens every city and the
+  time-travel ruler. Reminders are one-time city alerts, meetings open in
+  Apple's Calendar as an event file, and speech plays while the app runs.
 
 ## Pages
 
 - [Home](https://unichrono.app/): what the app does, with live demonstrations.
 - [User guide](https://unichrono.app/help.html): every feature explained, a
-  settings reference for both platforms, and troubleshooting for the common
+  settings reference for every platform, and troubleshooting for the common
   failures.
 - [About](https://unichrono.app/about.html): why the app exists and what it
   deliberately refuses to do.
@@ -53,4 +59,4 @@ freeze, cannot drift, and costs no battery.
 ## Get it
 
 - [Google Play](https://play.google.com/store/apps/details?id=com.spinyvalley.unichrono)
-- [App Store](https://apps.apple.com/app/id6804218446)
+- [App Store and Mac App Store](https://apps.apple.com/app/id6804218446)
