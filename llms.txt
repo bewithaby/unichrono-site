@@ -18,8 +18,8 @@ freeze, cannot drift, and costs no battery.
   Mac on macOS 14 Sonoma and later, as a menu bar app with desktop widgets.
 - Price: free on Android, permanently, with no paywall and no ads. Free on
   iPhone, where an optional one-time Pro unlock exists and is currently given
-  away from inside the app. The same unlock covers iPad and Mac; on Mac it is
-  a one-time purchase (the free giveaway button is iPhone and iPad only).
+  away from inside the app, on iPhone and iPad. On Mac, Pro is a one-time
+  purchase; the free iPhone and iPad unlock does not carry over to Mac.
 - Cities: 34,804, bundled in the app rather than fetched, from GeoNames
   (CC BY 4.0).
 - Widget styles: nine, including a full city list, a single hero city, three
@@ -59,4 +59,5 @@ freeze, cannot drift, and costs no battery.
 ## Get it
 
 - [Google Play](https://play.google.com/store/apps/details?id=com.spinyvalley.unichrono)
-- [App Store and Mac App Store](https://apps.apple.com/app/id6804218446)
+- [App Store, iPhone and iPad](https://apps.apple.com/app/id6804218446)
+- [Mac App Store](https://apps.apple.com/app/id6804218446?platform=mac)
