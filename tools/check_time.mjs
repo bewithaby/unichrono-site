@@ -194,7 +194,7 @@ for (const [w, h] of [[1440, 900], [1280, 800], [1100, 800], [390, 844]]) {
     if (Math.abs(m.l - m.left) > 2 || Math.abs(m.r - m.right) > 2) fail(where, `hero button ${Math.round(m.l)}–${Math.round(m.r)} not under the badges ${Math.round(m.left)}–${Math.round(m.right)}`);
     if (m.right - m.left >= 520 && m.h > 44) fail(where, 'hero button wraps although the badge row is wide');
     if (m.h > 70) fail(where, 'hero button more than two lines');
-    if (!m.bg.includes('linear-gradient')) fail(where, 'hero button border is not the theme gradient');
+    if (m.bg !== 'none') fail(where, 'hero button still has a gradient border');
   }
   const order = await page.evaluate(() => {
     const b = document.querySelector('#travel a.ttlink'), w = document.querySelector('#travel .watch');
