@@ -541,10 +541,12 @@ function wire() {
   $('theme').onclick = () => {
     const next = currentTheme() === 'light' ? 'dark' : 'light';
     document.documentElement.dataset.theme = next;
-    store.set('theme', next);
+    try { localStorage.setItem('uc-theme', next); } catch { /* storage blocked */ }
     themeButton();
+    document.getElementById('themeb')?.dispatchEvent(new Event('uc-repaint'));
   };
   themeButton();
+  document.addEventListener('uc-theme', themeButton);
   $('ics').onclick = () => {
     const blob = new Blob([icsText(event())], { type: 'text/calendar' });
     const a = document.createElement('a');

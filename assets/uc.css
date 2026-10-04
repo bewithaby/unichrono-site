@@ -10,6 +10,7 @@
   --mono:'Spline Sans Mono',ui-monospace,Menlo,monospace;
   --wrap:1180px;
 }
+html[data-theme="light"]{--bg:#F4F1E9;--ink:#191C26;--accent:#C25A24;--accent2:#E09A3C;--accent-ink:#FBF8F1}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:84px}
 body{background:var(--bg);color:var(--ink);font-family:Figtree,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
@@ -40,6 +41,10 @@ nav a:hover,nav a.here{color:var(--accent)}
 nav>.btn{display:none}
 .menub{display:none;margin-left:auto;background:none;border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--ink);cursor:pointer}
 .menub svg{width:17px;height:17px;display:block}
+.themeb{flex:none;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin-left:12px;
+  background:none;border:1px solid var(--line);border-radius:9px;color:var(--ink2);cursor:pointer;transition:color .15s,border-color .15s}
+.themeb:hover{color:var(--accent);border-color:var(--accent)}
+.themeb svg{width:16px;height:16px;display:block}
 
 /* ---- page head ---- */
 .phead{padding:clamp(94px,13vh,150px) 0 clamp(30px,5vw,54px);border-bottom:1px solid var(--line)}
@@ -113,7 +118,8 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
   nav.open{max-height:80vh}
   nav a{padding:15px clamp(18px,4vw,44px);border-top:1px solid var(--line);font-size:12px}
   nav>.btn{display:flex;margin:14px clamp(18px,4vw,44px) 18px}
-  .menub{display:block}
+  .menub{display:block;order:2;margin-left:10px}
+  .themeb{order:1;margin-left:auto}
   .hd>.btn{display:none}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}

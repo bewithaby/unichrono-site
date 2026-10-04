@@ -35,7 +35,7 @@
  }
 }
 </script>
-<script>try{var t=localStorage.getItem('uc.time.theme');if(t)document.documentElement.dataset.theme=JSON.parse(t);}catch(e){}</script>
+<script>try{var t=localStorage.getItem('uc-theme')||JSON.parse(localStorage.getItem('uc.time.theme')||'null');if(t==='paper')t='light';if(t!=='light'&&t!=='dark')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -58,6 +58,7 @@
       <a href="/about.html">About</a>
       <a class="btn" href="/#get">Get the app</a>
     </nav>
+    <button class="themeb" id="themeb" type="button" aria-label="Switch to light theme"></button>
     <a class="btn" href="/#get">Get the app</a>
   </div>
 </header>
@@ -130,5 +131,6 @@
     </span>
   </div>
 </footer>
+<script src="/assets/theme.js"></script>
 </body>
 </html>

@@ -218,6 +218,52 @@ for (const [w, h] of [[1440, 900], [1280, 800], [1100, 800], [390, 844]]) {
   if (await btn.count()) { await btn.click(); await page.waitForSelector('.row'); }
   await ctx.close();
 }
+// Site-wide light theme: a header switch on every page, one remembered choice.
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, colorScheme: 'dark' });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  const pages = ['/', '/about.html', '/help.html', '/privacy-policy.html', '/time/'];
+  const bg = () => page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  await page.goto(BASE + '/', { waitUntil: 'networkidle' });
+  if (await bg() !== 'rgb(14, 18, 32)') fail('site theme', `home starts ${await bg()}, want dark`);
+  const sw = page.locator('header #themeb');
+  if (!(await sw.count()) || !(await sw.isVisible())) fail('site theme', 'no theme switch in the home header');
+  else {
+    await sw.click();
+    if (await bg() !== 'rgb(244, 241, 233)') fail('site theme', `home after switch ${await bg()}`);
+    for (const p of pages) {
+      await page.goto(BASE + p, { waitUntil: 'networkidle' });
+      if (await bg() !== 'rgb(244, 241, 233)') fail('site theme', `${p} not light after choosing light (${await bg()})`);
+      if (!(await page.locator('header #themeb').isVisible())) fail('site theme', `${p} has no header switch`);
+    }
+    await page.locator('header #themeb').click();          // back to dark from the converter
+    await page.goto(BASE + '/about.html', { waitUntil: 'networkidle' });
+    if (await bg() !== 'rgb(14, 18, 32)') fail('site theme', `about not dark after switching back (${await bg()})`);
+  }
+  if (errors.length) fail('site theme', errors.join(' | '));
+  await ctx.close();
+}
+for (const [w, h] of [[1440, 900], [1366, 800], [1280, 800], [1261, 800], [1201, 800], [1100, 800], [900, 800], [390, 844]]) {
+  const ctx = await browser.newContext({ viewport: { width: w, height: h } });
+  const page = await ctx.newPage();
+  for (const p of ['/', '/about.html', '/time/']) {
+    await page.goto(BASE + p, { waitUntil: 'networkidle' });
+    const sw = page.locator('header #themeb');
+    if (!(await sw.isVisible())) { fail(`header ${p} ${w}px`, 'theme switch hidden'); continue; }
+    const b = await sw.boundingBox();
+    if (b.x + b.width > w) fail(`header ${p} ${w}px`, 'theme switch off-screen');
+    for (const btn of await page.locator('header .btn, header #themeb, header .menub').all()) {
+      if (!(await btn.isVisible())) continue;
+      const bb = await btn.boundingBox();
+      if (bb.height > 40) fail(`header ${p} ${w}px`, `"${(await btn.textContent()).trim()}" wraps`);
+      if (bb.x + bb.width > w - 8) fail(`header ${p} ${w}px`, `"${(await btn.textContent()).trim() || 'icon'}" runs off the right edge`);
+    }
+    if (await page.evaluate(() => document.documentElement.scrollWidth - innerWidth) > 0) fail(`header ${p} ${w}px`, 'page scrolls sideways');
+  }
+  await ctx.close();
+}
 await browser.close();
 console.log(failures.length ? `FAIL\n${failures.join('\n')}` : 'PASS');
 process.exit(failures.length ? 1 : 0);

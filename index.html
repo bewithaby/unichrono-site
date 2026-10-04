@@ -15,7 +15,7 @@
 <meta property="og:image" content="https://unichrono.app/img/og-1200x630.jpg">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#0E1220">
-<script>try{var t=localStorage.getItem('uc-theme');if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+<script>try{var t=localStorage.getItem('uc-theme');if(t==='paper')t='light';if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -30,7 +30,7 @@
 html[data-theme="ocean"] {--bg:#081018;--ink:#DFEAF2;--accent:#5FC9D8;--accent2:#3E8FD0;--accent-ink:#04121A}
 html[data-theme="lume"]  {--bg:#0B0F0B;--ink:#E5EDE3;--accent:#A3CF5B;--accent2:#5FBF7A;--accent-ink:#131708}
 html[data-theme="ember"] {--bg:#150D09;--ink:#F3E8DF;--accent:#F0663C;--accent2:#E2A24B;--accent-ink:#1C0E06}
-html[data-theme="paper"] {--bg:#F4F1E9;--ink:#191C26;--accent:#C25A24;--accent2:#E09A3C;--accent-ink:#FBF8F1}
+html[data-theme="paper"],html[data-theme="light"] {--bg:#F4F1E9;--ink:#191C26;--accent:#C25A24;--accent2:#E09A3C;--accent-ink:#FBF8F1}
 /* scoped theme (used inside the settings phone) */
 .t-midnight{--bg:#0E1220;--ink:#E8EAF2;--accent:#FFB74D;--accent2:#FF7043;--accent-ink:#1A1200}
 .t-ocean   {--bg:#081018;--ink:#DFEAF2;--accent:#5FC9D8;--accent2:#3E8FD0;--accent-ink:#04121A}
@@ -46,7 +46,7 @@ html[data-theme="paper"] {--bg:#F4F1E9;--ink:#191C26;--accent:#C25A24;--accent2:
   --panel2:color-mix(in oklab,var(--ink) 8%,var(--bg));
   --night:color-mix(in oklab,black 46%,var(--bg));
 }
-html[data-theme="paper"]{--night:color-mix(in oklab,#191C26 16%,#F4F1E9)}
+html[data-theme="paper"],html[data-theme="light"]{--night:color-mix(in oklab,#191C26 16%,#F4F1E9)}
 
 /* ============ base ============ */
 *{margin:0;padding:0;box-sizing:border-box}
@@ -91,8 +91,8 @@ header{position:fixed;inset:0 0 auto 0;z-index:500;border-bottom:1px solid var(-
 .hd{display:flex;align-items:center;gap:20px;height:62px}
 .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;letter-spacing:-.02em;text-decoration:none;flex:none}
 .logo img{width:27px;height:27px;border-radius:8px;flex:none}
-nav{display:flex;gap:18px;margin-left:auto;align-items:center}
-nav a{font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;color:var(--ink2);text-decoration:none;text-transform:uppercase;transition:color .15s;white-space:nowrap}
+nav{display:flex;gap:12px;margin-left:auto;align-items:center}
+nav a{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;color:var(--ink2);text-decoration:none;text-transform:uppercase;transition:color .15s;white-space:nowrap}
 nav a:hover{color:var(--accent)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.12em;
   text-transform:uppercase;text-decoration:none;color:var(--accent-ink);background:linear-gradient(100deg,var(--accent),var(--accent2));
@@ -105,6 +105,10 @@ nav>.btn{display:none}
 .hd>.hconv{margin-right:-8px}
 .menub{display:none;margin-left:auto;background:none;border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--ink);cursor:pointer}
 .menub svg{width:17px;height:17px;display:block}
+.themeb{flex:none;display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin-left:10px;
+  background:none;border:1px solid var(--line);border-radius:9px;color:var(--ink2);cursor:pointer;transition:color .15s,border-color .15s}
+.themeb:hover{color:var(--accent);border-color:var(--accent)}
+.themeb svg{width:16px;height:16px;display:block}
 
 /* ============ hero ============ */
 .hero{padding:clamp(40px,6vh,80px) 0 clamp(58px,8vw,110px)}
@@ -457,7 +461,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
 @keyframes tkm{to{transform:translateX(-50%)}}
 
 /* ============ responsive ============ */
-@media(max-width:1200px){
+@media(max-width:1260px){
   nav{position:fixed;top:62px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;margin:0;
     background:color-mix(in oklab,var(--bg) 97%,transparent);border-bottom:1px solid var(--line);
     max-height:0;overflow:hidden;transition:max-height .3s ease}
@@ -467,7 +471,9 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
   .menub{display:block}
   .hd .btn:not(nav .btn){display:none}
   .hd .btn.hconv:not(nav .btn){display:inline-flex;order:1;margin:0 0 0 auto;padding:9px 12px}
-  .menub{order:2;margin-left:10px}
+  .themeb{order:2;margin-left:0}
+  .menub{order:3;margin-left:0}
+  .hd{gap:8px}
 }
 @media(max-width:680px){
   h1{font-size:clamp(2rem,8.5vw,2.7rem)}
@@ -592,6 +598,8 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
       <a class="btn" href="#get">Get the app</a>
     </nav>
     <a class="btn ghost hconv" href="time/">Convert time</a>
+    <button class="themeb" id="themeb" type="button" aria-label="Switch to light theme"></button>
+
     <a class="btn" href="#get">Get the app</a>
   </div>
 </header>
@@ -1755,5 +1763,6 @@ window.addEventListener('resize',paintSlider);
   tick();setInterval(tick,15000);
 })();
 </script>
+<script src="assets/theme.js"></script>
 </body>
 </html>
