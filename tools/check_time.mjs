@@ -177,7 +177,25 @@ for (const [w, h] of [[1440, 900], [1280, 800], [1100, 800], [390, 844]]) {
   const hl = page.locator('.hero a.hlink[href="time/"]');
   if (!(await hl.isVisible())) fail(where, 'no hero converter link');
   else if (!(await hl.evaluate(el => el.classList.contains('btn') && el.classList.contains('ghost')))) fail(where, 'hero link is not an outlined button');
-  else if ((await hl.boundingBox()).height > 44) fail(where, 'hero button wraps');
+  else {
+    const m = await page.evaluate(() => {
+      const l = document.querySelector('.hero a.hlink'), row = document.querySelector('.hero .hero-cta');
+      const stores = [...row.querySelectorAll('.store')].map(e => e.getBoundingClientRect());
+      // One row of badges: match their span. Wrapped badges: match the badge area.
+      const oneRow = new Set(stores.map(r => Math.round(r.top))).size === 1;
+      const box = row.getBoundingClientRect();
+      const left = oneRow ? Math.min(...stores.map(r => r.left)) : box.left;
+      const right = oneRow ? Math.max(...stores.map(r => r.right)) : box.right;
+      const r = l.getBoundingClientRect();
+      return { l: r.left, r: r.right, h: r.height, left, right, text: l.textContent.trim(),
+               bg: getComputedStyle(l).backgroundImage, vw: innerWidth };
+    });
+    if (!/world time converter/i.test(m.text)) fail(where, `hero button text "${m.text}"`);
+    if (Math.abs(m.l - m.left) > 2 || Math.abs(m.r - m.right) > 2) fail(where, `hero button ${Math.round(m.l)}–${Math.round(m.r)} not under the badges ${Math.round(m.left)}–${Math.round(m.right)}`);
+    if (m.right - m.left >= 520 && m.h > 44) fail(where, 'hero button wraps although the badge row is wide');
+    if (m.h > 70) fail(where, 'hero button more than two lines');
+    if (!m.bg.includes('linear-gradient')) fail(where, 'hero button border is not the theme gradient');
+  }
   const order = await page.evaluate(() => {
     const b = document.querySelector('#travel a.ttlink'), w = document.querySelector('#travel .watch');
     return b && w ? !!(b.compareDocumentPosition(w) & Node.DOCUMENT_POSITION_FOLLOWING) : null;
