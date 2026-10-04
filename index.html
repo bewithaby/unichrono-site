@@ -101,6 +101,7 @@ nav a:hover{color:var(--accent)}
 .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line2)}
 .btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
 nav>.btn{display:none}
+.hd>.btn{white-space:nowrap;flex:none}
 .menub{display:none;margin-left:auto;background:none;border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--ink);cursor:pointer}
 .menub svg{width:17px;height:17px;display:block}
 
@@ -452,7 +453,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
 @keyframes tkm{to{transform:translateX(-50%)}}
 
 /* ============ responsive ============ */
-@media(max-width:1080px){
+@media(max-width:1200px){
   nav{position:fixed;top:62px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;margin:0;
     background:color-mix(in oklab,var(--bg) 97%,transparent);border-bottom:1px solid var(--line);
     max-height:0;overflow:hidden;transition:max-height .3s ease}
@@ -581,7 +582,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
     <nav id="nav">
-      <a href="#clocks">Cities</a><a href="#widgets">Widgets</a><a href="#travel">Time travel</a><a href="#alarms">Alarms</a><a href="#themes">Make it yours</a><a href="#story">Story</a><a href="#everywhere">Platforms</a><a href="about.html">About</a><a href="help.html">Help</a><a href="#feedback">Feedback</a>
+      <a href="#clocks">Cities</a><a href="#widgets">Widgets</a><a href="#travel">Time travel</a><a href="#alarms">Alarms</a><a href="#themes">Make it yours</a><a href="#story">Story</a><a href="#everywhere">Platforms</a><a href="time/">World time</a><a href="about.html">About</a><a href="help.html">Help</a><a href="#feedback">Feedback</a>
       <a class="btn" href="#get">Get the app</a>
     </nav>
     <a class="btn" href="#get">Get the app</a>
@@ -1059,6 +1060,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
     <div class="frow">
       <span>© 2026 Spiny Valley Labs — crafted across timezones</span>
       <span class="flinks">
+        <a href="time/">World time converter</a>
         <a href="about.html">About</a>
         <a href="help.html">Help</a>
         <a href="privacy-policy.html">Privacy</a>
