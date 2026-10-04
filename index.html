@@ -114,9 +114,7 @@ nav>.btn{display:none}
 h1{font-size:clamp(2.25rem,5vw,4.1rem);line-height:1.05;font-weight:600;letter-spacing:-.035em;margin:22px 0 22px}
 .hero-sub{font-size:clamp(16px,1.6vw,17.5px);line-height:1.7;color:var(--ink2);max-width:34em}
 .hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin:30px 0 16px}
-.hlink{display:inline-block;margin:2px 0 14px;font:500 11.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);
-  text-decoration:none;border-bottom:1px solid color-mix(in oklab,var(--accent) 45%,transparent);padding-bottom:3px;transition:border-color .15s}
-.hlink:hover{border-bottom-color:var(--accent)}
+.hero .hlink{margin:0 0 16px;white-space:nowrap}
 .store{display:inline-flex;align-items:center;gap:12px;border:1px solid var(--line2);border-radius:11px;padding:11px 18px;text-decoration:none;transition:border-color .2s,transform .2s}
 .store:hover{border-color:var(--accent);transform:translateY(-1px)}
 .store svg{width:21px;height:21px;color:var(--accent);flex:none}
@@ -618,7 +616,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
           <span><span class="t1">Download on the</span><span class="t2">Mac App Store</span></span>
         </a>
       </div>
-      <a class="hlink" href="time/">Or convert times right here in your browser <span aria-hidden="true">→</span></a>
+      <a class="btn ghost hlink" href="time/">Or convert times in your browser →</a>
       <p class="hero-note">34,804 cities · No account · No ads · No tracking · Works offline</p>
     </div>
 
@@ -780,8 +778,8 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
         <p class="lede rv" style="--d:.08s;margin-top:22px">Every long-distance life runs on one question: <b>is now a good time?</b></p>
         <p class="lede rv" style="--d:.12s">Drag the slider and every city answers at once — who's asleep, who's at lunch, whose Tuesday hasn't even started. Slide to Saturday evening and find the one hour that works for the whole team.</p>
         <p class="lede rv" style="--d:.16s">The app goes further — a hundred years in each direction, so you can plan a wedding in <b id="yr5">2031</b> and daylight saving is already handled, even there.</p>
-        <div class="watch rv" style="--d:.2s"><i></i>An hour or a century — every city replans.</div>
-        <div class="rv" style="--d:.24s;margin-top:26px"><a class="btn ghost ttlink" href="time/">Try time travel in your browser →</a></div>
+        <div class="rv" style="--d:.18s;margin-top:26px"><a class="btn ghost ttlink" href="time/">Try time travel in your browser →</a></div>
+        <div class="watch rv" style="--d:.22s"><i></i>An hour or a century — every city replans.</div>
       </div>
       <div class="pw-wrap rv" style="--d:.1s">
         <div class="phone">

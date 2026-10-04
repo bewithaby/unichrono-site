@@ -174,7 +174,15 @@ for (const [w, h] of [[1440, 900], [1280, 800], [1100, 800], [390, 844]]) {
   for (const b of await page.locator('header .btn').all()) {
     if (await b.isVisible() && (await b.boundingBox()).height > 40) fail(where, `"${(await b.textContent()).trim()}" wraps`);
   }
-  if (!(await page.locator('.hero a.hlink[href="time/"]').isVisible())) fail(where, 'no hero text link');
+  const hl = page.locator('.hero a.hlink[href="time/"]');
+  if (!(await hl.isVisible())) fail(where, 'no hero converter link');
+  else if (!(await hl.evaluate(el => el.classList.contains('btn') && el.classList.contains('ghost')))) fail(where, 'hero link is not an outlined button');
+  else if ((await hl.boundingBox()).height > 44) fail(where, 'hero button wraps');
+  const order = await page.evaluate(() => {
+    const b = document.querySelector('#travel a.ttlink'), w = document.querySelector('#travel .watch');
+    return b && w ? !!(b.compareDocumentPosition(w) & Node.DOCUMENT_POSITION_FOLLOWING) : null;
+  });
+  if (order !== true) fail(where, 'time-travel button is not above the "An hour or a century" line');
   const tt = page.locator('#travel a.ttlink[href="time/"]');
   if ((await tt.count()) !== 1 || (await tt.textContent()).trim() !== 'Try time travel in your browser →') fail(where, 'no time-travel button in section 03');
   else {
