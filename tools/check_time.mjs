@@ -97,6 +97,13 @@ for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/']) {
   await page.goto(BASE + '/time/', { waitUntil: 'networkidle' });
   await page.waitForSelector('.row');
   const before = await page.locator('.row').count();
+  await page.mouse.move(5, 5);  // nowhere near the grid: × must still show
+  const op = await page.locator('.row:nth-child(2) [data-act="remove"]').evaluate(el => {
+    let o = 1;
+    for (let n = el; n; n = n.parentElement) o *= Number(getComputedStyle(n).opacity);
+    return o;
+  });
+  if (op < 1) fail('controls', `× is hidden until hover (opacity ${op})`);
   await page.locator('.row:nth-child(2) [data-act="remove"]').click();
   if ((await page.locator('.row').count()) !== before - 1) fail('controls', '× did not remove');
   await page.click('#toast [data-act="undo"]');

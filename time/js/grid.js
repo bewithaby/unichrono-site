@@ -35,7 +35,7 @@ export function renderGrid(el, m) {
     const tools = row.home ? '' : `<div class="tools">`
       + `<button type="button" data-act="up" data-key="${key}" aria-label="Move ${name} up"${k === 0 ? ' disabled' : ''}>↑</button>`
       + `<button type="button" data-act="down" data-key="${key}" aria-label="Move ${name} down"${k === others.length - 1 ? ' disabled' : ''}>↓</button>`
-      + `<button type="button" data-act="remove" data-key="${key}" aria-label="Remove ${name}">×</button></div>`;
+      + `</div><button type="button" class="rm" data-act="remove" data-key="${key}" aria-label="Remove ${name}" title="Remove ${name}">×</button>`;
     html.push(`<div class="row" data-key="${key}"><div class="rh">${tools}`
       + `<div class="nm">${row.home ? '<span class="home" title="Your time zone">🏠</span>' : ''}<span>${flag(row.cc)}</span>`
       + `<button type="button" data-open="${esc(row.key)}" title="Details for ${esc(row.label)}">${esc(row.label)}</button></div>`

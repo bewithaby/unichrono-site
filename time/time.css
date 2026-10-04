@@ -103,10 +103,16 @@ body{background:var(--bg)}
 .c.now::after{content:"";position:absolute;bottom:2px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
 .hdr .c{font-size:10px;color:var(--ink3);cursor:default;min-height:26px}
 .hdr .rh{font:10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);justify-content:center}
-.rh .tools{position:absolute;top:4px;right:4px;display:flex;gap:2px;opacity:0;transition:opacity .15s;
+.rh .tools{position:absolute;top:5px;right:32px;display:flex;gap:2px;opacity:0;transition:opacity .15s;
   background:var(--bg);border-radius:8px;box-shadow:-10px 0 10px var(--bg)}
+.rh .rm{all:unset;position:absolute;top:7px;right:7px;width:22px;height:22px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font:16px/1 Figtree,sans-serif;color:var(--ink2);border:1px solid var(--line2)}
+.rh .rm:hover{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
+.rh .rm:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rh:has(.rm) .nm{padding-right:26px}
+@media (hover:none){.rh .rm{width:28px;height:28px;top:5px;right:5px}}
 .row:hover .tools,.rh:focus-within .tools{opacity:1}
-@media (hover:none){.rh .tools{opacity:1}}
+@media (hover:none){.rh .tools{display:none}}
 .tools button{all:unset;cursor:pointer;font:12px/1 var(--mono);color:var(--ink3);padding:4px 5px;border-radius:6px}
 .tools button:hover{color:var(--accent);background:var(--panel2)}
 .tools button:disabled{opacity:.3;cursor:default;background:none;color:var(--ink3)}
