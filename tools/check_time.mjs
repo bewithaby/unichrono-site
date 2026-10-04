@@ -157,6 +157,20 @@ for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/']) {
   if (await page.evaluate(() => document.documentElement.dataset.theme) !== 'light') fail('theme', 'light not remembered');
   await ctx.close();
 }
+// The home page's first screen has a visible way into the converter.
+for (const [w, h] of [[1280, 800], [390, 844]]) {
+  const ctx = await browser.newContext({ viewport: { width: w, height: h } });
+  const page = await ctx.newPage();
+  await page.goto(BASE + '/', { waitUntil: 'networkidle' });
+  const link = page.locator('.hero-cta a[href="time/"]');
+  if (!(await link.count())) { fail(`home ${w}px`, 'no converter button in the hero'); await ctx.close(); continue; }
+  const box = await link.boundingBox();
+  if (!box || box.y + box.height > h * 1.6) fail(`home ${w}px`, 'converter button far below the first screen');
+  if (await page.evaluate(() => document.documentElement.scrollWidth - innerWidth) > 0) fail(`home ${w}px`, 'page scrolls sideways');
+  await link.click();
+  await page.waitForSelector('.row');
+  await ctx.close();
+}
 await browser.close();
 console.log(failures.length ? `FAIL\n${failures.join('\n')}` : 'PASS');
 process.exit(failures.length ? 1 : 0);
