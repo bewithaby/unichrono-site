@@ -102,6 +102,7 @@ nav a:hover{color:var(--accent)}
 .btn.ghost:hover{border-color:var(--accent);color:var(--accent)}
 nav>.btn{display:none}
 .hd>.btn{white-space:nowrap;flex:none}
+.hd>.hconv{margin-right:-8px}
 .menub{display:none;margin-left:auto;background:none;border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--ink);cursor:pointer}
 .menub svg{width:17px;height:17px;display:block}
 
@@ -113,6 +114,9 @@ nav>.btn{display:none}
 h1{font-size:clamp(2.25rem,5vw,4.1rem);line-height:1.05;font-weight:600;letter-spacing:-.035em;margin:22px 0 22px}
 .hero-sub{font-size:clamp(16px,1.6vw,17.5px);line-height:1.7;color:var(--ink2);max-width:34em}
 .hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin:30px 0 16px}
+.hlink{display:inline-block;margin:2px 0 14px;font:500 11.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);
+  text-decoration:none;border-bottom:1px solid color-mix(in oklab,var(--accent) 45%,transparent);padding-bottom:3px;transition:border-color .15s}
+.hlink:hover{border-bottom-color:var(--accent)}
 .store{display:inline-flex;align-items:center;gap:12px;border:1px solid var(--line2);border-radius:11px;padding:11px 18px;text-decoration:none;transition:border-color .2s,transform .2s}
 .store:hover{border-color:var(--accent);transform:translateY(-1px)}
 .store svg{width:21px;height:21px;color:var(--accent);flex:none}
@@ -425,8 +429,6 @@ h2{font-size:clamp(1.75rem,3.2vw,2.75rem);line-height:1.12;font-weight:600;lette
 .gcard .once b{color:var(--ink);font-weight:500}
 .gcard .gp{font-size:14.5px;color:var(--ink2);line-height:1.65;margin:18px 0 24px}
 .gcard .store{margin-top:auto}
-.store.web{border-color:color-mix(in oklab,var(--accent) 70%,transparent);background:color-mix(in oklab,var(--accent) 9%,transparent)}
-.store.web:hover{border-color:var(--accent)}
 .gcard .gfoot{font-family:var(--mono);font-size:9px;letter-spacing:.16em;color:var(--ink3);text-transform:uppercase;margin-top:12px}
 .price-note{font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;color:var(--ink3);text-transform:uppercase;margin-top:22px;line-height:2}
 
@@ -464,6 +466,8 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
   nav>.btn{display:flex;margin:14px clamp(18px,4vw,44px) 18px;justify-content:center}
   .menub{display:block}
   .hd .btn:not(nav .btn){display:none}
+  .hd .btn.hconv:not(nav .btn){display:inline-flex;order:1;margin:0 0 0 auto;padding:9px 12px}
+  .menub{order:2;margin-left:10px}
 }
 @media(max-width:680px){
   h1{font-size:clamp(2rem,8.5vw,2.7rem)}
@@ -584,9 +588,10 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
     <nav id="nav">
-      <a href="#clocks">Cities</a><a href="#widgets">Widgets</a><a href="#travel">Time travel</a><a href="#alarms">Alarms</a><a href="#themes">Make it yours</a><a href="#story">Story</a><a href="#everywhere">Platforms</a><a href="time/">World time</a><a href="about.html">About</a><a href="help.html">Help</a><a href="#feedback">Feedback</a>
+      <a href="#clocks">Cities</a><a href="#widgets">Widgets</a><a href="#travel">Time travel</a><a href="#alarms">Alarms</a><a href="#themes">Make it yours</a><a href="#story">Story</a><a href="#everywhere">Platforms</a><a href="about.html">About</a><a href="help.html">Help</a><a href="#feedback">Feedback</a>
       <a class="btn" href="#get">Get the app</a>
     </nav>
+    <a class="btn ghost hconv" href="time/">Convert time</a>
     <a class="btn" href="#get">Get the app</a>
   </div>
 </header>
@@ -612,11 +617,8 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
           <svg viewBox="0 0 384 512" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
           <span><span class="t1">Download on the</span><span class="t2">Mac App Store</span></span>
         </a>
-        <a class="store web" href="time/">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
-          <span><span class="t1">Try it in your browser</span><span class="t2">World time converter</span></span>
-        </a>
       </div>
+      <a class="hlink" href="time/">Or convert times right here in your browser <span aria-hidden="true">→</span></a>
       <p class="hero-note">34,804 cities · No account · No ads · No tracking · Works offline</p>
     </div>
 
@@ -779,6 +781,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
         <p class="lede rv" style="--d:.12s">Drag the slider and every city answers at once — who's asleep, who's at lunch, whose Tuesday hasn't even started. Slide to Saturday evening and find the one hour that works for the whole team.</p>
         <p class="lede rv" style="--d:.16s">The app goes further — a hundred years in each direction, so you can plan a wedding in <b id="yr5">2031</b> and daylight saving is already handled, even there.</p>
         <div class="watch rv" style="--d:.2s"><i></i>An hour or a century — every city replans.</div>
+        <div class="rv" style="--d:.24s;margin-top:26px"><a class="btn ghost ttlink" href="time/">Try time travel in your browser →</a></div>
       </div>
       <div class="pw-wrap rv" style="--d:.1s">
         <div class="phone">
@@ -1066,12 +1069,11 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
     <div class="frow">
       <span>© 2026 Spiny Valley Labs — crafted across timezones</span>
       <span class="flinks">
-        <a href="time/">World time converter</a>
+        <a href="time/">Convert time</a>
         <a href="about.html">About</a>
         <a href="help.html">Help</a>
         <a href="privacy-policy.html">Privacy</a>
         <a href="#feedback">Feedback</a>
-        <a href="classic.html">Classic site</a>
         <a href="https://play.google.com/store/apps/details?id=com.spinyvalley.unichrono" target="_blank" rel="noopener">Google Play<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
         <a href="https://apps.apple.com/app/id6804218446" target="_blank" rel="noopener">App Store<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></a>
         <a href="https://apps.apple.com/app/id6804218446?platform=mac" target="_blank" rel="noopener">Mac App Store<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M7 7h10v10"/></svg></a>

@@ -157,18 +157,36 @@ for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/']) {
   if (await page.evaluate(() => document.documentElement.dataset.theme) !== 'light') fail('theme', 'light not remembered');
   await ctx.close();
 }
-// The home page's first screen has a visible way into the converter.
-for (const [w, h] of [[1280, 800], [390, 844]]) {
+// The home page: a header "Convert time" button visible at every width, a
+// hero text link, the footer link, no fourth store tile, no classic-site link.
+for (const [w, h] of [[1440, 900], [1280, 800], [1100, 800], [390, 844]]) {
   const ctx = await browser.newContext({ viewport: { width: w, height: h } });
   const page = await ctx.newPage();
   await page.goto(BASE + '/', { waitUntil: 'networkidle' });
-  const link = page.locator('.hero-cta a[href="time/"]');
-  if (!(await link.count())) { fail(`home ${w}px`, 'no converter button in the hero'); await ctx.close(); continue; }
-  const box = await link.boundingBox();
-  if (!box || box.y + box.height > h * 1.6) fail(`home ${w}px`, 'converter button far below the first screen');
-  if (await page.evaluate(() => document.documentElement.scrollWidth - innerWidth) > 0) fail(`home ${w}px`, 'page scrolls sideways');
-  await link.click();
-  await page.waitForSelector('.row');
+  const where = `home ${w}px`;
+  const btn = page.locator('header a.hconv');
+  if (!(await btn.count()) || !(await btn.isVisible())) fail(where, 'no visible Convert time button in the header');
+  else {
+    if ((await btn.textContent()).trim() !== 'Convert time') fail(where, `header button reads "${(await btn.textContent()).trim()}"`);
+    const bb = await btn.boundingBox();
+    if (bb.x + bb.width > w || bb.height > 40) fail(where, `header button off-screen or wrapped (${Math.round(bb.x + bb.width)}px, ${Math.round(bb.height)}px tall)`);
+  }
+  for (const b of await page.locator('header .btn').all()) {
+    if (await b.isVisible() && (await b.boundingBox()).height > 40) fail(where, `"${(await b.textContent()).trim()}" wraps`);
+  }
+  if (!(await page.locator('.hero a.hlink[href="time/"]').isVisible())) fail(where, 'no hero text link');
+  const tt = page.locator('#travel a.ttlink[href="time/"]');
+  if ((await tt.count()) !== 1 || (await tt.textContent()).trim() !== 'Try time travel in your browser →') fail(where, 'no time-travel button in section 03');
+  else {
+    await tt.scrollIntoViewIfNeeded();
+    const tb = await tt.boundingBox();
+    if (tb.height > 44) fail(where, 'time-travel button wraps');
+  }
+  if (await page.locator('.store.web').count()) fail(where, 'fourth store tile still there');
+  if (await page.locator('footer a[href="classic.html"]').count()) fail(where, 'classic site link still in footer');
+  if ((await page.locator('footer a[href="time/"]').textContent()).trim() !== 'Convert time') fail(where, 'footer link not "Convert time"');
+  if (await page.evaluate(() => document.documentElement.scrollWidth - innerWidth) > 0) fail(where, 'page scrolls sideways');
+  if (await btn.count()) { await btn.click(); await page.waitForSelector('.row'); }
   await ctx.close();
 }
 await browser.close();
