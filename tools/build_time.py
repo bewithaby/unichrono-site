@@ -219,7 +219,8 @@ def city_static(c, pages, slugs, now):
     compares = [s for s in COMPARE if s != slug and s in slugs.values()]
     comp_html = ''.join(f'<li><a href="/time/?c={slug},{s}">{e(c["name"])} vs {e(next(p["name"] for p in pages if slugs[p["id"]] == s))}</a></li>'
                         for s in compares)
-    head = (f'<section class="city-static"><h1>Time in {e(c["name"])}, {e(c["country"])}</h1>\n'
+    head = (f'<section class="city-static"><p class="kicker">World time</p>'
+            f'<h1>Time in <span class="grad">{e(c["name"])}</span>, {e(c["country"])}</h1>\n'
             f'<p class="live" id="live" aria-live="off"></p>\n'
             f'<p class="zone-para">{e(zone_paragraph(c, now))}</p>\n'
             f'<p class="zone-next" id="zone-next" data-zone="{e(c["zone"])}"></p>\n'
@@ -337,7 +338,7 @@ def build(db, root=ROOT, now=None):
             '@context': 'https://schema.org', '@type': 'WebApplication', 'name': 'Unichrono World Time',
             'url': f'{SITE}/time/', 'applicationCategory': 'UtilitiesApplication', 'operatingSystem': 'Any',
             'offers': {'@type': 'Offer', 'price': '0'}}, indent=1),
-        static='<section class="city-static"><h1>World time converter</h1>'
+        static='<section class="city-static"><p class="kicker">Unichrono</p><h1>World time <span class="grad">converter</span></h1>'
                '<p class="zone-para">Compare cities, pick a time that works for everyone, and share it.</p>'
                '<p class="live" id="live" aria-live="off"></p></section>',
         links='', preload='', cityindex=city_index(pages, slugs)))

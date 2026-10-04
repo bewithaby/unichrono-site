@@ -134,6 +134,22 @@ for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/']) {
   if (names.includes('Kolkata')) fail('city page', `Kolkata saved without Keep: ${names.join(', ')}`);
   await ctx.close();
 }
+// A labelled Light/Dark switch that flips the page and is remembered.
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, colorScheme: 'dark' });
+  const page = await ctx.newPage();
+  await page.goto(BASE + '/time/', { waitUntil: 'networkidle' });
+  await page.waitForSelector('.row');
+  const label = (await page.textContent('#theme')).trim();
+  if (label !== 'Light') fail('theme', `dark page button reads "${label}", want "Light"`);
+  await page.click('#theme');
+  const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  if (bg !== 'rgb(244, 241, 233)') fail('theme', `light background is ${bg}, want the site's paper #F4F1E9`);
+  if ((await page.textContent('#theme')).trim() !== 'Dark') fail('theme', 'button did not switch to "Dark"');
+  await page.reload({ waitUntil: 'networkidle' });
+  if (await page.evaluate(() => document.documentElement.dataset.theme) !== 'light') fail('theme', 'light not remembered');
+  await ctx.close();
+}
 await browser.close();
 console.log(failures.length ? `FAIL\n${failures.join('\n')}` : 'PASS');
 process.exit(failures.length ? 1 : 0);

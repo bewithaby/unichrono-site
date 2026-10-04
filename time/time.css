@@ -1,18 +1,21 @@
-/* World time tool, on top of /assets/uc.css (dark by default). */
+/* World time tool, on top of /assets/uc.css. Dark = the site's Midnight
+   Horizon; light = the site's Paper theme (index.html .t-paper). */
 
 :root[data-theme="light"]{
-  --bg:#F7F5F0; --ink:#151A28; --accent:#D9741C; --accent2:#D2502A; --accent-ink:#FFFFFF;
+  --bg:#F4F1E9; --ink:#191C26; --accent:#C25A24; --accent2:#E09A3C; --accent-ink:#FBF8F1;
+  --ok:#2E8B57; --mid:#C27C12;
 }
 @media (prefers-color-scheme: light){
   :root:not([data-theme="dark"]){
-    --bg:#F7F5F0; --ink:#151A28; --accent:#D9741C; --accent2:#D2502A; --accent-ink:#FFFFFF;
+    --bg:#F4F1E9; --ink:#191C26; --accent:#C25A24; --accent2:#E09A3C; --accent-ink:#FBF8F1;
+    --ok:#2E8B57; --mid:#C27C12;
   }
 }
 :root{
-  --ok:#3DBA6A; --mid:#F0A23B; --off:#E2565A;
-  --ok-bg:color-mix(in oklab,var(--ok) 26%,var(--bg));
-  --mid-bg:color-mix(in oklab,var(--mid) 26%,var(--bg));
-  --off-bg:color-mix(in oklab,var(--off) 14%,var(--bg));
+  --ok:#5BCB85; --mid:#F0B44C;
+  --ok-bg:color-mix(in oklab,var(--ok) 22%,var(--bg));
+  --mid-bg:color-mix(in oklab,var(--mid) 20%,var(--bg));
+  --sel-bg:color-mix(in oklab,var(--accent) 20%,transparent);
   --cell:46px; --head:178px;
 }
 body{background:var(--bg)}
@@ -23,7 +26,8 @@ body{background:var(--bg)}
 
 /* ---- static city block ---- */
 .tmain section.city-static{padding-bottom:0}
-.city-static h1{margin:8px 0 10px}
+.city-static .kicker{margin-top:10px}
+.city-static h1{margin:14px 0 10px}
 .zone-para{color:var(--ink2);max-width:46em}
 .facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px 18px;margin:18px 0 6px}
 .facts div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
@@ -41,9 +45,11 @@ body{background:var(--bg)}
 .appnote{color:var(--ink2);margin:26px 0 8px}
 
 /* ---- tool shell ---- */
-.tool{margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;min-width:0}
-.chip{display:inline-flex;align-items:center;gap:6px;font:500 12px/1 var(--mono);letter-spacing:.06em;color:var(--ink);
-  background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:9px 13px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.tool{margin-top:22px;border:1px solid var(--line);border-radius:22px;padding:18px;min-width:0;
+  background:radial-gradient(120% 70% at 50% 0%,color-mix(in oklab,var(--accent) 9%,transparent),transparent 65%),var(--panel)}
+.chip{display:inline-flex;align-items:center;gap:7px;font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
+  background:transparent;border:1px solid var(--line2);border-radius:9px;padding:9px 12px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.chip svg{width:14px;height:14px;flex:none}
 .chip:hover{border-color:var(--accent);color:var(--accent)}
 .chip.accent{background:linear-gradient(100deg,var(--accent),var(--accent2));color:var(--accent-ink);border-color:transparent}
 .chip.accent:hover{color:var(--accent-ink);filter:brightness(1.06)}
@@ -86,16 +92,19 @@ body{background:var(--bg)}
 .c i{font-style:normal;font-size:10px;opacity:.85}
 .c.long{font-size:9px;letter-spacing:-.02em}
 .c.available{background:var(--ok-bg)}
+.c.available i{color:var(--ok)}
 .c.shoulder{background:var(--mid-bg)}
-.c.away{background:var(--off-bg);color:var(--ink2)}
+.c.shoulder i{color:var(--mid)}
+.c.away{color:var(--ink3)}
 .c.midnight{border-left:2px solid var(--line2)}
 .c.midnight::before{content:attr(data-day);position:absolute;top:1px;left:2px;font-size:8px;color:var(--ink3)}
 .c.sel{box-shadow:inset 2px 0 0 var(--accent),inset -2px 0 0 var(--accent);font-weight:700;color:var(--ink);
-  background-image:linear-gradient(color-mix(in oklab,var(--accent) 22%,transparent),color-mix(in oklab,var(--accent) 22%,transparent))}
+  background-image:linear-gradient(var(--sel-bg),var(--sel-bg))}
 .c.now::after{content:"";position:absolute;bottom:2px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
 .hdr .c{font-size:10px;color:var(--ink3);cursor:default;min-height:26px}
 .hdr .rh{font:10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);justify-content:center}
-.rh .tools{position:absolute;top:5px;right:5px;display:flex;gap:2px;opacity:0;transition:opacity .15s}
+.rh .tools{position:absolute;top:4px;right:4px;display:flex;gap:2px;opacity:0;transition:opacity .15s;
+  background:var(--bg);border-radius:8px;box-shadow:-10px 0 10px var(--bg)}
 .row:hover .tools,.rh:focus-within .tools{opacity:1}
 @media (hover:none){.rh .tools{opacity:1}}
 .tools button{all:unset;cursor:pointer;font:12px/1 var(--mono);color:var(--ink3);padding:4px 5px;border-radius:6px}
@@ -104,7 +113,6 @@ body{background:var(--bg)}
 .tools button:focus-visible{outline:2px solid var(--accent)}
 .rh .keep{all:unset;cursor:pointer;margin-top:4px;font:11px var(--mono);color:var(--accent);text-decoration:underline;width:max-content}
 .rh{position:sticky}
-.rh:has(.tools) .nm{padding-right:62px}
 .gridfoot{display:flex;align-items:center;gap:14px;margin-top:10px}
 .linkbtn{all:unset;cursor:pointer;font:12px var(--mono);color:var(--ink3);text-decoration:underline}
 .linkbtn:hover{color:var(--accent)}

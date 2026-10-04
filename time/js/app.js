@@ -539,12 +539,12 @@ function wire() {
   $('reset').onclick = resetCities;
   $('fmt').onclick = () => { state.h24 = !state.h24; store.set('h24', state.h24); render(); };
   $('theme').onclick = () => {
-    const cur = document.documentElement.dataset.theme
-      || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-    const next = cur === 'light' ? 'dark' : 'light';
+    const next = currentTheme() === 'light' ? 'dark' : 'light';
     document.documentElement.dataset.theme = next;
     store.set('theme', next);
+    themeButton();
   };
+  themeButton();
   $('ics').onclick = () => {
     const blob = new Blob([icsText(event())], { type: 'text/calendar' });
     const a = document.createElement('a');
@@ -585,6 +585,22 @@ function wire() {
 
   const mb = $('menub'), nv = $('nav');
   mb.addEventListener('click', () => { const o = nv.classList.toggle('open'); mb.setAttribute('aria-expanded', String(o)); });
+}
+
+const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const MOON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+
+function currentTheme() {
+  return document.documentElement.dataset.theme
+    || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+}
+
+/** The switch names the theme it switches TO, with its icon. */
+function themeButton() {
+  const toLight = currentTheme() !== 'light';
+  $('theme').innerHTML = `${toLight ? SUN : MOON}<span>${toLight ? 'Light' : 'Dark'}</span>`;
+  $('theme').setAttribute('aria-label', toLight ? 'Switch to light theme' : 'Switch to dark theme');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', toLight ? '#0E1220' : '#F4F1E9');
 }
 
 async function checkClock() {
