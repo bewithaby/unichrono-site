@@ -14,7 +14,7 @@ NOW = dt.datetime(2026, 10, 4, tzinfo=dt.timezone.utc)
 
 
 def city(i, name, cc, pop, zone='Europe/London', country='X'):
-    return dict(id=i, name=name, ascii=name, country=country, cc=cc, zone=zone, lat=0.0, lng=0.0, pop=pop, aliases='')
+    return dict(id=i, name=name, ascii=name, country=country, cc=cc, zone=zone, lat=None, lng=None, pop=pop, aliases='')
 
 
 class Slugs(unittest.TestCase):
@@ -40,6 +40,16 @@ class Selection(unittest.TestCase):
         cs = [city(i, f'C{i}', 'AA', 1000 - i) for i in range(10)] + [city(99, 'Small', 'BB', 1)]
         ids = [c['id'] for c in b.select_pages(cs, top=3)]
         self.assertEqual(ids, [0, 1, 2, 99])
+
+
+    def test_boroughs_next_to_a_bigger_city_are_skipped(self):
+        nyc = dict(city(1, 'New York City', 'US', 9_000_000), lat=40.71, lng=-74.01)
+        brooklyn = dict(city(2, 'Brooklyn', 'US', 2_500_000), lat=40.65, lng=-73.95)
+        newark = dict(city(3, 'Philadelphia', 'US', 1_500_000), lat=39.95, lng=-75.17)
+        manhattan = dict(city(4, 'Manhattan', 'US', 1_400_000), lat=40.78, lng=-73.97)
+        bronx = dict(city(5, 'The Bronx', 'US', 1_300_000), lat=40.85, lng=-73.87)  # 19 km from NYC, 7 from Manhattan
+        ids = [c['id'] for c in b.select_pages([nyc, brooklyn, newark, manhattan, bronx], top=5)]
+        self.assertEqual(ids, [1, 3])
 
 
 class Text(unittest.TestCase):
@@ -88,7 +98,7 @@ class EndToEnd(unittest.TestCase):
     def test_every_internal_link_resolves(self):
         missing = []
         for page in (self.root / 'time').rglob('index.html'):
-            for href in re.findall(r'href="(/time/[^"?#]*)', page.read_text()):
+            for href in re.findall(r'<a [^>]*href="(/time/[^"?#]*)', page.read_text()):
                 target = self.root / href.lstrip('/')
                 if not (target / 'index.html').exists() and not target.is_file():
                     missing.append((str(page.relative_to(self.root)), href))

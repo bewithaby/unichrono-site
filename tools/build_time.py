@@ -12,6 +12,7 @@ import argparse
 import datetime as dt
 import html
 import json
+import math
 import re
 import shutil
 import sqlite3
@@ -57,13 +58,32 @@ def assign_slugs(cities):
     return out
 
 
-def select_pages(cities, top=400):
+def km(a, b):
+    if None in (a['lat'], a['lng'], b['lat'], b['lng']):
+        return float('inf')
+    la1, lo1, la2, lo2 = map(math.radians, (a['lat'], a['lng'], b['lat'], b['lng']))
+    h = math.sin((la2 - la1) / 2) ** 2 + math.cos(la1) * math.cos(la2) * math.sin((lo2 - lo1) / 2) ** 2
+    return 6371 * 2 * math.asin(math.sqrt(h))
+
+
+def select_pages(cities, top=400, near_km=15):
     """The `top` most populous cities, plus the most populous city of every
-    other country, in population order."""
+    other country, in population order. A city within `near_km` of a bigger
+    chosen one in the same country (Brooklyn next to New York City) is part
+    of it, not a page of its own."""
     ranked = sorted(cities, key=lambda c: (-c['pop'], c['id']))
-    chosen = ranked[:top]
+    chosen, absorbed = [], []
+    for c in ranked:
+        if len(chosen) == top:
+            break
+        # Absorbed districts absorb their own neighbours (the Bronx is far
+        # from New York City's centre point but next to Manhattan).
+        if any(p['cc'] == c['cc'] and km(p, c) < near_km for p in chosen + absorbed):
+            absorbed.append(c)
+        else:
+            chosen.append(c)
     have = {c['cc'] for c in chosen}
-    for c in ranked[top:]:
+    for c in ranked:
         if c['cc'] not in have:
             chosen.append(c)
             have.add(c['cc'])
@@ -177,17 +197,18 @@ def city_static(c, pages, slugs, now):
     compares = [s for s in COMPARE if s != slug and s in slugs.values()]
     comp_html = ''.join(f'<li><a href="/time/?c={slug},{s}">{e(c["name"])} vs {e(next(p["name"] for p in pages if slugs[p["id"]] == s))}</a></li>'
                         for s in compares)
-    out = [f'<section class="city-static"><h1>Time in {e(c["name"])}, {e(c["country"])}</h1>',
-           f'<p class="zone-para">{e(zone_paragraph(c, now))}</p>',
-           '<dl class="facts">' + ''.join(f'<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>' for k, v in facts) + '</dl>']
+    head = (f'<section class="city-static"><h1>Time in {e(c["name"])}, {e(c["country"])}</h1>\n'
+            f'<p class="live" id="live" aria-live="off"></p>\n'
+            f'<p class="zone-para">{e(zone_paragraph(c, now))}</p>\n'
+            '<dl class="facts">' + ''.join(f'<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>' for k, v in facts) + '</dl></section>')
+    links = []
     if same_country:
-        out.append(f'<h2>More cities in {e(c["country"])}</h2><ul class="links">{link_list(same_country, slugs)}</ul>')
+        links.append(f'<h2>More cities in {e(c["country"])}</h2><ul class="links">{link_list(same_country, slugs)}</ul>')
     if same_offset:
-        out.append(f'<h2>Same time as {e(c["name"])} right now</h2><ul class="links">{link_list(same_offset, slugs)}</ul>')
+        links.append(f'<h2>Same time as {e(c["name"])} right now</h2><ul class="links">{link_list(same_offset, slugs)}</ul>')
     if comp_html:
-        out.append(f'<h2>Compare</h2><ul class="links">{comp_html}</ul>')
-    out.append('</section>')
-    return '\n'.join(out)
+        links.append(f'<h2>Compare</h2><ul class="links">{comp_html}</ul>')
+    return head, '<section class="city-links">' + '\n'.join(links) + '</section>'
 
 
 def city_index(pages, slugs):
@@ -279,14 +300,16 @@ def build(db, root=ROOT, now=None):
             'url': f'{SITE}/time/', 'applicationCategory': 'UtilitiesApplication', 'operatingSystem': 'Any',
             'offers': {'@type': 'Offer', 'price': '0'}}, indent=1),
         static='<section class="city-static"><h1>World time converter</h1>'
-               '<p class="zone-para">Compare cities, pick a time that works for everyone, and share it.</p></section>',
-        preload='', cityindex=city_index(pages, slugs)))
+               '<p class="zone-para">Compare cities, pick a time that works for everyone, and share it.</p>'
+               '<p class="live" id="live" aria-live="off"></p></section>',
+        links='', preload='', cityindex=city_index(pages, slugs)))
 
     for c in pages:
         slug = slugs[c['id']]
         off = offset_minutes(c['zone'], now)
         abbr = abbreviation(c['zone'], now)
         zone_bit = f'{abbr} ({offset_label(off)})' if abbr != offset_label(off) else offset_label(off)
+        head, links = city_static(c, pages, slugs, now)
         page = out / slug
         page.mkdir()
         page.joinpath('index.html').write_text(render(
@@ -301,7 +324,7 @@ def build(db, root=ROOT, now=None):
                                          'address': {'@type': 'PostalAddress', 'addressCountry': c['cc']},
                                          'geo': {'@type': 'GeoCoordinates', 'latitude': c['lat'], 'longitude': c['lng']}}},
                               indent=1, ensure_ascii=False),
-            static=city_static(c, pages, slugs, now), preload=slug, cityindex=''))
+            static=head, links=links, preload=slug, cityindex=''))
 
     update_sitemap(root, [f'{SITE}/time/'] + [f'{SITE}/time/{slugs[p["id"]]}/' for p in pages], now.date().isoformat())
     update_llms(root)

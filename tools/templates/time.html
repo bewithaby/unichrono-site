@@ -1,23 +1,107 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>{{title}}</title>
 <meta name="description" content="{{description}}">
 <link rel="canonical" href="{{canonical}}">
+<link rel="icon" href="/img/icon.png">
+<meta name="theme-color" content="#0E1220">
 <meta property="og:title" content="{{title}}">
 <meta property="og:description" content="{{description}}">
 <meta property="og:url" content="{{canonical}}">
+<meta property="og:site_name" content="Unichrono">
+<meta name="twitter:card" content="summary_large_image">
 <meta property="og:image" content="https://unichrono.app/img/og-1200x630.jpg">
 <script type="application/ld+json">
 {{jsonld}}
 </script>
+<script>try{var t=localStorage.getItem('uc.time.theme');if(t)document.documentElement.dataset.theme=JSON.parse(t);}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/uc.css">
+<link rel="stylesheet" href="/time/time.css">
+<script type="module" src="/time/js/app.js"></script>
 </head>
 <body data-preload="{{preload}}">
-<main>
+
+<header>
+  <div class="wrap hd">
+    <a class="logo" href="/"><img src="/img/icon.png" alt="">Unichrono</a>
+    <button class="menub" id="menub" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav id="nav">
+      <a href="/">Home</a>
+      <a href="/time/" class="here">World time</a>
+      <a href="/help.html">Help</a>
+      <a href="/about.html">About</a>
+      <a class="btn" href="/#get">Get the app</a>
+    </nav>
+    <a class="btn" href="/#get">Get the app</a>
+  </div>
+</header>
+
+<main class="wrap tmain">
 {{static}}
+
+<section class="tool" id="tool" aria-label="World time converter">
+  <div class="smart">
+    <label class="sr" for="q">Type a time or a place</label>
+    <input id="q" type="text" autocomplete="off" spellcheck="false" enterkeyhint="go"
+           placeholder="Try &quot;8am Tokyo in London&quot;, &quot;LHR&quot;, &quot;PST&quot;, &quot;UTC+5:30&quot;">
+    <div id="preview" class="preview" aria-live="polite"></div>
+    <ul id="sugg" class="sugg" role="listbox" aria-label="Places"></ul>
+  </div>
+
+  <div class="bar">
+    <label class="sr" for="date">Date</label>
+    <input id="date" type="date">
+    <button id="now" class="chip" type="button">Now</button>
+    <span id="clock" class="clockline"></span>
+    <span class="grow"></span>
+    <button id="fmt" class="chip" type="button" aria-pressed="false">24h</button>
+    <button id="theme" class="chip" type="button" aria-label="Switch light or dark">◐</button>
+  </div>
+
+  <div class="gridwrap" id="gridwrap">
+    <div id="grid" class="grid" tabindex="0" role="application"
+         aria-label="Hour grid. Left and right arrows move the selected hour."></div>
+  </div>
+  <label class="sr" for="slider">Selected time</label>
+  <input id="slider" class="slider" type="range" min="0" max="1439" step="15">
+  <p id="sel" class="sel" aria-live="polite"></p>
+
+  <div class="meet" id="meet"></div>
+
+  <div class="actions">
+    <a id="gcal" class="chip" target="_blank" rel="noopener">Google Calendar</a>
+    <a id="ocal" class="chip" target="_blank" rel="noopener">Outlook</a>
+    <button id="ics" class="chip" type="button">Apple / .ics</button>
+    <button id="copy" class="chip" type="button">Copy times</button>
+    <button id="share" class="chip accent" type="button">Share link</button>
+  </div>
+
+  <aside id="detail" class="detail" hidden aria-live="polite"></aside>
+  <noscript><p>The converter needs JavaScript. The city facts above work without it.</p></noscript>
+</section>
+
+{{links}}
+
+<p class="appnote">Want this on your home screen, Lock Screen or watch? <a href="/#get">Unichrono for Android, iPhone, iPad and Mac</a> — free.</p>
+
 {{cityindex}}
 </main>
+
+<footer>
+  <div class="wrap frow">
+    <span>© 2026 Spiny Valley Labs</span>
+    <span class="flinks">
+      <a href="/">Home</a><a href="/help.html">Help</a><a href="/privacy-policy.html">Privacy</a><a href="/#feedback">Feedback</a>
+    </span>
+  </div>
+</footer>
 </body>
 </html>
