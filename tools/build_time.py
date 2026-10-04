@@ -35,7 +35,7 @@ KEEP = {'js', 'time.css'}           # hand-written, never deleted
 # Names people search for, where the dataset's own name differs.
 SLUG_OVERRIDES = {'new-york-city': 'new-york'}
 COMPARE = ['london', 'new-york', 'tokyo', 'sydney', 'dubai', 'singapore']
-LLMS_LINE = '- [World time converter](https://unichrono.app/time/): free in-browser time zone converter, meeting planner and city time pages.'
+LLMS_LINE = '- [World Time Converter](https://unichrono.app/time/): free in-browser time zone converter, meeting planner and city time pages.'
 
 
 # ---------- pure helpers (unit-tested) ----------
@@ -338,7 +338,7 @@ def build(db, root=ROOT, now=None):
             '@context': 'https://schema.org', '@type': 'WebApplication', 'name': 'Unichrono World Time',
             'url': f'{SITE}/time/', 'applicationCategory': 'UtilitiesApplication', 'operatingSystem': 'Any',
             'offers': {'@type': 'Offer', 'price': '0'}}, indent=1),
-        static='<section class="city-static"><p class="kicker">Unichrono</p><h1>World time <span class="grad">converter</span></h1>'
+        static='<section class="city-static"><p class="kicker">Unichrono</p><h1>World Time <span class="grad">Converter</span></h1>'
                '<p class="zone-para">Compare cities, pick a time that works for everyone, and share it.</p>'
                '<p class="live" id="live" aria-live="off"></p></section>',
         links='', preload='', cityindex=city_index(pages, slugs)))
