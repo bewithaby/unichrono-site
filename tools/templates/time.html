@@ -70,6 +70,11 @@
     <div id="grid" class="grid" tabindex="0" role="application"
          aria-label="Hour grid. Left and right arrows move the selected hour."></div>
   </div>
+  <div class="gridfoot">
+    <button id="addcity" class="chip" type="button">+ Add city</button>
+    <button id="reset" class="linkbtn" type="button" hidden>Reset to defaults</button>
+  </div>
+  <div id="toast" class="toast" role="status" hidden></div>
   <label class="sr" for="slider">Selected time</label>
   <input id="slider" class="slider" type="range" min="0" max="1439" step="15">
   <p id="sel" class="sel" aria-live="polite"></p>

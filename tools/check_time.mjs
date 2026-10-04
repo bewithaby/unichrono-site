@@ -88,6 +88,52 @@ for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/']) {
   if (errors.length) fail('bad zone', errors.join(' | '));
   await ctx.close();
 }
+// Visible controls: remove every default with ×, undo once, add a city, reload: only home + choices remain.
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, timezoneId: 'Australia/Sydney', locale: 'en-AU' });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.goto(BASE + '/time/', { waitUntil: 'networkidle' });
+  await page.waitForSelector('.row');
+  const before = await page.locator('.row').count();
+  await page.locator('.row:nth-child(2) [data-act="remove"]').click();
+  if ((await page.locator('.row').count()) !== before - 1) fail('controls', '× did not remove');
+  await page.click('#toast [data-act="undo"]');
+  if ((await page.locator('.row').count()) !== before) fail('controls', 'undo did not restore');
+  while ((await page.locator('[data-act="remove"]').count()) > 0) await page.locator('[data-act="remove"]').first().click();
+  if ((await page.locator('.row').count()) !== 1) fail('controls', 'could not remove every default');
+  if (await page.locator('#reset').isHidden()) fail('controls', 'reset link missing after edits');
+  await page.click('#addcity');
+  if (!(await page.evaluate(() => document.activeElement?.id === 'q'))) fail('controls', '+ Add city did not focus search');
+  await page.fill('#q', 'Lisbon');
+  await page.waitForSelector('#sugg li');
+  await page.locator('#sugg li').first().click();
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.waitForSelector('.row');
+  const names = await page.locator('.row [data-open]').allTextContents();
+  if (names.length !== 2 || names[1] !== 'Lisbon') fail('controls', `after reload: ${names.join(', ')}`);
+  await page.locator('.row:nth-child(2) [data-act="up"]').count().then(n => n || fail('controls', 'no move arrows'));
+  await page.click('#reset');
+  if ((await page.locator('.row').count()) < 3) fail('controls', 'reset did not bring defaults back');
+  if (errors.length) fail('controls', errors.join(' | '));
+  await ctx.close();
+}
+// A city page shows its city with Keep and does not save it on its own.
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, timezoneId: 'Australia/Sydney', locale: 'en-AU' });
+  const page = await ctx.newPage();
+  await page.addInitScript(() => { if (!sessionStorage.getItem('seeded')) { sessionStorage.setItem('seeded', '1'); localStorage.setItem('uc.time.cities', JSON.stringify([{ ref: 'london' }])); } });
+  await page.goto(BASE + '/time/kolkata/', { waitUntil: 'networkidle' });
+  await page.waitForSelector('.row');
+  if (!(await page.locator('[data-act="keep"]').count())) fail('city page', 'no Keep button');
+  await page.locator('[data-act="remove"]').last().click();   // edit something else
+  await page.goto(BASE + '/time/', { waitUntil: 'networkidle' });
+  await page.waitForSelector('.row');
+  const names = await page.locator('.row [data-open]').allTextContents();
+  if (names.includes('Kolkata')) fail('city page', `Kolkata saved without Keep: ${names.join(', ')}`);
+  await ctx.close();
+}
 await browser.close();
 console.log(failures.length ? `FAIL\n${failures.join('\n')}` : 'PASS');
 process.exit(failures.length ? 1 : 0);

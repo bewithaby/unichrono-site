@@ -29,12 +29,20 @@ export function renderGrid(el, m) {
   const sel = columnOf(m.cols, m.at), nowCol = columnOf(m.cols, m.now);
   el.style.setProperty('--cols', m.cols.length);
   const html = [];
+  const others = m.rows.filter(r => !r.home);
   for (const row of m.rows) {
-    html.push(`<div class="row" data-key="${esc(row.key)}"><div class="rh">`
+    const k = others.indexOf(row), name = esc(row.label), key = esc(row.key);
+    const tools = row.home ? '' : `<div class="tools">`
+      + `<button type="button" data-act="up" data-key="${key}" aria-label="Move ${name} up"${k === 0 ? ' disabled' : ''}>↑</button>`
+      + `<button type="button" data-act="down" data-key="${key}" aria-label="Move ${name} down"${k === others.length - 1 ? ' disabled' : ''}>↓</button>`
+      + `<button type="button" data-act="remove" data-key="${key}" aria-label="Remove ${name}">×</button></div>`;
+    html.push(`<div class="row" data-key="${key}"><div class="rh">${tools}`
       + `<div class="nm">${row.home ? '<span class="home" title="Your time zone">🏠</span>' : ''}<span>${flag(row.cc)}</span>`
       + `<button type="button" data-open="${esc(row.key)}" title="Details for ${esc(row.label)}">${esc(row.label)}</button></div>`
       + `<div class="tm" data-tm="${esc(row.zone)}">${timeText(row.zone, m.at, m.h24)}</div>`
-      + subLines(row, m.at, m.homeZone).map(t => `<div class="sub" data-sub>${esc(t)}</div>`).join('') + '</div>');
+      + subLines(row, m.at, m.homeZone).map(t => `<div class="sub" data-sub>${esc(t)}</div>`).join('')
+      + (row.transient ? `<button type="button" class="keep" data-act="keep" data-key="${key}">+ Keep in my cities</button>` : '')
+      + '</div>');
     let prevDay = null;
     m.cols.forEach((c, i) => {
       const w = wallParts(row.zone, c);

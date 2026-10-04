@@ -122,13 +122,64 @@ function homeCity() {
   return { ...c, home: true };
 }
 
-const rows = () => [state.home, ...state.cities].map(c => ({ key: c.ref, label: c.label, cc: c.cc, zone: c.zone, home: !!c.home }));
+const rows = () => [state.home, ...state.cities].map(c => ({ key: c.ref, label: c.label, cc: c.cc, zone: c.zone,
+                                                            home: !!c.home, transient: !!c.transient }));
 const allCities = () => [state.home, ...state.cities];
 const shown = () => state.t ?? new Date();
 
+/** Saves the list; a city page's own city (not yet kept) is never saved by itself. */
 function save() {
   state.fromLink = false;
-  store.set('cities', state.cities.map(c => ({ ref: c.ref, label: c.label === c.name ? null : c.label })));
+  store.set('cities', state.cities.filter(c => !c.transient)
+    .map(c => ({ ref: c.ref, label: c.label === c.name ? null : c.label })));
+}
+
+const customised = () => store.get('cities', null) !== null;
+
+let toastTimer = null;
+function toast(text, undo) {
+  const el = $('toast');
+  el.innerHTML = `<span>${esc(text)}</span>` + (undo ? '<button type="button" data-act="undo">Undo</button>' : '');
+  el.hidden = false;
+  const btn = el.querySelector('[data-act="undo"]');
+  if (btn) btn.onclick = () => { undo(); el.hidden = true; };
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.hidden = true; }, 6000);
+}
+
+function removeCity(ref) {
+  const i = state.cities.findIndex(c => c.ref === ref);
+  if (i < 0) return;
+  const [city] = state.cities.splice(i, 1);
+  if (state.detail === ref) { state.detail = null; $('detail').hidden = true; }
+  save();
+  render();
+  toast(`Removed ${city.label}`, () => { state.cities.splice(Math.min(i, state.cities.length), 0, city); save(); render(); });
+}
+
+function keepCity(ref) {
+  const c = state.cities.find(c => c.ref === ref);
+  if (!c) return;
+  c.transient = false;
+  save();
+  render();
+  toast(`${c.label} added to your cities`);
+}
+
+async function resetCities() {
+  store.set('cities', null);
+  const kept = state.cities.filter(c => c.transient);
+  state.cities = [...kept];
+  for (const ref of DEFAULTS) {
+    const p = bySlug.get(ref);
+    if (state.cities.length >= 3 + kept.length) break;
+    const c = p && fromCity(p);
+    if (c && c.zone !== HOME && !has(c)) state.cities.push(c);
+  }
+  state.detail = null;
+  $('detail').hidden = true;
+  render();
+  toast('Back to the default cities');
 }
 
 function columns() {
@@ -152,6 +203,7 @@ function render() {
     ? `Selected ${timeText(HOME, at, state.h24)}, ${dayText(HOME, at)} your time`
     : 'Showing the time now';
   $('now').hidden = !state.t;
+  $('reset').hidden = !customised();
   $('fmt').setAttribute('aria-pressed', String(state.h24));
   renderMeeting(cols);
   renderActions();
@@ -287,7 +339,7 @@ async function renderDetail() {
     $('dsave').onclick = () => { const v = $('rename').value.trim(); c.label = v || c.name; save(); render(); };
     $('dup').onclick = () => move(i, -1);
     $('ddown').onclick = () => move(i, 1);
-    $('dremove').onclick = () => { state.cities.splice(i, 1); state.detail = null; el.hidden = true; save(); render(); };
+    $('dremove').onclick = () => removeCity(c.ref);
   }
   if (c.cc) renderHolidays(c, at);
 }
@@ -445,6 +497,15 @@ function wire() {
   });
   window.addEventListener('pointerup', () => { dragging = false; });
   grid.addEventListener('click', e => {
+    const act = e.target.closest('[data-act]');
+    if (act) {
+      const ref = act.dataset.key, i = state.cities.findIndex(c => c.ref === ref);
+      if (act.dataset.act === 'remove') removeCity(ref);
+      else if (act.dataset.act === 'keep') keepCity(ref);
+      else if (act.dataset.act === 'up') move(i, -1);
+      else if (act.dataset.act === 'down') move(i, 1);
+      return;
+    }
     const cell = e.target.closest('.c');
     if (cell && e.pointerType !== 'mouse') return select(columns()[Number(cell.dataset.i)]);
     const b = e.target.closest('[data-open]');
@@ -471,6 +532,11 @@ function wire() {
     select(zonedInstant(HOME, Number(m[1]), Number(m[2]), Number(m[3]), w.h, w.mi));
   });
   $('now').onclick = () => { state.t = null; render(); };
+  $('addcity').onclick = () => {
+    $('q').focus();
+    if (!$('q').value) $('preview').textContent = 'Type a city, an airport code (LHR), an abbreviation (PST) or UTC+5:30.';
+  };
+  $('reset').onclick = resetCities;
   $('fmt').onclick = () => { state.h24 = !state.h24; store.set('h24', state.h24); render(); };
   $('theme').onclick = () => {
     const cur = document.documentElement.dataset.theme
@@ -550,7 +616,10 @@ async function start() {
   if (preload && !refs.some(r => r.ref === preload) && bySlug.has(preload)) refs.unshift({ ref: preload, transient: true });
   for (const r of refs) {
     const c = await resolveRef(r.ref, r.label);
-    if (c && !has(c) && c.zone !== undefined && state.cities.length < MAX_CITIES - 1) state.cities.push(c);
+    if (c && !has(c) && state.cities.length < MAX_CITIES - 1) {
+      if (r.transient) c.transient = true;
+      state.cities.push(c);
+    }
   }
   render();
   renderLive();
