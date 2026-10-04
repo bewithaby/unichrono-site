@@ -191,8 +191,11 @@ for (const [w, h] of [[1440, 900], [1280, 800], [1100, 800], [390, 844]]) {
                bg: getComputedStyle(l).backgroundImage, vw: innerWidth };
     });
     if (!/world time converter/i.test(m.text)) fail(where, `hero button text "${m.text}"`);
-    if (Math.abs(m.l - m.left) > 2 || Math.abs(m.r - m.right) > 2) fail(where, `hero button ${Math.round(m.l)}–${Math.round(m.r)} not under the badges ${Math.round(m.left)}–${Math.round(m.right)}`);
-    if (m.right - m.left >= 520 && m.h > 44) fail(where, 'hero button wraps although the badge row is wide');
+    // As wide as its text, centred under the badges.
+    const mid = (m.l + m.r) / 2, badgesMid = (m.left + m.right) / 2;
+    if (Math.abs(mid - badgesMid) > 2) fail(where, `hero button centre ${Math.round(mid)} vs badges ${Math.round(badgesMid)}`);
+    if (m.r - m.l >= m.right - m.left - 4 && m.vw >= 1000) fail(where, 'hero button still stretched to the full badge width');
+    if (m.vw >= 1000 && m.h > 44) fail(where, 'hero button wraps on desktop');
     if (m.h > 70) fail(where, 'hero button more than two lines');
     if (m.bg !== 'none') fail(where, 'hero button still has a gradient border');
   }
