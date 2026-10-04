@@ -1,6 +1,6 @@
 // Text for times, days and differences, read in any zone (incl. "UTC+05:30").
 
-import { wallParts, zonedInstant } from './tz.js';
+import { wallParts, zonedInstant, nextTransition, formatOffset } from './tz.js';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -50,4 +50,38 @@ const ALIASES = { 'Asia/Calcutta': 'Asia/Kolkata', 'Asia/Saigon': 'Asia/Ho_Chi_M
 export function homeZone(raw) {
   if (!raw) return 'UTC';
   return ALIASES[raw] ?? raw;
+}
+
+/** Index of the column holding `date`, or -1. */
+export function columnOf(cols, date) {
+  const t = date.getTime();
+  for (let i = 0; i < cols.length; i++) {
+    const end = i + 1 < cols.length ? cols[i + 1].getTime() : cols[i].getTime() + 3600000;
+    if (t >= cols[i].getTime() && t < end) return i;
+  }
+  return -1;
+}
+
+function columnsAround(zone, at, dayShift) {
+  const w = wallParts(zone, at);
+  const d = new Date(Date.UTC(w.y, w.mo - 1, w.d + dayShift));
+  return dayColumns(zone, d.getUTCFullYear(), d.getUTCMonth() + 1, d.getUTCDate());
+}
+
+/** The column `delta` steps from the one holding `at`, rolling into the next/previous home day. */
+export function stepColumn(zone, at, delta) {
+  const cols = columnsAround(zone, at, 0);
+  const j = columnOf(cols, at) + delta;
+  if (j >= 0 && j < cols.length) return cols[j];
+  if (j < 0) { const prev = columnsAround(zone, at, -1); return prev[prev.length + j]; }
+  return columnsAround(zone, at, 1)[j - cols.length];
+}
+
+/** "Next clock change: Sun 25 Oct 2026, clocks go back 1 h (to UTC)." or "". */
+export function nextChangeText(zone, now) {
+  const tr = nextTransition(zone, now);
+  if (!tr) return '';
+  const diff = tr.after - tr.before, a = Math.abs(diff);
+  const amount = [Math.floor(a / 60) ? `${Math.floor(a / 60)} h` : '', a % 60 ? `${a % 60} min` : ''].filter(Boolean).join(' ');
+  return `Next clock change: ${dayText(zone, tr.at)} ${wallParts(zone, tr.at).y}, clocks ${diff > 0 ? 'go forward' : 'go back'} ${amount} (to ${formatOffset(tr.after)}).`;
 }

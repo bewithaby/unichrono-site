@@ -1,23 +1,15 @@
 // The hour grid: one row per city, one cell per hour of the home day.
 
 import { wallParts, offsetMinutes, abbreviation, formatOffset } from './tz.js';
-import { timeText, hourText, dayText, diffText } from './format.js';
+import { timeText, hourText, dayText, diffText, columnOf } from './format.js';
+
+export { columnOf };
 import { mark } from './work.js';
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
 
 export function flag(cc) {
   return /^[A-Za-z]{2}$/.test(cc || '') ? String.fromCodePoint(...[...cc.toUpperCase()].map(c => 0x1F1A5 + c.charCodeAt(0))) : '';
-}
-
-/** Index of the column holding `date`, or -1. */
-export function columnOf(cols, date) {
-  const t = date.getTime();
-  for (let i = 0; i < cols.length; i++) {
-    const end = i + 1 < cols.length ? cols[i + 1].getTime() : cols[i].getTime() + 3600000;
-    if (t >= cols[i].getTime() && t < end) return i;
-  }
-  return -1;
 }
 
 /** Two lines under the time: "JST UTC+9" and "Wed 7 Oct · 8 h ahead". */

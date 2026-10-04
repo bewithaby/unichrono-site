@@ -18,7 +18,15 @@ import shutil
 import sqlite3
 import unicodedata
 from pathlib import Path
+import zoneinfo
 from zoneinfo import ZoneInfo
+
+import tzdata
+
+# Use only the pinned tzdata package (tools/requirements.txt), never the
+# build machine's /usr/share/zoneinfo, so every machine writes the same facts.
+zoneinfo.reset_tzpath(to=[])
+TZ_VERSION = tzdata.IANA_VERSION
 
 SITE = 'https://unichrono.app'
 ROOT = Path(__file__).resolve().parents[1]
@@ -130,20 +138,33 @@ def transitions(zone, start, days=400, limit=2):
     return out
 
 
-def fmt_day(d):
-    return f'{d.day} {d.strftime("%b %Y")}'
+def year_times(zone, now):
+    """((std offset, std abbr), (dst offset, dst abbr) or None) for now's year."""
+    marks = [dt.datetime(now.year, m, 15, 12, tzinfo=dt.timezone.utc) for m in (1, 7)]
+    pairs = sorted({(offset_minutes(zone, t), abbreviation(zone, t)) for t in marks})
+    return pairs[0], (pairs[-1] if len(pairs) > 1 else None)
+
+
+def _named(off, abbr):
+    return offset_label(off) if abbr == offset_label(off) else f'{abbr} ({offset_label(off)})'
+
+
+def zone_label(zone, now):
+    """Title text that stays true all year: "GMT/BST" or "JST (UTC+9)"."""
+    std, dst = year_times(zone, now)
+    if not dst:
+        return _named(*std)
+    if std[1] == offset_label(std[0]) or dst[1] == offset_label(dst[0]):
+        return f'{offset_label(std[0])}/{offset_label(dst[0])}'
+    return f'{std[1]}/{dst[1]}'
 
 
 def zone_paragraph(c, now):
-    off = offset_minutes(c['zone'], now)
-    abbr = abbreviation(c['zone'], now)
-    head = f'{c["name"]} uses {c["zone"].replace("_", " ")} time'
-    head += f', currently {abbr} ({offset_label(off)}).' if abbr != offset_label(off) else f', {offset_label(off)}.'
-    changes = transitions(c['zone'], now)
-    if not changes:
-        return f'{head} {c["country"]} does not change its clocks.'
-    parts = [f'{fmt_day(t.astimezone(ZoneInfo(c["zone"])))} (to {offset_label(o)})' for t, o in changes]
-    return f'{head} Next clock changes: {" and ".join(parts)}.'
+    std, dst = year_times(c['zone'], now)
+    head = f'{c["name"]} uses {c["zone"].replace("_", " ")} time: '
+    if not dst:
+        return f'{head}{_named(*std)} all year. {c["name"]} does not change its clocks.'
+    return f'{head}{_named(*std)} as standard time and {_named(*dst)} during daylight saving time.'
 
 
 def continent(zone):
@@ -158,8 +179,8 @@ def flag(cc):
 
 def related(c, pages, slugs, now):
     same_country = [p for p in pages if p['cc'] == c['cc'] and p['id'] != c['id']][:8]
-    off = offset_minutes(c['zone'], now)
-    same_offset = [p for p in pages if p['cc'] != c['cc'] and offset_minutes(p['zone'], now) == off][:8]
+    times = year_times(c['zone'], now)
+    same_offset = [p for p in pages if p['cc'] != c['cc'] and year_times(p['zone'], now) == times][:8]
     return same_country, same_offset
 
 
@@ -187,9 +208,10 @@ def link_list(items, slugs):
 def city_static(c, pages, slugs, now):
     slug = slugs[c['id']]
     same_country, same_offset = related(c, pages, slugs, now)
-    off = offset_minutes(c['zone'], now)
+    std, dst = year_times(c['zone'], now)
     facts = [('Country', f'{flag(c["cc"])} {c["country"]}'), ('Time zone', c['zone']),
-             ('UTC offset', offset_label(off)), ('Abbreviation', abbreviation(c['zone'], now))]
+             ('UTC offset', offset_label(std[0]) + (f' / {offset_label(dst[0])}' if dst else '')),
+             ('Abbreviation', std[1] + (f' / {dst[1]}' if dst else ''))]
     if c['lat'] is not None and c['lng'] is not None:
         facts.append(('Coordinates', f'{c["lat"]:.2f}, {c["lng"]:.2f}'))
     if c['pop']:
@@ -200,12 +222,13 @@ def city_static(c, pages, slugs, now):
     head = (f'<section class="city-static"><h1>Time in {e(c["name"])}, {e(c["country"])}</h1>\n'
             f'<p class="live" id="live" aria-live="off"></p>\n'
             f'<p class="zone-para">{e(zone_paragraph(c, now))}</p>\n'
+            f'<p class="zone-next" id="zone-next" data-zone="{e(c["zone"])}"></p>\n'
             '<dl class="facts">' + ''.join(f'<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>' for k, v in facts) + '</dl></section>')
     links = []
     if same_country:
         links.append(f'<h2>More cities in {e(c["country"])}</h2><ul class="links">{link_list(same_country, slugs)}</ul>')
     if same_offset:
-        links.append(f'<h2>Same time as {e(c["name"])} right now</h2><ul class="links">{link_list(same_offset, slugs)}</ul>')
+        links.append(f'<h2>Same time as {e(c["name"])} all year</h2><ul class="links">{link_list(same_offset, slugs)}</ul>')
     if comp_html:
         links.append(f'<h2>Compare</h2><ul class="links">{comp_html}</ul>')
     return head, '<section class="city-links">' + '\n'.join(links) + '</section>'
@@ -231,15 +254,30 @@ def render(template, **slots):
     return out
 
 
+# Countries the holidays package names only in their own language (checked
+# for holidays 0.83: every other unlocalised country is already English).
+NOT_ENGLISH = {'IT'}
+
+
 def holidays_for(cc, years):
+    """[[iso date, English name]], or None when the package has no English
+    names for the country (better no list than one in another language)."""
     import holidays
+    langs = holidays.list_localized_countries().get(cc, [])
+    english = next((l for l in ('en_US', 'en_GB') if l in langs), None) or next((l for l in langs if l.startswith('en')), None)
     try:
-        langs = holidays.list_localized_countries()
-        kw = {'language': 'en_US'} if 'en_US' in langs.get(cc, []) else {}
-        hs = holidays.country_holidays(cc, years=years, **kw)
+        hs = holidays.country_holidays(cc, years=years, **({'language': english} if english else {}))
     except NotImplementedError:
         return None
-    return sorted([d.isoformat(), name] for d, name in hs.items())
+    if not english and cc in NOT_ENGLISH:
+        return None
+    out = []
+    for d, name in hs.items():
+        # Sweden lists every Sunday as a holiday ("Easter Sunday; Sunday"); that is not news.
+        parts = [n for n in name.split('; ') if n not in ('Sunday', 'Söndag')]
+        if parts:
+            out.append([d.isoformat(), '; '.join(parts)])
+    return sorted(out)
 
 
 def update_sitemap(root, urls, today):
@@ -306,9 +344,7 @@ def build(db, root=ROOT, now=None):
 
     for c in pages:
         slug = slugs[c['id']]
-        off = offset_minutes(c['zone'], now)
-        abbr = abbreviation(c['zone'], now)
-        zone_bit = f'{abbr} ({offset_label(off)})' if abbr != offset_label(off) else offset_label(off)
+        zone_bit = zone_label(c['zone'], now)
         head, links = city_static(c, pages, slugs, now)
         page = out / slug
         page.mkdir()

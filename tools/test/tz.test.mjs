@@ -56,3 +56,16 @@ test('abbreviation and offset format', () => {
   assert.equal(formatOffset(-180), 'UTC−3');
   assert.equal(formatOffset(0), 'UTC');
 });
+
+import { supportedZone } from '../../time/js/tz.js';
+test('zones the browser does not know are mapped to old names or dropped', () => {
+  assert.equal(supportedZone('Europe/Kyiv'), 'Europe/Kyiv');
+  assert.equal(supportedZone('Not/AZone'), null);
+  assert.equal(supportedZone('UTC+05:30'), 'UTC+05:30');
+  const oldBrowser = z => !['Europe/Kyiv', 'Pacific/Kanton', 'America/Ciudad_Juarez', 'America/Coyhaique'].includes(z);
+  assert.equal(supportedZone('Europe/Kyiv', oldBrowser), 'Europe/Kiev');
+  assert.equal(supportedZone('Pacific/Kanton', oldBrowser), 'Pacific/Enderbury');
+  assert.equal(supportedZone('America/Ciudad_Juarez', oldBrowser), 'America/Denver');
+  assert.equal(supportedZone('America/Coyhaique', oldBrowser), 'America/Punta_Arenas');
+  assert.equal(supportedZone('Mars/Base', () => false), null);
+});

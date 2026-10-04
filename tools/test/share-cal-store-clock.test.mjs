@@ -72,3 +72,10 @@ test('clock offset and text', () => {
   assert.equal(clockText(300), 'Your clock is about right');
   assert.equal(clockText(-90_000), 'Your clock is 1 min 30 s fast');
 });
+
+import { shareRefs } from '../../time/js/share.js';
+test('a shared link carries the sender\'s own city first', () => {
+  assert.deepEqual(shareRefs('london', ['new-york', 'tokyo']), ['london', 'new-york', 'tokyo']);
+  assert.deepEqual(shareRefs('tokyo', ['tokyo', 'paris']), ['tokyo', 'paris']);
+  assert.equal(shareRefs('a', Array.from({ length: 20 }, (_, i) => 'c' + i)).length, 12);
+});

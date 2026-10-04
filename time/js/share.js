@@ -45,3 +45,8 @@ export function decodeState(search) {
   const h = params.get('h');
   return { cities, t, h24: h === '24' ? true : h === '12' ? false : null };
 }
+
+/** What a shared link carries: the sender's own city first, then the rest. */
+export function shareRefs(homeRef, refs) {
+  return [...new Set([homeRef, ...refs])].slice(0, MAX_CITIES);
+}

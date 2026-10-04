@@ -49,3 +49,25 @@ test('home zone alias', () => {
   assert.equal(homeZone('Europe/Paris'), 'Europe/Paris');
   assert.equal(homeZone(undefined), 'UTC');
 });
+
+import { stepColumn, nextChangeText } from '../../time/js/format.js';
+test('arrow steps move one grid column, also in half-hour home zones', () => {
+  const ten = new Date('2026-10-07T04:30:00Z');            // 10:00 Kolkata
+  assert.equal(stepColumn('Asia/Kolkata', ten, 1).toISOString(), '2026-10-07T05:30:00.000Z');   // 11:00
+  assert.equal(stepColumn('Asia/Kolkata', ten, -1).toISOString(), '2026-10-07T03:30:00.000Z');  // 09:00
+  const mid = new Date('2026-10-07T04:50:00Z');            // 10:20 Kolkata → next column 11:00
+  assert.equal(stepColumn('Asia/Kolkata', mid, 1).toISOString(), '2026-10-07T05:30:00.000Z');
+  // across midnight into the next and previous day
+  const late = new Date('2026-10-07T18:00:00Z');           // 23:30 Kolkata, column 23:00
+  assert.equal(stepColumn('Asia/Kolkata', late, 1).toISOString(), '2026-10-07T18:30:00.000Z');   // 00:00 next day
+  const early = new Date('2026-10-06T18:30:00Z');          // 00:00 Kolkata
+  assert.equal(stepColumn('Asia/Kolkata', early, -1).toISOString(), '2026-10-06T17:30:00.000Z');  // 23:00 day before
+});
+
+test('next clock change text', () => {
+  assert.equal(nextChangeText('Europe/London', new Date('2026-10-04T00:00Z')),
+    'Next clock change: Sun 25 Oct 2026, clocks go back 1 h (to UTC).');
+  assert.equal(nextChangeText('Australia/Sydney', new Date('2026-10-05T00:00Z')),
+    'Next clock change: Sun 4 Apr 2027, clocks go back 1 h (to UTC+10).');
+  assert.equal(nextChangeText('Asia/Tokyo', new Date('2026-10-04T00:00Z')), '');
+});

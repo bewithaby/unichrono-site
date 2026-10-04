@@ -55,13 +55,41 @@ class Selection(unittest.TestCase):
 class Text(unittest.TestCase):
     def test_zone_paragraph_no_dst(self):
         p = b.zone_paragraph(city(1, 'Tokyo', 'JP', 1, 'Asia/Tokyo', 'Japan'), NOW)
-        self.assertIn('UTC+9', p)
-        self.assertIn('does not change its clocks', p)
+        self.assertEqual(p, 'Tokyo uses Asia/Tokyo time: JST (UTC+9) all year. Tokyo does not change its clocks.')
 
-    def test_zone_paragraph_dst(self):
+    def test_city_not_country_for_no_dst(self):
+        # Phoenix keeps its clocks; the United States does not.
+        p = b.zone_paragraph(city(1, 'Phoenix', 'US', 1, 'America/Phoenix', 'United States'), NOW)
+        self.assertIn('Phoenix does not change its clocks', p)
+        self.assertNotIn('United States', p)
+
+    def test_zone_paragraph_dst_is_stable(self):
         p = b.zone_paragraph(city(1, 'London', 'GB', 1, 'Europe/London', 'United Kingdom'), NOW)
-        self.assertIn('25 Oct 2026', p)
-        self.assertIn('28 Mar 2027', p)
+        self.assertEqual(p, 'London uses Europe/London time: GMT (UTC) as standard time and BST (UTC+1) '
+                            'during daylight saving time.')
+        # The same text before and after the October change.
+        later = dt.datetime(2026, 12, 1, tzinfo=dt.timezone.utc)
+        self.assertEqual(p, b.zone_paragraph(city(1, 'London', 'GB', 1, 'Europe/London', 'United Kingdom'), later))
+
+    def test_southern_hemisphere_daylight_is_the_bigger_offset(self):
+        p = b.zone_paragraph(city(1, 'Sydney', 'AU', 1, 'Australia/Sydney', 'Australia'), NOW)
+        self.assertIn('AEST (UTC+10) as standard time and AEDT (UTC+11) during daylight saving', p)
+
+    def test_zone_label_for_titles(self):
+        self.assertEqual(b.zone_label('Europe/London', NOW), 'GMT/BST')
+        self.assertEqual(b.zone_label('Asia/Tokyo', NOW), 'JST (UTC+9)')
+
+    def test_tz_data_is_the_pinned_package(self):
+        import tzdata
+        self.assertEqual(b.TZ_VERSION, tzdata.IANA_VERSION)
+
+    def test_holidays_are_english_and_skip_sundays(self):
+        se = b.holidays_for('SE', [2026])
+        self.assertTrue(se)
+        self.assertFalse([n for _, n in se if 'Sunday' in n.split('; ') or n == 'Söndag'])
+        self.assertIn(['2026-04-05', 'Easter Sunday'], se)
+        it = b.holidays_for('IT', [2026])
+        self.assertTrue(it is None or 'Capodanno' not in [n for _, n in it])
 
     def test_continent(self):
         self.assertEqual(b.continent('America/Sao_Paulo'), 'Americas')
@@ -117,9 +145,13 @@ class EndToEnd(unittest.TestCase):
     def test_city_page_static_content(self):
         html = (self.root / 'time' / 'tokyo' / 'index.html').read_text()
         self.assertIn('<title>Current time in Tokyo, Japan – JST (UTC+9) | Unichrono</title>', html)
+        london = (self.root / 'time' / 'london' / 'index.html').read_text()
+        self.assertIn('<title>Current time in London, United Kingdom – GMT/BST | Unichrono</title>', london)
+        self.assertIn('id="zone-next"', london)
+        self.assertNotIn('Next clock changes', london)
         self.assertIn('<link rel="canonical" href="https://unichrono.app/time/tokyo/">', html)
         self.assertIn('"@type": "Place"', html)
-        self.assertIn('does not change its clocks', html)
+        self.assertIn('Tokyo does not change its clocks', html)
         self.assertIn('data-preload="tokyo"', html)
         self.assertIn('href="/time/?c=tokyo,new-york"', html)
 

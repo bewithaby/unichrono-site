@@ -144,3 +144,20 @@ export function abbreviation(zone, date) {
   }
   return formatOffset(offsetMinutes(zone, date));
 }
+
+// New IANA names older browsers do not know yet, and what they called them.
+const LEGACY = { 'Europe/Kyiv': 'Europe/Kiev', 'Pacific/Kanton': 'Pacific/Enderbury',
+                 'America/Ciudad_Juarez': 'America/Denver', 'America/Coyhaique': 'America/Punta_Arenas',
+                 'America/Nuuk': 'America/Godthab', 'Asia/Yangon': 'Asia/Rangoon' };
+
+function intlKnows(zone) {
+  try { new Intl.DateTimeFormat('en-US', { timeZone: zone }); return true; } catch { return false; }
+}
+
+/** `zone` if this browser can use it, else its older name, else null (drop the city). */
+export function supportedZone(zone, isValid = intlKnows) {
+  if (isOffsetZone(zone)) return zone;
+  if (isValid(zone)) return zone;
+  const old = LEGACY[zone];
+  return old && isValid(old) ? old : null;
+}

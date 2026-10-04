@@ -1,16 +1,16 @@
 // World time tool: state, data loading and wiring. Pure logic lives in the
 // other modules (tested with node --test); this file is the page glue.
 
-import { wallParts, zonedInstant, offsetMinutes, abbreviation, nextTransition, formatOffset, isOffsetZone } from './tz.js';
+import { wallParts, zonedInstant, offsetMinutes, abbreviation, nextTransition, formatOffset, isOffsetZone, supportedZone } from './tz.js';
 import { parseConversion, queryInstant, resolvePlace } from './parse.js';
 import { bestOverlap, mark } from './work.js';
 import { sunTimes } from './sun.js';
 import { moonPhase } from './moon.js';
-import { encodeState, decodeState, MAX_CITIES } from './share.js';
+import { encodeState, decodeState, shareRefs, MAX_CITIES } from './share.js';
 import { googleURL, outlookURL, icsText, timesText } from './calendar.js';
 import { makeStore } from './store.js';
 import { clockOffset, clockText } from './clock.js';
-import { timeText, dayText, diffText, dayColumns, homeZone } from './format.js';
+import { timeText, dayText, diffText, dayColumns, homeZone, stepColumn, nextChangeText } from './format.js';
 import { renderGrid, updateTimes, columnOf, flag } from './grid.js';
 
 const $ = id => document.getElementById(id);
@@ -56,7 +56,9 @@ const lookups = {
     if (!search || !t) return out;
     for (const c of search) {
       if (c.lname.startsWith(t) || (t.length >= 3 && c.words.includes(' ' + t))) {
-        out.push({ name: c.name, zone: c.zone, cityId: c.id });
+        const zone = supportedZone(c.zone);
+        if (!zone) continue;
+        out.push({ name: c.name, zone, cityId: c.id });
         if (out.length === 8) break;
       }
     }
@@ -65,7 +67,8 @@ const lookups = {
   airport(code) {
     const a = airports.get(code.toUpperCase());
     const c = a && cityById.get(a.cityId);
-    return c ? { iata: code.toUpperCase(), name: a.name, cityName: c.name, zone: c.zone, cityId: c.id } : null;
+    const zone = c && supportedZone(c.zone);
+    return zone ? { iata: code.toUpperCase(), name: a.name, cityName: c.name, zone, cityId: c.id } : null;
   },
   representative(zone) {
     const c = repByZone.get(zone);
@@ -74,15 +77,21 @@ const lookups = {
 };
 
 // ---------- cities ----------
-function zoneCity(zone, label) {
+// Every city object's zone is one this browser can use (or the city is
+// dropped): one unknown zone must not take the whole tool down.
+function zoneCity(rawZone, label) {
+  const zone = supportedZone(rawZone);
+  if (!zone) return null;
   const name = label || (isOffsetZone(zone) ? formatOffset(offsetMinutes(zone, new Date())) : zone.split('/').pop().replace(/_/g, ' '));
   return { ref: 'z:' + zone, label: name, name, country: '', cc: '', zone, lat: null, lng: null, pop: 0 };
 }
 
 function fromCity(c, label) {
+  const zone = supportedZone(c.zone);
+  if (!zone) return null;
   const slug = slugById.get(c.id);
   return { ref: slug ?? 'id:' + c.id, label: label || c.name, name: c.name, country: c.country, cc: c.cc,
-           zone: c.zone, lat: c.lat, lng: c.lng, pop: c.pop };
+           zone, lat: c.lat, lng: c.lng, pop: c.pop };
 }
 
 async function resolveRef(ref, label) {
@@ -108,8 +117,8 @@ const state = {
 };
 
 function homeCity() {
-  const p = pages.find(p => p.zone === HOME);
-  const c = p ? fromCity(p) : zoneCity(HOME);
+  const p = pages.find(p => supportedZone(p.zone) === HOME);
+  const c = (p && fromCity(p)) || zoneCity(HOME) || zoneCity('UTC');
   return { ...c, home: true };
 }
 
@@ -172,6 +181,12 @@ function tick() {
 }
 
 function renderLive() {
+  const next = $('zone-next');
+  if (next) {
+    const zone = supportedZone(next.dataset.zone);
+    const text = zone ? nextChangeText(zone, new Date()) : '';
+    if (next.textContent !== text) next.textContent = text;
+  }
   const el = $('live');
   const slug = document.body.dataset.preload;
   const c = slug && allCities().find(c => c.ref === slug);
@@ -316,7 +331,8 @@ async function placeCity(p) {
   if (p.cityId != null) {
     await loadSearch();
     const c = cityById.get(p.cityId);
-    if (c) return fromCity(c);
+    const city = c && fromCity(c);
+    if (city) return city;
   }
   return zoneCity(p.zone);
 }
@@ -435,11 +451,9 @@ function wire() {
     if (b) { state.detail = b.dataset.open; renderDetail(); $('detail').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
   });
   grid.addEventListener('keydown', e => {
-    const base = shown();
-    const hour = new Date(Math.floor(base.getTime() / 3600000) * 3600000);
     const cols = columns();
-    if (e.key === 'ArrowRight') select(new Date(hour.getTime() + 3600000));
-    else if (e.key === 'ArrowLeft') select(new Date(hour.getTime() - 3600000));
+    if (e.key === 'ArrowRight') select(stepColumn(HOME, shown(), 1));
+    else if (e.key === 'ArrowLeft') select(stepColumn(HOME, shown(), -1));
     else if (e.key === 'Home') select(cols[0]);
     else if (e.key === 'End') select(cols[cols.length - 1]);
     else if (e.key === 'Escape') { state.t = null; render(); }
@@ -478,7 +492,7 @@ function wire() {
     flash($('copy'), await copy(timesText(ev.lines, `Times for ${dayText(HOME, ev.start)}`)) ? 'Copied' : 'Copy failed');
   };
   $('share').onclick = async () => {
-    const url = location.origin + '/time/' + encodeState({ cities: state.cities.map(c => c.ref), t: state.t, h24: state.h24 });
+    const url = location.origin + '/time/' + encodeState({ cities: shareRefs(state.home.ref, state.cities.map(c => c.ref)), t: state.t, h24: state.h24 });
     if (navigator.share) {
       try { await navigator.share({ title: 'World time', url }); return; } catch (e) { if (e.name === 'AbortError') return; }
     }

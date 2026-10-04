@@ -69,6 +69,25 @@ for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/']) {
   await page.screenshot({ path: `${OUT}/weekday.png` });
   await ctx.close();
 }
+// A saved unknown zone must not take the tool down; arrows step whole columns in a :30 home zone.
+{
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, timezoneId: 'Asia/Kolkata', locale: 'en-IN' });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
+  await page.addInitScript(() => localStorage.setItem('uc.time.cities', JSON.stringify([{ ref: 'z:Not/AZone' }, { ref: 'tokyo' }])));
+  await page.goto(BASE + '/time/?t=2026-10-07T04:30Z', { waitUntil: 'networkidle' });
+  await page.waitForSelector('.row');
+  if ((await page.locator('.row').count()) !== 2) fail('bad zone', 'expected home + Tokyo');
+  await page.focus('#grid');
+  await page.keyboard.press('ArrowRight');
+  const s1 = await page.textContent('#sel');
+  await page.keyboard.press('ArrowRight');
+  const s2 = await page.textContent('#sel');
+  if (!s1.includes('11:00') || !s2.includes('12:00')) fail('kolkata arrows', `${s1} / ${s2}`);
+  if (errors.length) fail('bad zone', errors.join(' | '));
+  await ctx.close();
+}
 await browser.close();
 console.log(failures.length ? `FAIL\n${failures.join('\n')}` : 'PASS');
 process.exit(failures.length ? 1 : 0);
