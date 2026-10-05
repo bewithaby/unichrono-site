@@ -134,8 +134,8 @@
   <div class="wrap">
     <span class="kicker">User guide</span>
     <h1>How to use <span class="grad">Unichrono</span></h1>
-    <p>Every feature, explained — the city list, widgets, time travel, the plan board, city alerts and spoken time. Platform differences are called out, and there is a full settings reference for Android and for iPhone at the end.</p>
-    <p class="meta">Android &amp; iPhone · 34,804 cities · Works offline</p>
+    <p>Every feature, explained — the city list, groups, typed times, time travel, the plan board, clock change warnings, city alerts, spoken time, widgets, and the watch apps. Platform differences are called out, and there is a full settings reference for Android, iPhone &amp; iPad and Mac, with troubleshooting at the end.</p>
+    <p class="meta">Android · iPhone · iPad · Mac · Apple Watch · Wear OS · 34,804 cities · Works offline</p>
   </div>
 </div>
 
@@ -145,14 +145,21 @@
     <div class="toc-grid">
       <a href="#start">Getting started</a>
       <a href="#cities">Your city list</a>
+      <a href="#groups">City groups</a>
       <a href="#details">City details</a>
       <a href="#travel">Time travel</a>
+      <a href="#convert">Type a time</a>
       <a href="#plan">Alarms &amp; meetings</a>
       <a href="#alerts">City alerts</a>
       <a href="#announce">Announce the time</a>
+      <a href="#changes">Clock change warnings</a>
       <a href="#widgets">Widgets</a>
       <a href="#types">The widget types</a>
       <a href="#setup">Widget setup options</a>
+      <a href="#watch">Apple Watch</a>
+      <a href="#wear">Wear OS</a>
+      <a href="#siri">Siri, Spotlight &amp; Control Center</a>
+      <a href="#island">Dynamic Island</a>
       <a href="#android">Android: settings</a>
       <a href="#iphone">iPhone: settings</a>
       <a href="#mac">Mac: settings</a>
@@ -175,7 +182,7 @@
         <li><strong>Set that widget up.</strong> Pick its cities, format and colours. From then on it keeps itself correct with no further input.</li>
       </ol>
       <div class="note">
-        <p><strong>What you need.</strong> Android 8.0 or newer (the analog widget needs Android 12+, because only from that version can Android give an analog face its own timezone). On iPhone, a recent version of iOS; scheduled alarms use Apple's AlarmKit and need iOS 26.1 or later. On Mac, macOS 14 Sonoma or later; the app lives in the menu bar, <a href="#mac">see below</a>.</p>
+        <p><strong>What you need.</strong> Android 8.0 or newer (the analog widget needs Android 12+, because only from that version can Android give an analog face its own timezone). On iPhone, a recent version of iOS; scheduled alarms use Apple's AlarmKit and need iOS 26.1 or later. On Mac, macOS 14 Sonoma or later; the app lives in the menu bar, <a href="#mac">see below</a>. The Apple Watch app needs watchOS 10 or later and Unichrono on the paired iPhone. The Wear OS app needs Wear OS 3 or later and Unichrono on the paired Android phone. Dynamic Island clocks need an iPhone with a Dynamic Island on iOS 18 or later.</p>
       </div>
     </section>
 
@@ -188,11 +195,12 @@
         <li>The current time there, 12- or 24-hour, with seconds if you switch them on.</li>
         <li>A part-of-day icon — morning, day, evening or night — on fixed local hours, so it reads the same on every phone.</li>
         <li>The context line: zone abbreviation and UTC offset (for example <code>IST · UTC+5:30</code>), how far ahead or behind your own phone it is, and whether that city is on Yesterday, Today or Tomorrow relative to you.</li>
+        <li>In the week before the time difference to that city changes (daylight saving on either side), a small chip such as <em>From Sunday: 4h ahead (now 5h)</em>. See <a href="#changes">Clock change warnings</a>.</li>
       </ul>
       <h3>Managing the list</h3>
       <div class="tw"><table>
         <tr><th>Action</th><th>How</th></tr>
-        <tr><td>Add</td><td>Tap <code>+</code> and search by city or country. Every entry carries its own IANA timezone, so daylight saving is handled for you, forever.</td></tr>
+        <tr><td>Add</td><td>Tap <code>+</code> and search by city or country. Search also understands airport codes (<code>LHR</code>, <code>JFK</code>), time zone abbreviations (<code>PST</code>, <code>IST</code> — when one means several zones you pick which) and UTC offsets (<code>UTC+5:30</code>); an offset you add becomes a clock with no city, just that fixed offset. Every city carries its own IANA timezone, so daylight saving is handled for you, forever.</td></tr>
         <tr><td>Rename</td><td>Open the city and edit its name. Clear the field to go back to the original city name.</td></tr>
         <tr><td>Reorder</td><td>Press and hold a card and drag it. That order is used in the app, in the notification, and as the starting order for new widgets.</td></tr>
         <tr><td>Remove</td><td>Swipe a card sideways. Widgets already on your home screen keep their own city list and are unaffected.</td></tr>
@@ -200,6 +208,29 @@
       <div class="note">
         <p><strong>Can't find a city?</strong> Search by country too, and try the nearest large city — any city in the same timezone shows exactly the same time, and you can rename it afterwards. If something is genuinely missing, <a href="index.html#feedback">ask for it</a>.</p>
       </div>
+    </section>
+
+    <section id="groups">
+      <h2>City groups</h2>
+      <p class="sub">Sort cities into groups like <em>Team</em>, <em>Family</em> or <em>Trip</em>, and filter the list with one tap. Free on Android; part of Unichrono Pro on iPhone, iPad, Mac and Apple Watch.</p>
+      <p>Groups are tags, not folders: a city can be in any number of groups, and deleting a group never deletes a city.</p>
+      <div class="tw"><table>
+        <tr><th>Action</th><th>How</th></tr>
+        <tr><td>Create a group</td><td>Tap <strong>+ New group</strong> (or <strong>+</strong>) in the chip row above your cities. Give it a name (up to 30 characters), an optional emoji and a colour. Up to 12 groups.</td></tr>
+        <tr><td>Filter the list</td><td>Tap a group's chip. <strong>All</strong> shows every city again. The choice is remembered.</td></tr>
+        <tr><td>Put a city in a group</td><td>Open the city (or long-press its card on iPhone) and tick the group under <strong>Groups</strong>. A city you add while a group is selected joins that group automatically.</td></tr>
+        <tr><td>Edit, move or delete a group</td><td>Long-press its chip. Deleting asks first, and your cities stay.</td></tr>
+        <tr><td>Reorder cities</td><td>Drag works under <strong>All</strong>. A group always shows its cities in your list's order.</td></tr>
+        <tr><td>Share a group</td><td>Long-press its chip → <strong>Share</strong> (iPhone, iPad) or <strong>Save as file</strong> (Android). You get a small <code>.unichrono</code> file with the group's cities, its name, emoji and colour. Send it any way you like.</td></tr>
+        <tr><td>Open a shared group</td><td>iPhone and iPad: tap the file (AirDrop, Messages, Mail, Files) and choose Unichrono. Android and Mac: <strong>Settings → Import clocks</strong> and pick the file. Its cities are added (ones you already have are not duplicated) and a group with the same name is created, or the cities join your existing group of that name.</td></tr>
+        <tr><td>Hide groups</td><td><strong>Settings → Show groups</strong> off hides the chips and the Groups section everywhere. Your groups are kept; the list shows every city, and turning it back on restores them as they were.</td></tr>
+      </table></div>
+      <h3>Groups elsewhere</h3>
+      <ul>
+        <li><strong>Widgets (iPhone, iPad):</strong> edit a widget and choose a <strong>Group</strong> to have it show that group's cities. Cities you pick individually win over the group; a deleted group falls back to your whole list.</li>
+        <li><strong>Apple Watch:</strong> the watch gets your iPhone's groups and shows a group row at the top of the list.</li>
+        <li><strong>Mac:</strong> the menu-bar panel has its own chips, and the Cities window a Groups strip. Mac groups belong to that Mac and do not sync.</li>
+      </ul>
     </section>
 
     <section id="details">
@@ -226,6 +257,28 @@
         <li><strong>Close it</strong> to snap every card back to now.</li>
       </ol>
       <p>Nothing you do in time travel changes your list or your widgets. It is a view, not an edit.</p>
+      <p><strong>Share a time</strong> (iPhone, iPad): the share button in the time-travel panel sends the moment you landed on, with every visible city's time, as plain text. On Mac, <strong>Copy</strong> in the panel does the same. Free.</p>
+    </section>
+
+    <section id="convert">
+      <h2>Type a time</h2>
+      <p class="sub">Type the time you mean, in words, and every city jumps there.</p>
+      <ol>
+        <li><strong>Open time travel</strong> and tap the box that says <em>Type a time</em> (on Mac it is the convert box at the top of the panel).</li>
+        <li><strong>Type a time and a place:</strong> <code>8am Tokyo</code>, <code>3pm PST</code>, <code>14:30 LHR</code>, <code>noon UTC+5:30</code>, <code>fri 9am new york</code>, <code>tomorrow 8pm</code>. With no place, the time is in your own zone.</li>
+        <li><strong>Read the answer</strong> underneath, for example <em>8:00 am Mon in Tokyo = 10:00 am Mon here</em>.</li>
+        <li><strong>Tap Go</strong> to move every city to that moment, or <strong>Add Tokyo</strong> to put that place in your list.</li>
+      </ol>
+      <div class="tw"><table>
+        <tr><th>You can type</th><th>Examples</th></tr>
+        <tr><td>A city or country</td><td><code>Tokyo</code>, <code>São Paulo</code>, <code>Kenya</code></td></tr>
+        <tr><td>An airport code</td><td><code>LHR</code>, <code>SFO</code>, <code>DXB</code> — the city the airport serves</td></tr>
+        <tr><td>A zone abbreviation</td><td><code>PST</code>, <code>CET</code>, <code>IST</code>, <code>AEDT</code> — ambiguous ones (IST, CST) offer a choice</td></tr>
+        <tr><td>A UTC offset</td><td><code>UTC+5:30</code>, <code>GMT-3</code>, <code>UTC-7</code></td></tr>
+        <tr><td>A day</td><td><code>today</code>, <code>tomorrow</code>, <code>yesterday</code>, <code>mon</code>…<code>sun</code>, <code>tonight</code></td></tr>
+        <tr><td>A time</td><td><code>8</code>, <code>8am</code>, <code>8:30pm</code>, <code>20:30</code>, <code>noon</code>, <code>midnight</code></td></tr>
+      </table></div>
+      <p>A bare hour picks the next time it comes round, so <code>8</code> late in the evening means 8 tomorrow morning. Prefer a browser? The same converter is at <a href="time/">unichrono.app/time</a>.</p>
     </section>
 
     <section id="plan">
@@ -281,6 +334,17 @@
         <li>Announcements respect the ringer: silenced means vibrate only, Do Not Disturb means silence.</li>
       </ul>
       <p>This speaks your own device time. To be told about a time in another city, use a <a href="#alerts">city alert</a> instead.</p>
+    </section>
+
+    <section id="changes">
+      <h2>Clock change warnings</h2>
+      <p class="sub">Daylight saving moves the gap between you and your cities, on dates that differ by country. Unichrono tells you before it happens. iPhone, iPad and Android.</p>
+      <ul>
+        <li><strong>On the card:</strong> for the seven days before the difference to a city changes, its card shows a chip such as <em>From Sunday: 4h ahead (now 5h)</em>. It counts changes on either side — yours or theirs.</li>
+        <li><strong>A notification</strong> three days before, at 9 am your time. Cities changing on the same day share one notification.</li>
+        <li><strong>Settings:</strong> <em>Clock change reminders</em> (on by default) turns the notifications off. Unichrono never asks for notification permission just for this; if notifications are off, the chips still appear.</li>
+      </ul>
+      <p>The rules come from your phone's time zone database, so a change announced by a government at short notice appears after your next system update.</p>
     </section>
 
     <section id="widgets">
@@ -355,6 +419,68 @@
       <p>Long names are shortened intelligently rather than chopped, so two cities on a small widget never end up looking identical.</p>
     </section>
 
+    <section id="watch">
+      <h2>Apple Watch</h2>
+      <p class="sub">Your iPhone's cities on your wrist, with complications. Included with the iPhone app; the watch app installs from the Watch app on your iPhone.</p>
+      <ol>
+        <li><strong>Install it:</strong> on the iPhone, open the <strong>Watch</strong> app → scroll to <em>Available apps</em> → <strong>Install</strong> next to Unichrono (or it installs itself if <em>Automatic App Install</em> is on).</li>
+        <li><strong>Open Unichrono on the iPhone once</strong>, then on the watch. Your cities appear within a few seconds.</li>
+      </ol>
+      <div class="tw"><table>
+        <tr><th>On the watch</th><th>How</th></tr>
+        <tr><td>See a city's details</td><td>Tap it: date, time zone and offset, sunrise and sunset.</td></tr>
+        <tr><td>Time travel</td><td>Tap the clock icon at the top, then turn the Digital Crown. Every city moves together, up to a day either way. <strong>Now</strong> returns.</td></tr>
+        <tr><td>Add a city</td><td><strong>Add City</strong> at the bottom of the list, search, tap. It appears on your iPhone too.</td></tr>
+        <tr><td>Remove or reorder</td><td>Swipe a row left to delete, or open a city → <strong>Move up / Move down / Remove</strong>.</td></tr>
+        <tr><td>Filter by group (Pro)</td><td>The group row at the top of the list. Hidden when groups are hidden on the iPhone.</td></tr>
+        <tr><td>Ask Siri</td><td><em>"What time is it in Tokyo with Unichrono"</em>, <em>"Is it a good time to call London with Unichrono"</em> (watchOS 11 or later).</td></tr>
+      </table></div>
+      <h3>Complications and the Smart Stack</h3>
+      <p>Touch and hold the watch face → <strong>Edit</strong> → <strong>Complications</strong> → <strong>Unichrono</strong>. Free: <em>City Time</em> (every shape) and <em>World Clock</em>. With Pro: <em>OK to Call?</em> (green, amber or red by the city's working hours), <em>Two Cities</em>, <em>Analog</em> and <em>Sun</em>. Locked ones show a padlock; tap it to see how to unlock Pro on the iPhone. Unichrono also offers itself in the Smart Stack: turn the Digital Crown up from the watch face.</p>
+      <p>There is one city list. The iPhone is the source of truth; edits on the watch are sent to it and confirmed. Pro is the same purchase as on the iPhone and needs no separate buy. The free tier holds three cities, as on the iPhone.</p>
+    </section>
+
+    <section id="wear">
+      <h2>Wear OS</h2>
+      <p class="sub">Your Android phone's cities on your watch, a tile and a complication. Free.</p>
+      <ol>
+        <li><strong>Install it</strong> from the Play Store on the watch (search <em>Unichrono</em>), or from the phone's Play Store → <em>Install on more devices</em>.</li>
+        <li><strong>Open Unichrono on the phone</strong> once after installing, so it sends your list. Any later change on the phone — a new city, a rename, a reorder, the 12/24-hour setting — reaches the watch within seconds.</li>
+      </ol>
+      <ul>
+        <li><strong>The app:</strong> every city with its time and how far ahead or behind it is. Tap one for a big readout; swipe right (or press back) to return to the list.</li>
+        <li><strong>The tile:</strong> swipe left from the watch face to the tiles, long-press → <strong>+</strong> → <strong>Unichrono</strong>. It shows your first four cities and changes exactly on the minute.</li>
+        <li><strong>The complication:</strong> edit your watch face → a complication slot → <strong>Unichrono</strong>. It shows the first city in your list that is not in the watch's own time zone, so it stays useful when you travel.</li>
+      </ul>
+      <p>The watch shows the phone's list; cities are added and edited on the phone. It needs Google Play services on the phone, which handles the connection between phone and watch.</p>
+    </section>
+
+    <section id="siri">
+      <h2>Siri, Spotlight &amp; Control Center</h2>
+      <p class="sub">iPhone, iPad, Mac and Apple Watch. Nothing to set up.</p>
+      <div class="tw"><table>
+        <tr><th>Say or search</th><th>What happens</th></tr>
+        <tr><td><em>"What time is it in Tokyo with Unichrono"</em></td><td>Siri answers with the time there and how far ahead or behind it is. Works for your saved cities and a hundred major ones.</td></tr>
+        <tr><td><em>"Convert a time with Unichrono"</em></td><td>Siri asks for the time and place, and answers in your time.</td></tr>
+        <tr><td><em>"Is it a good time to call London with Unichrono"</em></td><td>Yes, maybe, or no, by that city's working hours.</td></tr>
+        <tr><td><em>"Open time travel in Unichrono"</em></td><td>Opens the time-travel panel ready to type a time.</td></tr>
+        <tr><td>Spotlight</td><td>Type a saved city's name in Spotlight to open it in Unichrono.</td></tr>
+        <tr><td>Shortcuts app</td><td>Every action above is in the Shortcuts app, for your own automations.</td></tr>
+        <tr><td>Control Center (iPhone, iOS 18)</td><td>Add <em>Time travel</em>, <em>Speak the time</em> or <em>Dynamic Island clocks</em> as Control Center buttons: swipe down → <strong>+</strong> → <strong>Add a Control</strong> → Unichrono.</td></tr>
+      </table></div>
+    </section>
+
+    <section id="island">
+      <h2>Dynamic Island</h2>
+      <p class="sub">Up to two cities, always on screen. Unichrono Pro, on iPhones with a Dynamic Island, iOS 18 or later.</p>
+      <ol>
+        <li>Long-press a city card, or open the city, and choose <strong>Show in Dynamic Island</strong>. Pinning a third city replaces the oldest.</li>
+        <li>The cities' times sit in the Dynamic Island and on the Lock Screen, ticking live.</li>
+        <li>Choose <strong>Remove from Dynamic Island</strong> to unpin.</li>
+      </ol>
+      <p>iOS ends live activities after 12 hours; Unichrono puts them back the next time you open it. If nothing appears, turn on <strong>Settings → Unichrono → Live Activities</strong> in iOS Settings.</p>
+    </section>
+
     <section id="android">
       <h2><span class="plat"><svg viewBox="0 0 512 512" fill="currentColor"><path d="M325.3 234.3 104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>Android</span> — where every setting lives</h2>
       <p class="sub">Open the app → the gear icon. In the order you meet them.</p>
@@ -364,7 +490,9 @@
         <tr><td>Theme</td><td>System / Light / Dark</td><td>The app's own appearance</td><td>System</td></tr>
         <tr><td>Display</td><td>Show country flags</td><td>A flag before each city name; also the starting value for new widgets</td><td>On</td></tr>
         <tr><td>Display</td><td>Show seconds</td><td>Seconds on in-app clocks; also the starting value for new widgets</td><td>Off</td></tr>
+        <tr><td>Display</td><td>Show groups</td><td>The group chips above your cities and the Groups section in a city's details. Off keeps your groups but hides them</td><td>On</td></tr>
         <tr><td>Display</td><td>Analog clock</td><td>Draws a small analog face beside each time on the cards</td><td>Off</td></tr>
+        <tr><td>Clock changes</td><td>Clock change reminders</td><td>A notification 3 days before the time difference to one of your cities changes</td><td>On</td></tr>
         <tr><td>Announce the time</td><td>Speak the time</td><td>Says your phone's own local time out loud</td><td>Off</td></tr>
         <tr><td>Announce the time</td><td>Hourly / Daily</td><td>On the hour, or once a day</td><td>Hourly</td></tr>
         <tr><td>Announce the time</td><td>From / To / At</td><td>The quiet window for hourly, or the single time for daily</td><td>—</td></tr>
@@ -409,7 +537,10 @@
         <tr><td>Appearance</td><td>System / Light / Dark</td><td>The app's own look</td><td>System</td></tr>
         <tr><td>Display</td><td>Show country flags</td><td>A flag before each city name</td><td>On</td></tr>
         <tr><td>Display</td><td>Show seconds</td><td>Seconds on in-app clocks</td><td>Off</td></tr>
+        <tr><td>Display</td><td>Show groups (Pro)</td><td>Group chips and Groups menus here and on your Apple Watch. Off keeps your groups but hides them</td><td>On</td></tr>
+        <tr><td>Alerts</td><td>Clock change reminders</td><td>A notification 3 days before the time difference to one of your cities changes</td><td>On</td></tr>
         <tr><td>Announce the time</td><td>Speak the time + Hourly / Daily + window</td><td>Your own local time, spoken on the hour or once a day</td><td>Off</td></tr>
+        <tr><td>Your clocks</td><td>Groups</td><td>Where groups live; for a free user it explains Pro</td><td>—</td></tr>
         <tr><td>Widgets</td><td>Widget gallery</td><td>Live previews of every widget and Lock Screen accessory, with placement instructions</td><td>—</td></tr>
         <tr><td>Help</td><td>How to use</td><td>Replays the quick tour</td><td>—</td></tr>
         <tr><td>About</td><td>Request a feature</td><td>The same short web form</td><td>—</td></tr>
@@ -445,8 +576,11 @@
         <tr><td>Display</td><td>Hour format: System / 12-hour / 24-hour</td><td>How every time is written</td><td>System</td></tr>
         <tr><td>Display</td><td>Show seconds</td><td>Seconds on the clocks in the panel</td><td>Off</td></tr>
         <tr><td>Display</td><td>Country flags</td><td>A flag before each city name</td><td>On</td></tr>
+        <tr><td>Display</td><td>Show groups (Pro)</td><td>Group chips in the panel and the Groups strip in Cities, on this Mac only</td><td>On</td></tr>
         <tr><td>Display</td><td>Appearance: System / Light / Dark</td><td>The app's own look</td><td>System</td></tr>
         <tr><td>General</td><td>Launch at login</td><td>Starts Unichrono when you log in, so the menu bar clock, alerts and announcer are always there</td><td>On (asked on first launch)</td></tr>
+        <tr><td>General</td><td>Open panel shortcut</td><td>A key combination that opens the panel from any app; click it and press your own</td><td>⌃⌥⌘U</td></tr>
+        <tr><td>General</td><td>Show my next meeting</td><td>Your next calendar meeting at the top of the panel, with a countdown and a Join button for video links</td><td>Off</td></tr>
         <tr><td>Time announcer</td><td>Announce the time + Hourly / Daily</td><td>Your own time, spoken aloud on this Mac</td><td>Off</td></tr>
         <tr><td>Your clocks</td><td>Export clocks… / Import clocks…</td><td>Saves your city list to a file that also opens on iPhone, iPad and Android</td><td>—</td></tr>
         <tr><td>Widgets</td><td>Widget gallery…</td><td>Previews of every widget before you place one</td><td>—</td></tr>
@@ -465,7 +599,7 @@
       <p>Right-click the desktop → <strong>Edit Widgets</strong> → search <strong>Unichrono</strong>, and drag a widget onto the desktop or into Notification Centre. Right-click a placed widget → <strong>Edit</strong> to choose its cities, colour and format.</p>
 
       <h3>Permissions</h3>
-      <p>Only one: <strong>Notifications</strong>, asked the first time you save a city alert or reminder. Unichrono opens or saves a file only when you pick one yourself with Export or Import.</p>
+      <p><strong>Notifications</strong>, asked the first time you save a city alert or reminder. <strong>Calendars</strong>, asked only if you turn on <em>Show my next meeting</em>; the calendar is read on your Mac to find the next meeting and nothing leaves it. Unichrono opens or saves a file only when you pick one yourself with Export or Import.</p>
 
       <div class="note">
         <p><strong>Speech on Mac.</strong> Spoken alerts and the time announcer are spoken live by the system voice while Unichrono is running, even during a Focus. If Unichrono isn't running, a city alert still arrives as a notification, just without the voice, and the announcer stays silent. That is why <em>Launch at login</em> is on by default.</p>
@@ -498,6 +632,24 @@
       <p>That is intentional — widgets keep their own labels so an in-app rename cannot rewrite a widget you already set up. Edit the labels in that widget's own setup.</p>
       <h3>The Analog widget is not available on my phone</h3>
       <p>It needs Android 12 or newer. Below that, Android cannot give an analog face its own timezone, so it could only ever show your local time.</p>
+      <h3>My group chips disappeared</h3>
+      <p><strong>Settings → Show groups</strong> is off. Turn it on and your groups come back exactly as they were. On iPhone, iPad and Mac groups are part of Pro, so they also hide if Pro isn't active.</p>
+      <h3>A shared group file won't open, or imports only cities</h3>
+      <p>On iPhone, choose <em>Unichrono</em> from the share sheet or Files; on Android and Mac use <strong>Settings → Import clocks</strong>. Some file pickers show <code>.unichrono</code> files as "BIN file"; that is fine. Cities you already have are not added twice. If the group itself isn't created, you already have 12 groups, or (iPhone, Mac) Pro isn't active — the cities still come in.</p>
+      <h3>Typing a time doesn't find my place</h3>
+      <p>Try the city name in full, an airport code, or an offset such as <code>UTC+5:30</code>. A city name wins over an airport code with the same letters. For an abbreviation that means several zones, pick one from the choices shown.</p>
+      <h3>I didn't get a clock change warning</h3>
+      <p>Check <em>Clock change reminders</em> is on and that notifications are allowed for Unichrono. The notification arrives three days ahead at 9 am; the chip on the card shows for the last seven days. Changes in your own zone count too, but a city whose difference to you stays the same (you both change on the same day) has nothing to warn about.</p>
+      <h3>My Apple Watch shows "Open Unichrono on your iPhone"</h3>
+      <p>The watch hasn't received your list yet. Open Unichrono on the iPhone with the watch nearby and unlocked; the list arrives in a few seconds. If it still doesn't, restart the watch app. Pro complications stay locked until the watch has synced with an iPhone that has Pro.</p>
+      <h3>My Wear OS watch shows "Open Unichrono on your phone"</h3>
+      <p>Open Unichrono on the phone once with the watch connected. The phone must have Google Play services (phones without them, such as recent Huawei models, can't sync with Wear OS). If the watch says <em>Update Unichrono on your phone</em>, the phone app is older than the watch app.</p>
+      <h3>The Wear OS tile or complication shows the wrong city or time</h3>
+      <p>The complication shows the first city that isn't in the watch's own time zone, so it changes when you travel. Both refresh by themselves on the minute and whenever your list or the watch's time zone changes; if one looks stuck, remove and re-add it.</p>
+      <h3>Siri doesn't understand the city</h3>
+      <p>Siri recognises your saved cities and a hundred major ones by name. For anywhere else, add the city to your list first, or use <em>"Convert a time with Unichrono"</em> and type the place.</p>
+      <h3>Nothing shows in the Dynamic Island</h3>
+      <p>It needs Pro, an iPhone with a Dynamic Island and iOS 18 or later, and Live Activities allowed: iOS Settings → Unichrono → Live Activities. After 12 hours iOS ends it; opening Unichrono brings it back.</p>
     </section>
 
     <section id="feedback-inapp">
@@ -524,7 +676,9 @@
       <ul>
         <li>On Android the app has <strong>no network permission</strong>. It cannot send anything anywhere, and the city data ships inside the app rather than being fetched.</li>
         <li>The one thing that can leave your device is a <a href="#feedback-inapp">feedback form you fill in yourself</a>, which opens in your browser rather than being sent by the app.</li>
-        <li>No accounts, no ads, no analytics, no tracking SDKs, on either platform.</li>
+        <li>No accounts, no ads, no analytics, no tracking SDKs, on any platform.</li>
+        <li>The watch apps talk only to your own phone. Apple Watch and iPhone exchange your city list and settings over Apple's connection between paired devices; a Wear OS watch and its Android phone use Google Play services' phone-to-watch connection, the same one every Wear OS app uses. Neither Unichrono watch app has network permission, and nothing goes to us or to any server of ours.</li>
+        <li>On Mac, <em>Show my next meeting</em> reads your calendar on the Mac only, and only when you turn it on.</li>
         <li>Your cities, labels, widget settings and alerts are stored on the device only, and go when the app goes.</li>
         <li>The permissions it does ask for are the obvious ones, requested only when you first use the feature that needs them.</li>
         <li>City data comes from GeoNames.org, licensed CC BY 4.0.</li>

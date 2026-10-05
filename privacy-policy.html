@@ -46,7 +46,7 @@
     <span class="kicker">Privacy Policy</span>
     <h1>Nothing leaves <span class="grad">your device.</span></h1>
     <p><strong>Short version:</strong> Unichrono collects no data, on Android, iPhone, iPad or Mac. There is no account, no analytics and — on Android — no network permission at all.</p>
-    <p class="meta">Effective 1 October 2026 · Published by Spiny Valley Labs</p>
+    <p class="meta">Effective 5 October 2026 · Published by Spiny Valley Labs</p>
   </div>
 </div>
 
@@ -89,6 +89,7 @@
       <h2>Data stored on your device</h2>
       <p>Your chosen cities, clock labels, widget layouts, and app settings are stored locally on your device only. They never leave it, and they are deleted when you uninstall the app. Timezone calculations use the timezone database that ships with the operating system; no lookup ever happens over a network. On iPhone, this data is kept in a shared container so your Home Screen and Lock Screen widgets can read it — that container stays on your device and is never transmitted anywhere.</p>
       <p><strong>On Apple Watch:</strong> Unichrono on Apple Watch shows the cities from your iPhone, and lets you add, remove and reorder them. Your iPhone and watch exchange the city list and its display settings directly, over Apple's own connection between a paired iPhone and Apple Watch. Nothing is sent to us or to any server. The watch keeps its copy on the watch, where its watch face complications read it, and it requests no permissions.</p>
+      <p><strong>On Wear OS:</strong> Unichrono on a Wear OS watch shows the cities from your Android phone. The phone sends the city list and its display settings to the watch through Google Play services' phone-to-watch connection (the Wearable Data Layer), the same mechanism every Wear OS app uses to talk to its phone. Neither the phone app nor the watch app has internet permission, nothing is sent to us or to any server of ours, and the watch keeps its copy on the watch for its tile and complication. The watch app requests no permissions.</p>
     </section>
 
     <section id="feedback-form">
@@ -111,7 +112,7 @@
 
       <h3><span class="plat"><svg viewBox="0 0 512 512" fill="currentColor"><path d="M325.3 234.3 104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/></svg>Android</span></h3>
       <ul>
-        <li><strong>Notifications (POST_NOTIFICATIONS):</strong> requested only if you turn on the optional quick-access clock notification. It is used solely to display your clocks in the notification shade and can be turned off at any time in the app or in system settings.</li>
+        <li><strong>Notifications (POST_NOTIFICATIONS):</strong> requested when you turn on the optional quick-access clock notification or create a city alert. Used only to show those on your phone. Clock change reminders use the same permission if you have already granted it, and never ask for it themselves. Any of them can be turned off in the app or in system settings.</li>
         <li><strong>Run at startup (RECEIVE_BOOT_COMPLETED):</strong> used only to restore the quick-access notification after a reboot, if you have enabled it.</li>
       </ul>
 
@@ -127,7 +128,7 @@
       <p>Mac widgets come from the same WidgetKit, with no access grant. Nothing is requested at launch.</p>
       <ul>
         <li><strong>Notifications:</strong> requested the first time you save a city alert or a reminder. Used only to show those alerts on your Mac.</li>
-        <li><strong>Calendar:</strong> never requested. <em>Add to Calendar</em> opens the meeting in Apple's Calendar app as a standard event file, and Calendar asks you to confirm it. Unichrono cannot read or write your calendar.</li>
+        <li><strong>Calendar:</strong> requested only if you turn on <em>Show my next meeting</em> in Settings. Unichrono then reads your calendar on the Mac to find your next meeting and show it, with its video link, in the menu-bar panel. Nothing from your calendar leaves the Mac or is stored by Unichrono, and turning the setting off stops the reading. Without that setting the calendar is never requested: <em>Add to Calendar</em> opens the meeting in Apple's Calendar app as a standard event file, and Calendar asks you to confirm it.</li>
         <li><strong>Launch at login:</strong> registered with macOS so the menu bar clock starts when you log in. You can turn it off in the app's Settings, or in System Settings → General → Login Items.</li>
       </ul>
 
