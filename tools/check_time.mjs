@@ -147,14 +147,17 @@ for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/']) {
   const page = await ctx.newPage();
   await page.goto(BASE + '/time/', { waitUntil: 'networkidle' });
   await page.waitForSelector('.row');
+  // A direct visit starts light (even with a dark OS); the switch offers Dark.
   const label = (await page.textContent('#theme')).trim();
-  if (label !== 'Light') fail('theme', `dark page button reads "${label}", want "Light"`);
+  if (label !== 'Dark') fail('theme', `light page button reads "${label}", want "Dark"`);
+  const light = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  if (light !== 'rgb(244, 241, 233)') fail('theme', `light background is ${light}, want the site's paper #F4F1E9`);
   await page.click('#theme');
   const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  if (bg !== 'rgb(244, 241, 233)') fail('theme', `light background is ${bg}, want the site's paper #F4F1E9`);
-  if ((await page.textContent('#theme')).trim() !== 'Dark') fail('theme', 'button did not switch to "Dark"');
+  if (bg !== 'rgb(14, 18, 32)') fail('theme', `dark background is ${bg}, want #0E1220`);
+  if ((await page.textContent('#theme')).trim() !== 'Light') fail('theme', 'button did not switch to "Light"');
   await page.reload({ waitUntil: 'networkidle' });
-  if (await page.evaluate(() => document.documentElement.dataset.theme) !== 'light') fail('theme', 'light not remembered');
+  if (await page.evaluate(() => document.documentElement.dataset.theme) !== 'dark') fail('theme', 'dark not remembered');
   await ctx.close();
 }
 // The home page: a header "Convert time" button visible at every width, a
@@ -260,6 +263,53 @@ for (const [w, h] of [[1440, 900], [1366, 800], [1280, 800], [1261, 800], [1201,
     if (await page.evaluate(() => document.documentElement.scrollWidth - innerWidth) > 0) fail(`header ${p} ${w}px`, 'page scrolls sideways');
   }
   await ctx.close();
+}
+// Theme defaults and sync. No saved choice: landing on the home page is dark,
+// landing straight on the converter is light, and moving between pages keeps
+// what the visitor is already looking at. A choice then wins everywhere,
+// including pages restored by Back and pages open in other tabs.
+{
+  const DARK = 'rgb(14, 18, 32)', LIGHT = 'rgb(244, 241, 233)';
+  const bg = p => p.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  for (const scheme of ['light', 'dark']) {
+    const fresh = async path => {
+      const c = await browser.newContext({ viewport: { width: 1280, height: 900 }, colorScheme: scheme });
+      const pg = await c.newPage();
+      await pg.goto(BASE + path, { waitUntil: 'networkidle' });
+      const got = await bg(pg); await c.close(); return got;
+    };
+    if (await fresh('/') !== DARK) fail('theme default', `${scheme} OS: home not dark on a direct visit`);
+    if (await fresh('/time/') !== LIGHT) fail('theme default', `${scheme} OS: converter not light on a direct visit`);
+    if (await fresh('/time/tokyo/') !== LIGHT) fail('theme default', `${scheme} OS: city page not light on a direct visit`);
+    if (await fresh('/about.html') !== DARK) fail('theme default', `${scheme} OS: about not dark on a direct visit`);
+  }
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, colorScheme: 'light' });
+  const page = await ctx.newPage();
+  await page.goto(BASE + '/', { waitUntil: 'networkidle' });
+  await page.click('.hero .hlink');                            // home → converter, no choice made
+  await page.waitForLoadState('networkidle');
+  if (await bg(page) !== DARK) fail('theme sync', `home → converter changed theme to ${await bg(page)}`);
+  await page.click('#theme');                                  // choose light on the converter
+  await page.goBack({ waitUntil: 'networkidle' });
+  if (await bg(page) !== LIGHT) fail('theme sync', `Back to home after choosing light shows ${await bg(page)}`);
+  if (await page.evaluate(() => document.getElementById('themeb').getAttribute('aria-label')) !== 'Switch to dark theme')
+    fail('theme sync', 'home switch icon not updated after Back');
+  await page.goto(BASE + '/about.html', { waitUntil: 'networkidle' });
+  if (await bg(page) !== LIGHT) fail('theme sync', 'about not light after choosing light');
+  const other = await ctx.newPage();
+  await other.goto(BASE + '/time/', { waitUntil: 'networkidle' });
+  await page.click('header #themeb');                          // about → dark
+  await other.waitForTimeout(300);
+  if (await bg(other) !== DARK) fail('theme sync', `open converter tab did not follow (${await bg(other)})`);
+  if ((await other.textContent('#theme')).trim() !== 'Light') fail('theme sync', 'converter button label not updated in other tab');
+  await ctx.close();
+  // A saved dark choice beats the converter's light default on a direct visit.
+  const c2 = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  await c2.addInitScript(() => { if (!sessionStorage.getItem('x')) { localStorage.setItem('uc-theme', 'dark'); sessionStorage.setItem('x', '1'); } });
+  const p2 = await c2.newPage();
+  await p2.goto(BASE + '/time/', { waitUntil: 'networkidle' });
+  if (await bg(p2) !== DARK) fail('theme sync', 'saved dark ignored on a direct converter visit');
+  await c2.close();
 }
 await browser.close();
 console.log(failures.length ? `FAIL\n${failures.join('\n')}` : 'PASS');
