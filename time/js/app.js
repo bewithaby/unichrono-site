@@ -630,9 +630,11 @@ async function start() {
     refs = Array.isArray(saved) ? saved.filter(s => s && typeof s.ref === 'string')
          : DEFAULTS.map(ref => ({ ref })).filter(r => bySlug.get(r.ref)?.zone !== HOME).slice(0, 3);
   }
-  // A city page preloads its city; a time-difference page preloads both ("london,new-york").
-  const preload = (document.body.dataset.preload || '').split(',').filter(r => bySlug.has(r));
-  for (const ref of preload.reverse()) if (!refs.some(r => r.ref === ref)) refs.unshift({ ref, transient: true });
+  // A city page preloads its city; a time-difference page preloads both ("london,new-york"),
+  // a zone page two labelled zones ("z:America/New_York|Eastern Time,z:Asia/Kolkata|India").
+  const preload = (document.body.dataset.preload || '').split(',').map(p => p.split('|'))
+    .filter(([ref]) => ref.startsWith('z:') || bySlug.has(ref));
+  for (const [ref, label] of preload.reverse()) if (!refs.some(r => r.ref === ref)) refs.unshift({ ref, label, transient: true });
   for (const r of refs) {
     const c = await resolveRef(r.ref, r.label);
     if (c && !has(c) && state.cities.length < MAX_CITIES - 1) {

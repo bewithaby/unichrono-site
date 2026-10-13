@@ -79,6 +79,42 @@ OVERLAP_WITH = ['london', 'new-york', 'sydney', 'tokyo']
 LLMS_LINE = '- [World Time Converter](https://unichrono.app/time/): free in-browser time zone converter, meeting planner and city time pages.'
 
 
+# Time-zone abbreviations people type into search ("est to ist"): key →
+# (abbreviation, name, zone, what the abbreviation means in practice). One
+# zone per key; the notes say what the other meanings are.
+ZONES = {
+    'est': ('EST', 'Eastern Time', 'America/New_York', 'US Eastern Time (New York). In summer it is EDT; '
+            'people often say EST all year, and this page follows the clock, not the label.'),
+    'cst': ('CST', 'Central Time', 'America/Chicago', 'US Central Time (Chicago), CDT in summer. '
+            'China Standard Time is also written CST; that is a different zone, UTC+8.'),
+    'mst': ('MST', 'Mountain Time', 'America/Denver', 'US Mountain Time (Denver), MDT in summer. '
+            'Arizona stays on MST all year.'),
+    'pst': ('PST', 'Pacific Time', 'America/Los_Angeles', 'US Pacific Time (Los Angeles). In summer it is PDT; '
+            'people often say PST all year, and this page follows the clock, not the label.'),
+    'gmt': ('GMT', 'UK time', 'Europe/London', 'UK time (London). Strictly GMT is UTC+0 all year; '
+            'the UK moves to BST, UTC+1, in summer, and this page follows the UK clock.'),
+    'cet': ('CET', 'Central European Time', 'Europe/Paris', 'Central European Time (Paris, Berlin, Rome), '
+            'CEST in summer.'),
+    'utc': ('UTC', 'Coordinated Universal Time', 'UTC', 'Coordinated Universal Time, the reference every '
+            'other offset counts from. It never changes.'),
+    'ist': ('IST', 'India Standard Time', 'Asia/Kolkata', 'India Standard Time, UTC+5:30 all year. '
+            'Ireland and Israel also use the letters IST for their own zones.'),
+    'jst': ('JST', 'Japan Standard Time', 'Asia/Tokyo', 'Japan Standard Time, UTC+9 all year.'),
+    'aest': ('AEST', 'Australian Eastern Time', 'Australia/Sydney', 'Australian Eastern Time (Sydney, Melbourne), '
+             'AEDT in the southern summer. Brisbane stays on AEST all year.'),
+    'sgt': ('SGT', 'Singapore Time', 'Asia/Singapore', 'Singapore Time, UTC+8 all year.'),
+    'pht': ('PHT', 'Philippine Time', 'Asia/Manila', 'Philippine Time (Manila), UTC+8 all year.'),
+    'gst': ('GST', 'Gulf Standard Time', 'Asia/Dubai', 'Gulf Standard Time (Dubai, Abu Dhabi), UTC+4 all year.'),
+}
+ZONE_PAIRS = [('est', 'ist'), ('pst', 'ist'), ('cst', 'ist'), ('mst', 'ist'), ('gmt', 'ist'), ('cet', 'ist'),
+              ('utc', 'ist'), ('aest', 'ist'), ('sgt', 'ist'), ('jst', 'ist'), ('gst', 'ist'),
+              ('est', 'pst'), ('est', 'cst'), ('cst', 'pst'), ('est', 'mst'), ('mst', 'pst'),
+              ('est', 'gmt'), ('pst', 'gmt'), ('cst', 'gmt'), ('gmt', 'cet'), ('cet', 'est'), ('cet', 'pst'),
+              ('utc', 'est'), ('utc', 'pst'), ('utc', 'cst'), ('utc', 'cet'), ('utc', 'jst'),
+              ('aest', 'est'), ('aest', 'pst'), ('aest', 'gmt'), ('jst', 'est'), ('jst', 'pst'),
+              ('sgt', 'est'), ('pht', 'est'), ('pht', 'pst')]
+
+
 # ---------- pure helpers (unit-tested) ----------
 
 # Letters NFKD cannot split into a base letter plus an accent.
@@ -550,7 +586,119 @@ def pair_static(a, b, now):
     return title, desc, head, '<section class="city-facts">' + '\n'.join(body) + '</section>'
 
 
-def city_index(pages, slugs, pairs=()):
+def zone_slug(a, b):
+    return f'{a}-to-{b}'
+
+
+def zone_short(key, when):
+    """What the zone's clock is called at `when`: 'EDT (UTC−4)'."""
+    zone = ZONES[key][2]
+    return _named(offset_minutes(zone, when), abbreviation(zone, when))
+
+
+def hour_table(za, zb, date):
+    """[(a wall time, b wall time)] for each whole hour of `date` in za."""
+    out = []
+    for h in range(24):
+        t = dt.datetime(date.year, date.month, date.day, h, tzinfo=ZoneInfo(za))
+        u = t.astimezone(ZoneInfo(zb))
+        shift = (u.date() - t.date()).days
+        out.append((clock(t), clock(u) + ({1: ' (next day)', -1: ' (day before)'}.get(shift, ''))))
+    return out
+
+
+def zone_pair_static(ka, kb, now):
+    """(title, description, head html, body html) for /time/<a>-to-<b>/."""
+    A, B = ZONES[ka], ZONES[kb]
+    za, zb = A[2], B[2]
+    jan, jul = _midweek(now.year, 1), _midweek(now.year, 7)
+    noon = lambda d: dt.datetime(d.year, d.month, d.day, 12, tzinfo=dt.timezone.utc)  # noqa: E731
+    gaps = [(m, offset_minutes(zb, noon(d)) - offset_minutes(za, noon(d))) for m, d in (('January', jan), ('July', jul))]
+    same = gaps[0][1] == gaps[1][1]
+    def rel(g, of=True):
+        if g == 0:
+            return 'the same time as' if of else 'the same time'
+        return f'{hours(g)} {("ahead of" if of else "ahead") if g > 0 else "behind"}'
+    if same:
+        lead = f'{B[1]} ({B[0]}) is {rel(gaps[0][1])} {A[1]} ({A[0]}) all year.'
+        short = lead
+    else:
+        lead = (f'{B[1]} is {rel(gaps[0][1])} {A[1]} in January, when the clocks read '
+                f'{zone_short(ka, noon(jan))} and {zone_short(kb, noon(jan))}, and {rel(gaps[1][1], False)} in July, '
+                f'when they read {zone_short(ka, noon(jul))} and {zone_short(kb, noon(jul))}.')
+        short = f'{B[0]} is {rel(gaps[0][1])} {A[0]} in January and {rel(gaps[1][1], False)} in July.'
+    nine = hour_table(za, zb, jan)[9]
+
+    def labels(key):
+        """'EST / EDT' when the zone's own label changes through the year."""
+        names = []
+        for d in (jan, jul):
+            n = abbreviation(ZONES[key][2], noon(d))
+            if n not in names:
+                names.append(n)
+        return ' / '.join(names)
+    title = f'{A[0]} to {B[0]} converter: {A[1]} to {B[1]}'
+    desc = (f'Convert {A[0]} to {B[0]}: 9 am {A[0]} is {nine[1]} {B[0]} in January. {short} '
+            + ('Hour-by-hour table and shared working hours.' if same and len(pair_segments(za, zb, now)) == 1
+               else 'Hour-by-hour table, the dates the gap changes, and shared working hours.'))
+    head = (f'<section class="city-static"><p class="kicker">Time zone converter</p>'
+            f'<h1>{e(A[0])} to <span class="grad">{e(B[0])}</span></h1>\n'
+            f'<p class="live" id="live" aria-live="off"></p>\n'
+            f'<p class="zone-para">{e(lead)}</p></section>')
+    if same:
+        tab = table([labels(ka), labels(kb)], hour_table(za, zb, jan))
+    else:
+        rows = [(a, b1, b2) for (a, b1), (_, b2) in zip(hour_table(za, zb, jan), hour_table(za, zb, jul))]
+        tab = table([labels(ka), f'{labels(kb)}, January', f'{labels(kb)}, July'], rows)
+    body = [f'<h2>{e(A[0])} to {e(B[0])}, hour by hour</h2>'
+            f'<p class="tnote">Each hour of the day in {e(A[1])}, and the time in {e(B[1])} at that moment.</p>' + tab]
+    segs = pair_segments(za, zb, now)
+    if len(segs) > 1:
+        body.append(f'<h2>When the gap changes in {now.year} and {now.year + 1}</h2>'
+                    + table(['From', 'To', 'Difference'],
+                            [(day(f), day(l) if l else 'and after', gap_sentence(A[1], B[1], g)) for f, l, g in segs]))
+    months = [(jan, 'January'), (jul, 'July')]
+    body.append('<h2>Working hours overlap</h2><p class="tnote">When 9 am – 5 pm on both sides meet, '
+                'in each side\'s own time.</p>'
+                + table(['', *(m for _, m in months)],
+                        [(f'{x[1]}', *(overlap_text(x[2], y[2], d) for d, _ in months)) for x, y in ((A, B), (B, A))]))
+    body.append('<h2>About these abbreviations</h2><ul class="changes">'
+                + ''.join(f'<li><b>{e(z[0])}</b>: {e(z[3])}</li>' for z in (A, B)) + '</ul>')
+    others = [(x, y) for x, y in ZONE_PAIRS if (x, y) != (ka, kb) and {x, y} & {ka, kb}]
+    body.append('<h2>More conversions</h2><ul class="links">'
+                + ''.join(f'<li><a href="/time/{zone_slug(x, y)}/">{e(ZONES[x][0])} to {e(ZONES[y][0])}</a></li>'
+                          for x, y in others) + '</ul>')
+    preload = f'z:{za}|{A[1]},z:{zb}|{B[1]}'
+    return title, desc, head, '<section class="city-facts">' + '\n'.join(body) + '</section>', preload
+
+
+def zone_reference(now):
+    """The hub's abbreviation table: readable with no JavaScript at all."""
+    rows = []
+    for key, (abbr, name, zone, _) in ZONES.items():
+        std, dst = year_times(zone, now)
+        rows.append((abbr, name, offset_label(std[0]),
+                     f'{dst[1]} ({offset_label(dst[0])})' if dst else 'No change'))
+    return table(['Abbr', 'Zone', 'Standard', 'Daylight saving'], rows)
+
+
+HUB_INTRO = (
+    '<section class="city-facts"><h2>How the converter works</h2>'
+    '<p>Type a time and a place the way you would say it: <b>8am Tokyo in London</b>, <b>3pm EST to IST</b>, '
+    'an airport code such as <b>LHR</b>, or an offset such as <b>UTC+5:30</b>. Every city you add gets a row '
+    'of hours, lined up so one column is one moment. Drag the slider or tap an hour to move every clock together; '
+    'green hours are inside everyone\'s working day, so the meeting time that suits all of them stands out.</p>'
+    '<p>Daylight saving is handled for each place on its own dates, so the gap between New York and London is '
+    'right in the weeks when only one of them has changed its clocks. Pick a date to plan ahead; sunrise, sunset, '
+    'the next clock change and public holidays for each city sit one tap away. When the time is set, send it as a '
+    'link, add it to Google Calendar or Outlook, or download an .ics file. It all runs in your browser: no account, '
+    'no sign-up, and nothing you type is sent anywhere.</p>'
+    '<h2>Time zone abbreviations</h2>'
+    '<p class="tnote">The abbreviations people type most, and the clock each one means here.</p>{table}'
+    '</section>')
+
+
+def city_index(pages, slugs, pairs=(), zone_pairs=()):
     """The hub's list. Two cities with one name show their country."""
     names = {}
     for p in pages:
@@ -560,6 +708,10 @@ def city_index(pages, slugs, pairs=()):
     for p in sorted(pages, key=lambda p: p['name']):
         groups.setdefault(continent(p['zone']), []).append(p)
     out = ['<section class="city-index">']
+    if zone_pairs:
+        out.append('<h2>Time zone conversions</h2><ul class="links">'
+                   + ''.join(f'<li><a href="/time/{zone_slug(x, y)}/">{e(ZONES[x][0])} to {e(ZONES[y][0])}</a></li>'
+                             for x, y in zone_pairs) + '</ul>')
     if pairs:
         out.append('<h2>Time differences</h2><ul class="links">'
                    + ''.join(f'<li><a href="/time/{s}/">{e(x)} – {e(y)}</a></li>' for s, x, y in pairs) + '</ul>')
@@ -670,18 +822,20 @@ def build(db, root=ROOT, now=None):
 
     (out / 'index.html').write_text(render(
         template,
-        title='World Time Converter &amp; Meeting Planner | Unichrono',
-        description=e('Convert times between cities, find a meeting time across time zones, and see sunrise, '
-                      'clock changes and holidays. Free, in your browser, no sign-up.'),
+        title='Time Zone Converter &amp; Meeting Planner – World Time | Unichrono',
+        description=e('Free time zone converter and meeting planner. Type "3pm EST to IST" or "8am Tokyo in London", '
+                      'compare cities hour by hour, and find a time that suits everyone. No sign-up.'),
         canonical=f'{SITE}/time/', jsonld=json.dumps({
             '@context': 'https://schema.org', '@type': 'WebApplication', 'name': 'Unichrono World Time',
             'url': f'{SITE}/time/', 'applicationCategory': 'UtilitiesApplication', 'operatingSystem': 'Any',
             'offers': {'@type': 'Offer', 'price': '0'}}, indent=1),
-        static='<section class="city-static"><p class="kicker">Unichrono</p><h1>World Time <span class="grad">Converter</span></h1>'
-               '<p class="zone-para">Compare cities, pick a time that works for everyone, and share it.</p>'
+        static='<section class="city-static"><p class="kicker">World time</p><h1>Time Zone <span class="grad">Converter</span> '
+               '&amp; Meeting Planner</h1>'
+               '<p class="zone-para">Convert a time between any cities or time zones, compare them hour by hour, '
+               'pick a meeting time that works for everyone, and share it.</p>'
                '<p class="live" id="live" aria-live="off"></p></section>',
-        links='', preload='', robots='',
-        cityindex=city_index(indexed, slugs, [(s, a['name'], b['name']) for s, a, b in pairs])))
+        links=HUB_INTRO.replace('{table}', zone_reference(now)), preload='', robots='',
+        cityindex=city_index(indexed, slugs, [(s, a['name'], b['name']) for s, a, b in pairs], ZONE_PAIRS)))
 
     for c in pages:
         slug = slugs[c['id']]
@@ -712,6 +866,16 @@ def build(db, root=ROOT, now=None):
                                'url': f'{SITE}/time/{s}/'}, indent=1, ensure_ascii=False),
             static=head, links=body, preload=f'{slugs[a["id"]]},{slugs[b["id"]]}', cityindex='', robots=''))
 
+    for ka, kb in ZONE_PAIRS:
+        title, desc, head, body, preload = zone_pair_static(ka, kb, now)
+        s = zone_slug(ka, kb)
+        (out / s).mkdir()
+        (out / s / 'index.html').write_text(render(
+            template, title=e(f'{title} | Unichrono'), description=e(desc), canonical=f'{SITE}/time/{s}/',
+            jsonld=json.dumps({'@context': 'https://schema.org', '@type': 'WebPage', 'name': title,
+                               'url': f'{SITE}/time/{s}/'}, indent=1, ensure_ascii=False),
+            static=head, links=body, preload=e(preload), cityindex='', robots=''))
+
     taken = {p.name for p in out.iterdir()}
     for old, new in json.loads(REDIRECTS.read_text()).items() if REDIRECTS.exists() else ():
         assert new in taken, f'redirect {old} -> {new}: no such page'
@@ -720,9 +884,10 @@ def build(db, root=ROOT, now=None):
             (out / old / 'index.html').write_text(redirect_page(new))
 
     update_sitemap(root, [f'{SITE}/time/'] + [f'{SITE}/time/{slugs[p["id"]]}/' for p in indexed]
-                   + [f'{SITE}/time/{s}/' for s, _, _ in pairs], now.date().isoformat())
+                   + [f'{SITE}/time/{s}/' for s, _, _ in pairs]
+                   + [f'{SITE}/time/{zone_slug(a, b)}/' for a, b in ZONE_PAIRS], now.date().isoformat())
     update_llms(root)
-    return {'pages': len(pages), 'indexed': len(indexed), 'pairs': len(pairs), 'countries': len({c['cc'] for c in cities}),
+    return {'pages': len(pages), 'indexed': len(indexed), 'pairs': len(pairs), 'zone_pairs': len(ZONE_PAIRS), 'countries': len({c['cc'] for c in cities}),
             'page_countries': len({p['cc'] for p in pages})}
 
 

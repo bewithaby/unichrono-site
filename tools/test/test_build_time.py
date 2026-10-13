@@ -187,7 +187,8 @@ class EndToEnd(unittest.TestCase):
         self.assertEqual(xml.count('<loc>https://unichrono.app/time/</loc>'), 1)
         self.assertEqual(xml.count('<loc>https://unichrono.app/time/tokyo/</loc>'), 1)
         self.assertEqual(xml.count('<loc>https://unichrono.app/</loc>'), 1)
-        self.assertEqual(xml.count('/time/'), self.stats['indexed'] + self.stats['pairs'] + 1)
+        self.assertEqual(xml.count('/time/'), self.stats['indexed'] + self.stats['pairs'] + self.stats['zone_pairs'] + 1)
+        self.assertIn('<loc>https://unichrono.app/time/est-to-ist/</loc>', xml)
         self.assertNotIn('/time/casey/', xml)
         self.assertIn('<loc>https://unichrono.app/time/london-new-york/</loc>', xml)
 
@@ -226,6 +227,25 @@ class EndToEnd(unittest.TestCase):
         self.assertIn('data-preload="london,new-york"', html)
         self.assertIn('New York is 5 hours behind London for most of the year', html)
         self.assertIn('<link rel="canonical" href="https://unichrono.app/time/london-new-york/">', html)
+
+    def test_zone_pair_page(self):
+        html = (self.root / 'time' / 'est-to-ist' / 'index.html').read_text()
+        self.assertIn('<title>EST to IST converter: Eastern Time to India Standard Time | Unichrono</title>', html)
+        self.assertIn('data-preload="z:America/New_York|Eastern Time,z:Asia/Kolkata|India Standard Time"', html)
+        self.assertIn('9 hours 30 min ahead in July', html)
+        self.assertIn('<td>9:00\u00a0am</td><td>7:30\u00a0pm</td><td>6:30\u00a0pm</td>', html)
+        self.assertIn('href="/time/pst-to-ist/"', html)
+        fixed = (self.root / 'time' / 'utc-to-jst' / 'index.html').read_text()
+        self.assertIn('9 hours ahead of Coordinated Universal Time (UTC) all year', fixed)
+        self.assertNotIn('dates the gap changes', fixed)
+
+    def test_hub(self):
+        hub = (self.root / 'time' / 'index.html').read_text()
+        self.assertIn('<title>Time Zone Converter &amp; Meeting Planner – World Time | Unichrono</title>', hub)
+        self.assertIn('<h2>How the converter works</h2>', hub)
+        self.assertIn('<td>IST</td><td>India Standard Time</td><td>UTC+5:30</td><td>No change</td>', hub)
+        self.assertIn('href="/time/est-to-ist/"', hub)
+        self.assertIn('href="/time/london-new-york/"', hub)
 
     def test_renamed_slugs_redirect(self):
         stub = (self.root / 'time' / 'zuerich' / 'index.html').read_text()
