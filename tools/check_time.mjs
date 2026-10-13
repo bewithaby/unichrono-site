@@ -14,7 +14,7 @@ const browser = await chromium.launch({ executablePath: process.env.CHROMIUM });
 const failures = [];
 const fail = (where, what) => { failures.push(`${where}: ${what}`); };
 
-for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/']) {
+for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/', '/time/london-new-york/']) {
   for (const [w, h] of [[390, 844], [1280, 900]]) {
     for (const scheme of ['dark', 'light']) {
       const where = `${path} ${w}px ${scheme}`;
@@ -30,7 +30,10 @@ for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/']) {
       if (rows < 3) fail(where, `only ${rows} rows`);
       const overflow = await page.evaluate(() => document.documentElement.scrollWidth - innerWidth);
       if (overflow > 0) fail(where, `page scrolls sideways by ${overflow}px`);
-      if (path !== '/time/') {
+      if (path === '/time/london-new-york/') {
+        const first = await page.locator('.row').evaluateAll(rs => rs.slice(1, 3).map(r => r.textContent)); // row 0 is the visitor's home city
+        if (!/London/.test(first[0] ?? '') || !/New York/.test(first[1] ?? '')) fail(where, `pair rows not preloaded: ${first}`);
+      } else if (path !== '/time/') {
         const a = await page.textContent('#live');
         await page.waitForTimeout(1600);
         const b = await page.textContent('#live');

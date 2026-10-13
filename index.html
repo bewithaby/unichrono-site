@@ -116,7 +116,8 @@ nav>.btn{display:none}
 .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,4vw,60px);align-items:center}
 .kicker{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--accent);text-transform:uppercase;display:flex;align-items:center;gap:12px}
 .kicker::before{content:"";width:26px;height:1px;background:var(--accent);flex:none}
-h1{font-size:clamp(2.25rem,5vw,4.1rem);line-height:1.05;font-weight:600;letter-spacing:-.035em;margin:22px 0 22px}
+h1.kicker{margin:0;font-weight:400}
+.display{font-size:clamp(2.25rem,5vw,4.1rem);line-height:1.05;font-weight:600;letter-spacing:-.035em;margin:22px 0 22px}
 .hero-sub{font-size:clamp(16px,1.6vw,17.5px);line-height:1.7;color:var(--ink2);max-width:34em}
 .hero-cta{display:flex;gap:12px;flex-wrap:wrap;margin:30px 0 16px}
 .cta-block{display:inline-flex;flex-direction:column;max-width:100%}
@@ -477,7 +478,7 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
   .hd{gap:8px}
 }
 @media(max-width:680px){
-  h1{font-size:clamp(2rem,8.5vw,2.7rem)}
+  .display{font-size:clamp(2rem,8.5vw,2.7rem)}
   .phone{height:640px}
   .fbig{margin-bottom:26px}
   .tki{font-size:10.5px}.tkdot{margin:0 16px}
@@ -610,8 +611,8 @@ footer{border-top:1px solid var(--line);padding:52px 0 34px;overflow:hidden}
 <section class="hero">
   <div class="wrap hero-grid">
     <div>
-      <span class="kicker">Time around the world. Made personal.</span>
-      <h1>The world runs on many clocks. <em class="grad">Yours runs on one.</em></h1>
+      <h1 class="kicker">World clock widgets for Android, iPhone, iPad and Mac</h1>
+      <p class="display">The world runs on many clocks. <em class="grad">Yours runs on one.</em></p>
       <p class="hero-sub">Every city you care about, one glance away. Live home-screen widgets, a time machine for cross-meridian planning, and alarms anchored to a city's clock instead of your local time.</p>
       <div class="cta-block">
       <div class="hero-cta">

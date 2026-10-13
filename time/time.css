@@ -33,7 +33,18 @@ body{background:var(--bg)}
 .facts div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
 .facts dt{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
 .facts dd{font-weight:600;overflow-wrap:anywhere}
-.city-links{margin-top:26px}
+.city-facts,.city-links{margin-top:26px}
+.city-facts h2{font-size:1.15rem;margin:26px 0 8px;letter-spacing:-.01em}
+.city-facts .tnote{color:var(--ink2);margin:0 0 10px;max-width:46em}
+.changes{margin:0 0 6px 1.2em;color:var(--ink2)}
+.changes li{margin:4px 0}
+.tablewrap{overflow-x:auto;min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.ttable{border-collapse:collapse;width:100%;min-width:0;font-variant-numeric:tabular-nums}
+.ttable th,.ttable td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.ttable th{white-space:nowrap}
+@media (max-width:560px){.ttable th,.ttable td{padding:8px 9px;font-size:.92em}}
+.ttable tr:last-child td{border-bottom:0}
+.ttable th{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);font-weight:500}
 .city-links h2,.city-index h2{font-size:1.15rem;margin:22px 0 8px;letter-spacing:-.01em}
 .city-index h3{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin:18px 0 6px}
 .links{list-style:none;display:flex;flex-wrap:wrap;gap:6px 14px}

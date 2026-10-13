@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>New York to Sydney time difference | Unichrono</title>
+<meta name="description" content="Sydney is 14 hours ahead of New York for most of the year. When it is 9 am in New York it is 1:00 am in Sydney in January. Every date the gap changes, and the working hours both cities share.">
+<link rel="canonical" href="https://unichrono.app/time/new-york-sydney/">
+
+<link rel="icon" href="/img/icon.png">
+<meta name="theme-color" content="#0E1220">
+<meta property="og:title" content="New York to Sydney time difference | Unichrono">
+<meta property="og:description" content="Sydney is 14 hours ahead of New York for most of the year. When it is 9 am in New York it is 1:00 am in Sydney in January. Every date the gap changes, and the working hours both cities share.">
+<meta property="og:url" content="https://unichrono.app/time/new-york-sydney/">
+<meta property="og:site_name" content="Unichrono">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://unichrono.app/img/og-unichrono-1200x630.jpg">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebPage",
+ "name": "New York to Sydney time difference",
+ "url": "https://unichrono.app/time/new-york-sydney/"
+}
+</script>
+<script>try{var t=localStorage.getItem('uc-theme')||JSON.parse(localStorage.getItem('uc.time.theme')||'null')||sessionStorage.getItem('uc-theme-now');if(t==='paper')t='light';if(t!=='light'&&t!=='dark')t='light';document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/uc.css">
+<link rel="stylesheet" href="/time/time.css">
+<script type="module" src="/time/js/app.js"></script>
+</head>
+<body data-preload="new-york,sydney">
+
+<header>
+  <div class="wrap hd">
+    <a class="logo" href="/"><img src="/img/icon.png" alt="">Unichrono</a>
+    <button class="menub" id="menub" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav id="nav">
+      <a href="/">Home</a>
+      <a href="/time/" class="here">Convert time</a>
+      <a href="/help.html">Help</a>
+      <a href="/about.html">About</a>
+      <a class="btn" href="/#get">Get the app</a>
+    </nav>
+    <button class="themeb" id="themeb" type="button" aria-label="Switch to light theme"></button>
+    <a class="btn" href="/#get">Get the app</a>
+  </div>
+</header>
+
+<main class="wrap tmain">
+<section class="city-static"><p class="kicker">Time difference</p><h1>New York and <span class="grad">Sydney</span> time</h1>
+<p class="live" id="live" aria-live="off"></p>
+<p class="zone-para">Sydney is 14 hours ahead of New York for most of the year. Because the two change their clocks on different dates, the gap is 14 hours or 15 hours or 16 hours depending on the date.</p></section>
+
+<section class="tool" id="tool" aria-label="World time converter">
+  <div class="smart">
+    <label class="sr" for="q">Type a time or a place</label>
+    <input id="q" type="text" autocomplete="off" spellcheck="false" enterkeyhint="go"
+           placeholder="Try &quot;8am Tokyo in London&quot;, &quot;LHR&quot;, &quot;PST&quot;, &quot;UTC+5:30&quot;">
+    <div id="preview" class="preview" aria-live="polite"></div>
+    <ul id="sugg" class="sugg" role="listbox" aria-label="Places"></ul>
+  </div>
+
+  <div class="bar">
+    <label class="sr" for="date">Date</label>
+    <input id="date" type="date">
+    <button id="now" class="chip" type="button">Now</button>
+    <span id="clock" class="clockline"></span>
+    <span class="grow"></span>
+    <button id="fmt" class="chip" type="button" aria-pressed="false">24h</button>
+    <button id="theme" class="chip" type="button">Light</button>
+  </div>
+
+  <div class="gridwrap" id="gridwrap">
+    <div id="grid" class="grid" tabindex="0" role="application"
+         aria-label="Hour grid. Left and right arrows move the selected hour."></div>
+  </div>
+  <div class="gridfoot">
+    <button id="addcity" class="chip" type="button">+ Add city</button>
+    <button id="reset" class="linkbtn" type="button" hidden>Reset to defaults</button>
+  </div>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <label class="sr" for="slider">Selected time</label>
+  <input id="slider" class="slider" type="range" min="0" max="1439" step="15">
+  <p id="sel" class="sel" aria-live="polite"></p>
+
+  <div class="meet" id="meet"></div>
+
+  <div class="actions">
+    <a id="gcal" class="chip" target="_blank" rel="noopener">Google Calendar</a>
+    <a id="ocal" class="chip" target="_blank" rel="noopener">Outlook</a>
+    <button id="ics" class="chip" type="button">Apple / .ics</button>
+    <button id="copy" class="chip" type="button">Copy times</button>
+    <button id="share" class="chip accent" type="button">Share link</button>
+  </div>
+
+  <aside id="detail" class="detail" hidden aria-live="polite"></aside>
+  <noscript><p>The converter needs JavaScript. The city facts above work without it.</p></noscript>
+</section>
+
+<section class="city-facts"><h2>The gap through 2026 and 2027</h2><div class="tablewrap"><table class="ttable"><thead><tr><th>From</th><th>To</th><th>Difference</th></tr></thead><tbody><tr><td>Thu 1 Jan 2026</td><td>Sat 7 Mar 2026</td><td>Sydney is 16 hours ahead of New York</td></tr><tr><td>Sun 8 Mar 2026</td><td>Sat 4 Apr 2026</td><td>Sydney is 15 hours ahead of New York</td></tr><tr><td>Sun 5 Apr 2026</td><td>Sat 3 Oct 2026</td><td>Sydney is 14 hours ahead of New York</td></tr><tr><td>Sun 4 Oct 2026</td><td>Sat 31 Oct 2026</td><td>Sydney is 15 hours ahead of New York</td></tr><tr><td>Sun 1 Nov 2026</td><td>Sat 13 Mar 2027</td><td>Sydney is 16 hours ahead of New York</td></tr><tr><td>Sun 14 Mar 2027</td><td>Sat 3 Apr 2027</td><td>Sydney is 15 hours ahead of New York</td></tr><tr><td>Sun 4 Apr 2027</td><td>Sat 2 Oct 2027</td><td>Sydney is 14 hours ahead of New York</td></tr><tr><td>Sun 3 Oct 2027</td><td>Sat 6 Nov 2027</td><td>Sydney is 15 hours ahead of New York</td></tr><tr><td>Sun 7 Nov 2027</td><td>and after</td><td>Sydney is 16 hours ahead of New York</td></tr></tbody></table></div>
+<h2>Working hours overlap</h2><p class="tnote">When 9 am – 5 pm in both cities meet, in each city's own time.</p><div class="tablewrap"><table class="ttable"><thead><tr><th></th><th>January</th><th>July</th></tr></thead><tbody><tr><td>New York time</td><td>No overlap</td><td>No overlap</td></tr><tr><td>Sydney time</td><td>No overlap</td><td>No overlap</td></tr></tbody></table></div></section>
+
+<p class="appnote">Want this on your home screen, Lock Screen or watch? <a href="/#get">Unichrono for Android, iPhone, iPad and Mac</a> — free.</p>
+
+
+</main>
+
+<footer>
+  <div class="wrap frow">
+    <span>© 2026 Spiny Valley Labs</span>
+    <span class="flinks">
+      <a href="/">Home</a><a href="/help.html">Help</a><a href="/privacy-policy.html">Privacy</a><a href="/#feedback">Feedback</a>
+    </span>
+  </div>
+</footer>
+<script src="/assets/theme.js"></script>
+</body>
+</html>

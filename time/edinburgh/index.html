@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Current time in Edinburgh, United Kingdom – GMT/BST | Unichrono</title>
+<meta name="description" content="Current time in Edinburgh, United Kingdom: GMT/BST. Every clock change in 2026 and 2027, sunrise and sunset through the year and the working hours it shares with London, New York and Sydney.">
+<link rel="canonical" href="https://unichrono.app/time/edinburgh/">
+
+<link rel="icon" href="/img/icon.png">
+<meta name="theme-color" content="#0E1220">
+<meta property="og:title" content="Current time in Edinburgh, United Kingdom – GMT/BST | Unichrono">
+<meta property="og:description" content="Current time in Edinburgh, United Kingdom: GMT/BST. Every clock change in 2026 and 2027, sunrise and sunset through the year and the working hours it shares with London, New York and Sydney.">
+<meta property="og:url" content="https://unichrono.app/time/edinburgh/">
+<meta property="og:site_name" content="Unichrono">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://unichrono.app/img/og-unichrono-1200x630.jpg">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebPage",
+ "name": "Time in Edinburgh, United Kingdom",
+ "url": "https://unichrono.app/time/edinburgh/",
+ "about": {
+  "@type": "Place",
+  "name": "Edinburgh",
+  "address": {
+   "@type": "PostalAddress",
+   "addressCountry": "GB"
+  },
+  "geo": {
+   "@type": "GeoCoordinates",
+   "latitude": 55.9521,
+   "longitude": -3.1965
+  }
+ }
+}
+</script>
+<script>try{var t=localStorage.getItem('uc-theme')||JSON.parse(localStorage.getItem('uc.time.theme')||'null')||sessionStorage.getItem('uc-theme-now');if(t==='paper')t='light';if(t!=='light'&&t!=='dark')t='light';document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/uc.css">
+<link rel="stylesheet" href="/time/time.css">
+<script type="module" src="/time/js/app.js"></script>
+</head>
+<body data-preload="edinburgh">
+
+<header>
+  <div class="wrap hd">
+    <a class="logo" href="/"><img src="/img/icon.png" alt="">Unichrono</a>
+    <button class="menub" id="menub" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav id="nav">
+      <a href="/">Home</a>
+      <a href="/time/" class="here">Convert time</a>
+      <a href="/help.html">Help</a>
+      <a href="/about.html">About</a>
+      <a class="btn" href="/#get">Get the app</a>
+    </nav>
+    <button class="themeb" id="themeb" type="button" aria-label="Switch to light theme"></button>
+    <a class="btn" href="/#get">Get the app</a>
+  </div>
+</header>
+
+<main class="wrap tmain">
+<section class="city-static"><p class="kicker">World time</p><h1>Time in <span class="grad">Edinburgh</span>, United Kingdom</h1>
+<p class="live" id="live" aria-live="off"></p>
+<p class="zone-para">Edinburgh uses Europe/London time: GMT (UTC) as standard time and BST (UTC+1) during daylight saving time.</p>
+<p class="zone-next" id="zone-next" data-zone="Europe/London"></p>
+<dl class="facts"><div><dt>Country</dt><dd>🇬🇧 United Kingdom</dd></div><div><dt>Time zone</dt><dd>Europe/London</dd></div><div><dt>UTC offset</dt><dd>UTC / UTC+1</dd></div><div><dt>Abbreviation</dt><dd>GMT / BST</dd></div><div><dt>Coordinates</dt><dd>55.95, -3.20</dd></div><div><dt>Population</dt><dd>514,990</dd></div></dl></section>
+
+<section class="tool" id="tool" aria-label="World time converter">
+  <div class="smart">
+    <label class="sr" for="q">Type a time or a place</label>
+    <input id="q" type="text" autocomplete="off" spellcheck="false" enterkeyhint="go"
+           placeholder="Try &quot;8am Tokyo in London&quot;, &quot;LHR&quot;, &quot;PST&quot;, &quot;UTC+5:30&quot;">
+    <div id="preview" class="preview" aria-live="polite"></div>
+    <ul id="sugg" class="sugg" role="listbox" aria-label="Places"></ul>
+  </div>
+
+  <div class="bar">
+    <label class="sr" for="date">Date</label>
+    <input id="date" type="date">
+    <button id="now" class="chip" type="button">Now</button>
+    <span id="clock" class="clockline"></span>
+    <span class="grow"></span>
+    <button id="fmt" class="chip" type="button" aria-pressed="false">24h</button>
+    <button id="theme" class="chip" type="button">Light</button>
+  </div>
+
+  <div class="gridwrap" id="gridwrap">
+    <div id="grid" class="grid" tabindex="0" role="application"
+         aria-label="Hour grid. Left and right arrows move the selected hour."></div>
+  </div>
+  <div class="gridfoot">
+    <button id="addcity" class="chip" type="button">+ Add city</button>
+    <button id="reset" class="linkbtn" type="button" hidden>Reset to defaults</button>
+  </div>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <label class="sr" for="slider">Selected time</label>
+  <input id="slider" class="slider" type="range" min="0" max="1439" step="15">
+  <p id="sel" class="sel" aria-live="polite"></p>
+
+  <div class="meet" id="meet"></div>
+
+  <div class="actions">
+    <a id="gcal" class="chip" target="_blank" rel="noopener">Google Calendar</a>
+    <a id="ocal" class="chip" target="_blank" rel="noopener">Outlook</a>
+    <button id="ics" class="chip" type="button">Apple / .ics</button>
+    <button id="copy" class="chip" type="button">Copy times</button>
+    <button id="share" class="chip accent" type="button">Share link</button>
+  </div>
+
+  <aside id="detail" class="detail" hidden aria-live="polite"></aside>
+  <noscript><p>The converter needs JavaScript. The city facts above work without it.</p></noscript>
+</section>
+
+<section class="city-facts"><h2>Clock changes in 2026 and 2027</h2><ul class="changes"><li>Sun 29 Mar 2026: clocks go forward 1 hour at 1:00 am, to BST (UTC+1)</li><li>Sun 25 Oct 2026: clocks go back 1 hour at 2:00 am, to GMT (UTC)</li><li>Sun 28 Mar 2027: clocks go forward 1 hour at 1:00 am, to BST (UTC+1)</li><li>Sun 31 Oct 2027: clocks go back 1 hour at 2:00 am, to GMT (UTC)</li></ul>
+<h2>Working hours overlap</h2><p class="tnote">When a 9 am – 5 pm working day in Edinburgh meets one in each city, shown in Edinburgh time.</p><div class="tablewrap"><table class="ttable"><thead><tr><th>With</th><th>January</th><th>July</th></tr></thead><tbody><tr><td>London</td><td>9:00 am – 5:00 pm (8 hours)</td><td>9:00 am – 5:00 pm (8 hours)</td></tr><tr><td>New York</td><td>2:00 pm – 5:00 pm (3 hours)</td><td>2:00 pm – 5:00 pm (3 hours)</td></tr><tr><td>Sydney</td><td>No overlap</td><td>No overlap</td></tr></tbody></table></div>
+<h2>Sunrise and sunset in Edinburgh</h2><p class="tnote">Local time, 2026. The converter above shows today's.</p><div class="tablewrap"><table class="ttable"><thead><tr><th>Day</th><th>Sunrise</th><th>Sunset</th><th>Daylight</th></tr></thead><tbody><tr><td>March equinox, 20 Mar</td><td>6:16 am</td><td>6:26 pm</td><td>12 h 09 min</td></tr><tr><td>June solstice, 21 Jun</td><td>4:27 am</td><td>10:04 pm</td><td>17 h 36 min</td></tr><tr><td>September equinox, 22 Sep</td><td>6:58 am</td><td>7:15 pm</td><td>12 h 17 min</td></tr><tr><td>December solstice, 21 Dec</td><td>8:43 am</td><td>3:40 pm</td><td>6 h 57 min</td></tr></tbody></table></div></section>
+<section class="city-links"><h2>More cities in United Kingdom</h2><ul class="links"><li><a href="/time/london/">London</a></li><li><a href="/time/manchester/">Manchester</a></li></ul>
+<h2>Same time as Edinburgh all year</h2><ul class="links"><li><a href="/time/saint-helier/">Saint Helier</a></li><li><a href="/time/douglas/">Douglas</a></li><li><a href="/time/saint-peter-port/">Saint Peter Port</a></li></ul>
+<h2>Compare</h2><ul class="links"><li><a href="/time/?c=edinburgh,london">Edinburgh vs London</a></li><li><a href="/time/?c=edinburgh,new-york">Edinburgh vs New York</a></li><li><a href="/time/?c=edinburgh,tokyo">Edinburgh vs Tokyo</a></li><li><a href="/time/?c=edinburgh,sydney">Edinburgh vs Sydney</a></li><li><a href="/time/?c=edinburgh,dubai">Edinburgh vs Dubai</a></li><li><a href="/time/?c=edinburgh,singapore">Edinburgh vs Singapore</a></li></ul></section>
+
+<p class="appnote">Want this on your home screen, Lock Screen or watch? <a href="/#get">Unichrono for Android, iPhone, iPad and Mac</a> — free.</p>
+
+
+</main>
+
+<footer>
+  <div class="wrap frow">
+    <span>© 2026 Spiny Valley Labs</span>
+    <span class="flinks">
+      <a href="/">Home</a><a href="/help.html">Help</a><a href="/privacy-policy.html">Privacy</a><a href="/#feedback">Feedback</a>
+    </span>
+  </div>
+</footer>
+<script src="/assets/theme.js"></script>
+</body>
+</html>

@@ -30,6 +30,15 @@ class Slugs(unittest.TestCase):
     def test_new_york_city_is_new_york(self):
         self.assertEqual(b.assign_slugs([city(1, 'New York City', 'US', 10)]), {1: 'new-york'})
 
+    def test_featured_city_keeps_the_bare_name(self):
+        cs = [city(1, 'Hyderabad', 'PK', 10), city(2, 'Hyderabad', 'IN', 5)]
+        self.assertEqual(b.assign_slugs(cs, featured={2}), {1: 'hyderabad-pk', 2: 'hyderabad'})
+
+    def test_slug_from_display_name_not_geonames_ascii(self):
+        self.assertEqual(b.assign_slugs([dict(city(1, 'Zürich', 'CH', 10), ascii='Zuerich')]), {1: 'zurich'})
+        self.assertEqual(b.slugify('Diyarbakır'), 'diyarbakir')
+        self.assertEqual(b.slugify('San Pawl il-Baħar'), 'san-pawl-il-bahar')
+
     def test_same_name_same_country_falls_back_to_id(self):
         cs = [city(1, 'Rajpur', 'IN', 10), city(2, 'Rajpur', 'IN', 5)]
         self.assertEqual(b.assign_slugs(cs), {1: 'rajpur-in-1', 2: 'rajpur-in-2'})
@@ -50,6 +59,47 @@ class Selection(unittest.TestCase):
         bronx = dict(city(5, 'The Bronx', 'US', 1_300_000), lat=40.85, lng=-73.87)  # 19 km from NYC, 7 from Manhattan
         ids = [c['id'] for c in b.select_pages([nyc, brooklyn, newark, manhattan, bronx], top=5)]
         self.assertEqual(ids, [1, 3])
+
+    def test_featured_cities_are_added(self):
+        cs = [city(i, f'C{i}', 'AA', 1000 - i) for i in range(10)]
+        ids = [c['id'] for c in b.select_pages(cs, top=3, featured={7})]
+        self.assertEqual(ids, [0, 1, 2, 7])
+
+    def test_featured_ids_pick_the_biggest_and_fail_on_unknown(self):
+        cs = [city(1, 'Kingston', 'JM', 900), city(2, 'Kingston', 'JM', 5)]
+        self.assertEqual(b.featured_ids(cs, [('Kingston', 'JM')]), {1})
+        with self.assertRaises(AssertionError):
+            b.featured_ids(cs, [('Atlantis', 'XX')])
+
+
+class Facts(unittest.TestCase):
+    def test_clock_changes_london(self):
+        got = [t for _, t in b.clock_changes('Europe/London', NOW)]
+        self.assertEqual(got[0], 'Sun 29 Mar 2026: clocks go forward 1 hour at 1:00\u00a0am, to BST (UTC+1)')
+        self.assertEqual(got[1], 'Sun 25 Oct 2026: clocks go back 1 hour at 2:00\u00a0am, to GMT (UTC)')
+        self.assertEqual(len(got), 4)
+        self.assertEqual(b.clock_changes('Asia/Tokyo', NOW), [])
+
+    def test_overlap_crosses_the_date_line(self):
+        # Tokyo's Wednesday 9 am is Los Angeles' Tuesday 4 pm (PST).
+        o = b.overlap('Asia/Tokyo', 'America/Los_Angeles', dt.date(2026, 1, 14))
+        self.assertEqual((o[0].hour, o[1].hour), (9, 10))
+        self.assertIsNone(b.overlap('Europe/London', 'Australia/Sydney', dt.date(2026, 1, 14)))
+        self.assertEqual(b.overlap_text('Europe/London', 'America/New_York', dt.date(2026, 7, 15)),
+                         '2:00\u00a0pm – 5:00\u00a0pm (3 hours)')
+
+    def test_sun_matches_the_tool(self):
+        rise, set_ = b.sun_times(51.51, -0.13, 'Europe/London', dt.date(2026, 6, 21))
+        self.assertEqual((f'{rise:%H:%M}', f'{set_:%H:%M}'), ('04:44', '21:22'))  # time/js/sun.js gives the same
+        self.assertEqual(b.sun_times(78.22, 15.65, 'Arctic/Longyearbyen', dt.date(2026, 6, 21)), 'day')
+        self.assertEqual(b.sun_times(78.22, 15.65, 'Arctic/Longyearbyen', dt.date(2026, 12, 21)), 'night')
+
+    def test_pair_segments_london_new_york(self):
+        segs = b.pair_segments('Europe/London', 'America/New_York', NOW)
+        self.assertEqual(segs[0], (dt.date(2026, 1, 1), dt.date(2026, 3, 7), -300))
+        self.assertEqual(segs[1], (dt.date(2026, 3, 8), dt.date(2026, 3, 28), -240))
+        self.assertEqual(len(segs), 9)
+        self.assertEqual(b.pair_segments('Asia/Tokyo', 'Asia/Seoul', NOW), [(dt.date(2026, 1, 1), None, 0)])
 
 
 class Text(unittest.TestCase):
@@ -137,7 +187,9 @@ class EndToEnd(unittest.TestCase):
         self.assertEqual(xml.count('<loc>https://unichrono.app/time/</loc>'), 1)
         self.assertEqual(xml.count('<loc>https://unichrono.app/time/tokyo/</loc>'), 1)
         self.assertEqual(xml.count('<loc>https://unichrono.app/</loc>'), 1)
-        self.assertEqual(xml.count('/time/'), self.stats['pages'] + 1)
+        self.assertEqual(xml.count('/time/'), self.stats['indexed'] + self.stats['pairs'] + 1)
+        self.assertNotIn('/time/casey/', xml)
+        self.assertIn('<loc>https://unichrono.app/time/london-new-york/</loc>', xml)
 
     def test_llms_line_once(self):
         self.assertEqual((self.root / 'llms.txt').read_text().count('/time/'), 1)
@@ -153,7 +205,32 @@ class EndToEnd(unittest.TestCase):
         self.assertIn('"@type": "Place"', html)
         self.assertIn('Tokyo does not change its clocks', html)
         self.assertIn('data-preload="tokyo"', html)
-        self.assertIn('href="/time/?c=tokyo,new-york"', html)
+        self.assertIn('href="/time/new-york-tokyo/"', html)
+        self.assertIn('href="/time/?c=tokyo,dubai"', html)
+        self.assertIn('Clock changes in 2026 and 2027', london)
+        self.assertIn('<h2>Working hours overlap</h2>', html)
+        self.assertIn('<h2>Sunrise and sunset in Tokyo</h2>', html)
+        self.assertNotIn('noindex', html)
+
+    def test_only_featured_pages_are_indexed(self):
+        casey = (self.root / 'time' / 'casey' / 'index.html').read_text()
+        self.assertIn('<meta name="robots" content="noindex, follow">', casey)
+        hub = (self.root / 'time' / 'index.html').read_text()
+        self.assertNotIn('href="/time/casey/"', hub)
+        self.assertIn('href="/time/tokyo/"', hub)
+        self.assertEqual(self.stats['indexed'], len(b.FEATURED))
+
+    def test_pair_page(self):
+        html = (self.root / 'time' / 'london-new-york' / 'index.html').read_text()
+        self.assertIn('<title>London to New York time difference | Unichrono</title>', html)
+        self.assertIn('data-preload="london,new-york"', html)
+        self.assertIn('New York is 5 hours behind London for most of the year', html)
+        self.assertIn('<link rel="canonical" href="https://unichrono.app/time/london-new-york/">', html)
+
+    def test_renamed_slugs_redirect(self):
+        stub = (self.root / 'time' / 'zuerich' / 'index.html').read_text()
+        self.assertIn('<meta http-equiv="refresh" content="0; url=/time/zurich/">', stub)
+        self.assertIn('<link rel="canonical" href="https://unichrono.app/time/zurich/">', stub)
 
     def test_data_files(self):
         self.assertTrue((self.root / 'time/data/search.json').stat().st_size > 1_000_000)
