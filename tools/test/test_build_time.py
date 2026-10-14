@@ -72,6 +72,32 @@ class Selection(unittest.TestCase):
             b.featured_ids(cs, [('Atlantis', 'XX')])
 
 
+class Popular(unittest.TestCase):
+    def test_real_clicks_lead_then_the_volume_list_fills(self):
+        labels = {k: k for k in ['india', 'ist', 'est', 'cst', 'est-to-ist', 'japan', 'ist-to-est', 'cst-to-ist',
+                                 'pst-to-ist', 'utc-to-est', 'tokyo', 'est-to-pst', 'gmt-to-ist', 'nepal', 'berlin']}
+        with tempfile.TemporaryDirectory() as d:
+            gsc = Path(d) / 'Pages.csv'
+            gsc.write_text('Top pages,Clicks,Impressions,CTR,Position\n'
+                           'https://unichrono.app/time/berlin/,40,900,4%,8\n'
+                           'https://unichrono.app/time/est-to-ist/,"1,200",20000,6%,5\n'
+                           'https://unichrono.app/time/,99,5000,2%,9\n'
+                           'https://unichrono.app/time/not-a-page/,500,600,1%,3\n'
+                           'https://unichrono.app/time/japan/,0,700,0%,30\n')
+            bing = Path(d) / 'bing.csv'
+            bing.write_text('Page,Clicks,Impressions\nhttps://www.unichrono.app/time/berlin,30,100\n')
+            order, ranked = b.popular_slugs(labels, exports=[gsc, bing])
+        self.assertEqual(order[:2], ['est-to-ist', 'berlin'])        # 1,200 clicks, then 40 + 30
+        self.assertNotIn('not-a-page', order)                        # no page, no chip
+        self.assertEqual(len(order), b.POPULAR_SIZE)
+        self.assertEqual(order[2:5], ['india', 'ist', 'est'])        # then the Bing-volume list
+        self.assertNotIn('japan', ranked)                            # impressions alone are not visits
+
+    def test_without_data_the_volume_list_is_used(self):
+        labels = {k: k for k in b.POPULAR}
+        self.assertEqual(b.popular_slugs(labels, exports=[], saved=[])[0], b.POPULAR)
+
+
 class Facts(unittest.TestCase):
     def test_clock_changes_london(self):
         got = [t for _, t in b.clock_changes('Europe/London', NOW)]
@@ -271,28 +297,30 @@ class EndToEnd(unittest.TestCase):
         self.assertIn('<title>World Clock &amp; Time Zone Converter – Meeting Planner | Unichrono</title>', hub)
         self.assertIn('href="/time/india/"', hub)
         self.assertIn('href="/time/est/"', hub)
-        self.assertIn('<h2>How the converter works</h2>', hub)
+        self.assertIn('<h2>About this converter</h2>', hub)
         self.assertIn('<td>IST</td><td>India Standard Time</td><td>UTC+5:30</td><td>No change</td>', hub)
         self.assertIn('href="/time/est-to-ist/"', hub)
         self.assertIn('href="/time/london-new-york/"', hub)
 
-    def test_hub_finder(self):
+    def test_hub_list(self):
         hub = (self.root / 'time' / 'index.html').read_text()
-        self.assertIn('id="dirq"', hub)
-        self.assertIn('class="handoff"', hub)
-        self.assertNotIn('dtab', hub)  # no tabs: every group is on show
+        self.assertNotIn('id="dirq"', hub)   # one search box: the converter's
+        self.assertNotIn('dtab', hub)
         self.assertLess(hub.index('data-g="popular"'), hub.index('data-g="zones"'))
         self.assertIn('<a class="chipl hot" href="/time/india/">Time in India</a>', hub)
-        for g in ('popular', 'conv', 'zones', 'countries', 'cities', 'pairs'):
-            self.assertIn(f'class="dgroup" data-g="{g}"', hub)
-        # Every indexed page is still linked from the hub, now inside the finder.
+        self.assertIn('<summary>All abbreviations and offsets</summary>', hub)
+        self.assertIn('<h2>About this converter</h2>', hub)
+        self.assertGreater(hub.index('About this converter'), hub.index('data-g="pairs"'))
+        self.assertIn('id="tries"', hub)
+        self.assertIn('id="steps"', hub)
         for slug in ('tokyo', 'india', 'est', 'est-to-ist', 'london-new-york', 'ist-to-jst'):
             self.assertIn(f'href="/time/{slug}/"', hub)
-        self.assertLess(hub.index('href="/time/est-to-ist/"'), hub.index('href="/time/gst-to-ist/"'))
-        self.assertIn('<span class="sr">EST to </span>IST', hub)
+        self.assertEqual(hub.count('class="convrow wide"'), 5)   # city pairs, one row per first city
+        links = (self.root / 'time' / 'data' / 'links.json').read_text()
+        self.assertIn('"America/New_York":"est"', links)
+        self.assertIn('"est-to-ist"', links)
         phil = (self.root / 'time' / 'philippines' / 'index.html').read_text()
         self.assertIn('PHT (UTC+8)', phil)
-        self.assertNotIn('PST (UTC+8)', phil)
 
     def test_renamed_slugs_redirect(self):
         stub = (self.root / 'time' / 'zuerich' / 'index.html').read_text()

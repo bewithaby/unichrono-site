@@ -165,18 +165,29 @@ body{background:var(--bg)}
 }
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 
-/* ---- hub finder ---- */
+/* ---- try examples + how-it-works strip ---- */
+.tries{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0 0}
+.tries>span{font:500 10.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin-right:2px}
+.try{font:inherit;font-size:.88em;color:var(--ink2);background:transparent;border:1px dashed var(--line);border-radius:999px;
+  padding:5px 10px;cursor:pointer}
+.try:hover{color:var(--accent);border-color:var(--accent)}
+.steps{list-style:none;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:12px 0 4px;padding:10px 12px;
+  border-radius:12px;background:color-mix(in oklab,var(--accent) 7%,transparent);max-width:none}
+.steps li{display:flex;align-items:center;gap:8px;color:var(--ink2);font-size:.9em}
+.steps b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent);
+  color:#fff;font-size:12px;flex:none}
+.steps .stepsx{margin-left:auto}
+.steps .stepsx button{background:none;border:0;color:var(--ink3);font-size:18px;line-height:1;cursor:pointer;padding:2px 4px}
+.steps[hidden]{display:none}
+.sugg .pagel{text-decoration:none;margin-right:6px}
+
+/* ---- hub list ---- */
 .directory{margin-top:30px}
-.directory>h2{font-size:1.35rem;margin:0 0 12px;letter-spacing:-.01em}
-.dirq{width:100%;font:inherit;font-size:1.05rem;color:var(--ink);background:var(--panel);border:1px solid var(--line);
-  border-radius:14px;padding:13px 16px;outline:none}
-.dirq:focus{border-color:var(--accent)}
-.handoff{display:block;margin:10px 0 0;font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;
-  color:var(--accent);background:transparent;border:1px solid var(--accent);border-radius:999px;padding:10px 14px;cursor:pointer;
-  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.handoff:hover{background:color-mix(in oklab,var(--accent) 12%,transparent)}
+.directory>h2{font-size:1.35rem;margin:0 0 4px;letter-spacing:-.01em}
 .dgroup{margin-top:20px}
-.dgroup>h3{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin:0 0 9px}
+.dgroup>h3{display:flex;align-items:baseline;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink3);margin:0 0 9px}
+.dgroup>h3 .linkbtn{font-size:10px;letter-spacing:.12em}
 .directory .links{margin:0;padding:0;max-width:none}
 .chips{list-style:none;display:flex;flex-wrap:wrap;gap:7px;margin:0;padding:0;max-width:none}
 .chipl{display:inline-flex;align-items:baseline;gap:6px;padding:7px 11px;border:1px solid var(--line);border-radius:999px;
@@ -188,13 +199,14 @@ body{background:var(--bg)}
 .chipl .znow:empty{display:none}
 @media (max-width:560px){.chipl .zname{display:none}.chips{gap:6px}.chipl{padding:6px 9px;font-size:.86em;gap:5px}}
 .convrow{display:grid;grid-template-columns:4.2em 1.6em 1fr;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--line)}
+.convrow.wide{grid-template-columns:7.5em 1.6em 1fr}
 .convrow:last-child{border-bottom:0}
 .zfrom{font-weight:700;color:var(--ink);text-decoration:none}
-.zfrom:hover{color:var(--accent)}
+a.zfrom:hover{color:var(--accent)}
 .convrow .arrow{color:var(--ink3)}
 .convrow .links{gap:4px 14px}
-.allcities{margin-top:10px}
-.allcities summary{cursor:pointer;color:var(--accent);font-weight:500}
+.more{margin-top:10px}
+.more summary{cursor:pointer;color:var(--accent);font-weight:500}
+.more .tablewrap{margin-top:10px}
 .cont h4{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink3);margin:14px 0 6px}
-.dempty{color:var(--ink2);margin-top:14px}
 .directory [hidden]{display:none !important}

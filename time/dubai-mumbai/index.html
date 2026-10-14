@@ -64,6 +64,18 @@
     <div id="preview" class="preview" aria-live="polite"></div>
     <ul id="sugg" class="sugg" role="listbox" aria-label="Places"></ul>
   </div>
+  <p class="tries" id="tries"><span>Try</span>
+    <button type="button" class="try">8am Tokyo in London</button>
+    <button type="button" class="try">3pm EST to IST</button>
+    <button type="button" class="try">LHR</button>
+    <button type="button" class="try">UTC+5:30</button>
+  </p>
+  <ol class="steps" id="steps" aria-label="How it works">
+    <li><b>1</b><span>Type a place, a zone or a time</span></li>
+    <li><b>2</b><span>Drag the hours: every clock moves together</span></li>
+    <li><b>3</b><span>Share the link or add it to your calendar</span></li>
+    <li class="stepsx"><button type="button" id="stepsclose" aria-label="Hide these tips">×</button></li>
+  </ol>
 
   <div class="bar">
     <label class="sr" for="date">Date</label>

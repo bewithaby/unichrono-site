@@ -10,7 +10,7 @@ import { encodeState, decodeState, shareRefs, MAX_CITIES } from './share.js';
 import { googleURL, outlookURL, icsText, timesText } from './calendar.js';
 import { makeStore } from './store.js';
 import { clockOffset, clockText } from './clock.js';
-import { wireDirectory } from './directory.js';
+import { wireExtras } from './directory.js';
 import { timeText, dayText, diffText, dayColumns, homeZone, stepColumn, nextChangeText } from './format.js';
 import { renderGrid, updateTimes, columnOf, flag } from './grid.js';
 
@@ -23,6 +23,7 @@ const DEFAULTS = ['london', 'new-york', 'tokyo', 'sydney'];
 
 // ---------- data ----------
 let pages = [], bySlug = new Map(), slugById = new Map();
+let pageLinks = { zones: {}, pairs: [] };   // what suggestions can link to (data/links.json)
 let search = null, searchPromise = null, cityById = new Map(), airports = new Map(), repByZone = new Map();
 
 function pageCity(r) {
@@ -33,6 +34,21 @@ async function loadPages() {
   const res = await fetch('/time/data/pages.json');
   pages = (await res.json()).map(pageCity);
   for (const p of pages) { bySlug.set(p.slug, p); slugById.set(p.id, p.slug); }
+  try { pageLinks = await (await fetch('/time/data/links.json')).json(); } catch { /* links are a bonus */ }
+}
+
+/** The page we have for a suggestion: a zone page for "EST", a city page for a city. */
+function pageFor(p) {
+  const slug = (p.kind === 'abbreviation' || p.kind === 'offset') ? pageLinks.zones[p.zone]
+    : p.cityId != null ? slugById.get(p.cityId) : null;
+  return slug && location.pathname !== `/time/${slug}/` ? slug : null;
+}
+
+/** "EST to IST" has its own page; say so under the answer. */
+function pairPage(src, dst) {
+  const a = src && pageLinks.zones[src.zone], b = dst && pageLinks.zones[dst.zone];
+  const slug = a && b ? `${a}-to-${b}` : null;
+  return slug && pageLinks.pairs.includes(slug) && location.pathname !== `/time/${slug}/` ? slug : null;
 }
 
 function loadSearch() {
@@ -444,15 +460,26 @@ async function onInput() {
     }));
     $('preview').innerHTML = `<span><b>${esc(timeText(src.zone, at, state.h24))} ${esc(dayText(src.zone, at))}</b> ${esc(src.label)}`
       + ` = <b>${esc(timeText(other.zone, at, state.h24))} ${esc(dayText(other.zone, at))}</b> ${esc(other.label)}</span>`
-      + `<button class="chip accent" type="button" id="jump">Show on grid ↵</button>${addBtns.join('')}`;
+      + `<button class="chip accent" type="button" id="jump">Show on grid ↵</button>${addBtns.join('')}`
+      + (pairPage(src, dst) ? `<a class="chip" href="/time/${pairPage(src, dst)}/">Full ${esc(pairPage(src, dst).split('-to-').map(x => x.toUpperCase()).join(' to '))} table →</a>` : '');
     $('jump').onclick = jump;
     $('preview').querySelectorAll('[data-add]').forEach(b => { b.onclick = () => addPlace(pendingJump.adds[Number(b.dataset.add)]); });
     return;
   }
   pendingJump = null;
-  suggestions = resolvePlace(text, lookups, savedForResolve()).filter(p => p.kind !== 'saved').slice(0, 8);
+  const found = resolvePlace(text, lookups, savedForResolve());
+  suggestions = found.filter(p => p.kind !== 'saved').slice(0, 8);
   active = suggestions.length ? 0 : -1;
-  $('preview').textContent = suggestions.length ? '' : `Nothing found for “${text}”. Try a city, airport code (LHR), abbreviation (PST) or UTC+5:30.`;
+  const onGrid = !suggestions.length && found.find(p => p.kind === 'saved');
+  if (onGrid) {
+    // The place is already a row, so there is nothing to add; say so instead of "nothing found".
+    const ref = onGrid.savedId;
+    const page = bySlug.has(ref) && location.pathname !== `/time/${ref}/` ? ref : null;
+    $('preview').innerHTML = `<span>${esc(onGrid.label)} is already on the grid.</span>`
+      + (page ? `<a class="chip" href="/time/${page}/">${esc(onGrid.label)} page →</a>` : '');
+  } else {
+    $('preview').textContent = suggestions.length ? '' : `Nothing found for “${text}”. Try a city, airport code (LHR), abbreviation (PST) or UTC+5:30.`;
+  }
   renderSuggestions();
 }
 
@@ -463,7 +490,7 @@ function renderSuggestions() {
     const where = c && p.kind !== 'abbreviation' ? `${c.country}` : p.zone;
     return `<li role="option" id="s${i}" aria-selected="${i === active}" data-i="${i}">
       <span>${c ? flag(c.cc) + ' ' : ''}${esc(p.label)} <small>${esc(where)} · ${esc(timeText(p.zone, now, state.h24))}</small></span>
-      <span class="chip">Add</span></li>`;
+      ${pageFor(p) ? `<a class="chip pagel" href="/time/${pageFor(p)}/">Page →</a>` : ''}<span class="chip">Add</span></li>`;
   }).join('');
   $('q').setAttribute('aria-activedescendant', active >= 0 ? `s${active}` : '');
 }
@@ -583,7 +610,14 @@ function wire() {
       onInput().then(() => { if (pendingJump) jump(); else if (active >= 0) addPlace(suggestions[active]); });
     } else if (e.key === 'Escape') { q.value = ''; clearSmart(); }
   });
+  // "Try" examples run exactly as if typed and Enter pressed.
+  document.querySelectorAll('#tries .try').forEach(b => b.addEventListener('click', () => {
+    q.value = b.textContent;
+    q.focus();
+    q.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  }));
   $('sugg').addEventListener('click', e => {
+    if (e.target.closest('a')) return;   // "Page →" opens the page instead of adding the place
     const li = e.target.closest('li');
     if (li) addPlace(suggestions[Number(li.dataset.i)]);
   });
@@ -620,7 +654,7 @@ async function checkClock() {
 
 async function start() {
   wire();
-  wireDirectory();
+  wireExtras();
   await loadPages();
   state.home = homeCity();
   state.h24 = store.get('h24', false) === true;

@@ -1,18 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { fold, matches } from '../../time/js/directory.js';
+import { remember } from '../../time/js/directory.js';
 
-test('fold drops accents and punctuation', () => {
-  assert.equal(fold('São Paulo'), 'sao paulo');
-  assert.equal(fold('Zürich'), 'zurich');
-  assert.equal(fold("St. John's"), 'st john s');
-});
-
-test('every query word must start a word of the item', () => {
-  assert.ok(matches('new york city', 'new y'));
-  assert.ok(matches('ist india standard time india mumbai', 'india'));
-  assert.ok(matches('Zürich', 'zur'));
-  assert.ok(!matches('new york city', 'york new jersey'));
-  assert.ok(!matches('pacific time', 'cif'));  // inside a word does not count
-  assert.ok(matches('anything', '   '));        // empty query keeps everything
+test('recent pages: newest first, no duplicates, at most eight', () => {
+  let list = [];
+  for (let i = 0; i < 10; i++) list = remember(list, `/time/p${i}/`, `P${i}`);
+  assert.equal(list.length, 8);
+  assert.equal(list[0].path, '/time/p9/');
+  list = remember(list, '/time/p5/', 'P5');
+  assert.deepEqual(list.slice(0, 2).map(r => r.path), ['/time/p5/', '/time/p9/']);
+  assert.equal(list.filter(r => r.path === '/time/p5/').length, 1);
 });

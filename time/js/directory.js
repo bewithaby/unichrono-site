@@ -1,94 +1,77 @@
-// The hub's finder (/time/ "Find your time zone, country or city"). Every
-// group is on show and every link is plain HTML; this filters them as the
-// visitor types and hands the text to the converter, which knows every place.
+// Extras for the /time/ pages that are not the converter itself: the
+// visitor's own recent pages (kept in this browser only, never sent
+// anywhere), live times on the hub's zone and country chips, and the
+// dismissible "how it works" strip.
 
-/** Lowercase, accents folded, so "zurich" finds "Zürich" and "sao" finds "São". */
-export function fold(text) {
-  return text.normalize('NFKD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+const RECENT = 'uc.time.recent';
+const STEPS = 'uc.time.steps';
+const MAX_RECENT = 8;
+
+function read(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
+}
+function write(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* private mode: no memory, no harm */ }
 }
 
-/** Every word of the query starts a word of the item's text: "new y" finds New York. */
-export function matches(itemText, query) {
-  const words = ` ${fold(itemText)}`;
-  return fold(query).split(' ').filter(Boolean).every(w => words.includes(` ${w}`));
+/** [{path, label}] with this page first, no duplicates, at most MAX_RECENT. */
+export function remember(list, path, label) {
+  return [{ path, label }, ...list.filter(r => r && r.path !== path)].slice(0, MAX_RECENT);
 }
 
-/** The finder's text, put into the converter's box as if typed there. */
-function handOff(text) {
-  const q = document.getElementById('q');
-  if (!q) return;
-  q.value = text;
-  document.getElementById('tool')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  q.focus({ preventScroll: true });
-  q.dispatchEvent(new Event('input', { bubbles: true }));
+/** Every page below /time/ notes itself; the hub lists them. */
+function rememberVisit() {
+  const path = location.pathname;
+  if (!/^\/time\/[a-z0-9-]+\/$/.test(path)) return;
+  const label = document.querySelector('.city-static h1')?.textContent.trim();
+  if (label) write(RECENT, remember(read(RECENT, []), path, label));
 }
 
-export function wireDirectory(root = document.getElementById('find')) {
-  if (!root) return;
-  const input = root.querySelector('#dirq');
-  const groups = [...root.querySelectorAll('.dgroup')];
-  const empty = root.querySelector('.dempty');
-  const hand = root.querySelector('.handoff');
-  const all = root.querySelector('.allcities');
+function showRecent() {
+  const box = document.getElementById('recent');
+  if (!box) return;
+  const list = read(RECENT, []).filter(r => r && typeof r.path === 'string' && /^\/time\/[a-z0-9-]+\/$/.test(r.path));
+  const group = box.closest('.dgroup');
+  group.hidden = !list.length;
+  box.replaceChildren(...list.map(r => {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.className = 'chipl';
+    a.href = r.path;
+    a.textContent = r.label;
+    li.append(a);
+    return li;
+  }));
+  document.getElementById('recentclear').onclick = () => { write(RECENT, []); showRecent(); };
+}
 
-  function show() {
-    const q = input.value.trim();
-    let any = false;
-    for (const g of groups) {
-      let hits = 0;
-      if (g.dataset.g === 'conv') {
-        // A row stays whole when its "from" zone matches; otherwise it keeps only the matching targets.
-        for (const row of g.querySelectorAll('.convrow')) {
-          const whole = !q || matches(row.dataset.s, q) || matches(row.querySelector('.zfrom').textContent, q);
-          let kept = 0;
-          for (const li of row.querySelectorAll('li')) {
-            const on = whole || matches(li.dataset.s, q) || matches(li.textContent, q);
-            li.hidden = !on;
-            kept += on;
-          }
-          row.hidden = !kept;
-          hits += kept;
-        }
-      } else {
-        // While searching, the short city list steps aside so a match is never shown twice.
-        for (const li of g.querySelectorAll('li[data-s]')) {
-          const inAll = !!li.closest('.allcities');
-          const on = (!q || matches(li.dataset.s, q) || matches(li.textContent, q)) && (!q || inAll || g.dataset.g !== 'cities');
-          li.hidden = !on;
-          hits += on;
-        }
-        for (const c of g.querySelectorAll('.cont')) c.hidden = !c.querySelector('li:not([hidden])');
-      }
-      g.hidden = !!q && !hits;
-      any ||= !g.hidden;
-    }
-    if (all) {
-      if (q) { all.dataset.wasOpen ??= String(all.open); all.open = true; }
-      else if (all.dataset.wasOpen !== undefined) { all.open = all.dataset.wasOpen === 'true'; delete all.dataset.wasOpen; }
-    }
-    root.classList.toggle('searching', !!q);
-    hand.hidden = !q;
-    hand.textContent = q ? `Search “${q}” in the converter →` : '';
-    empty.hidden = any || !q;
-  }
+function wireSteps() {
+  const steps = document.getElementById('steps');
+  if (!steps) return;
+  if (read(STEPS, '') === 'hidden') steps.hidden = true;
+  document.getElementById('stepsclose').onclick = () => { steps.hidden = true; write(STEPS, 'hidden'); };
+}
 
-  input.addEventListener('input', show);
-  input.addEventListener('keydown', e => { if (e.key === 'Enter' && input.value.trim()) handOff(input.value.trim()); });
-  hand.addEventListener('click', () => handOff(input.value.trim()));
-  show();
-
-  // Live times on the zone and country chips.
+function liveTimes() {
+  const els = [...document.querySelectorAll('.znow[data-zone]')];
+  if (!els.length) return;
   const fmt = new Map();
-  function tick() {
+  const tick = () => {
     const now = new Date();
-    for (const el of root.querySelectorAll('.znow[data-zone]')) {
-      const zone = el.dataset.zone;
+    for (const el of els) {
       try {
-        if (!fmt.has(zone)) fmt.set(zone, new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: 'numeric', minute: '2-digit' }));
-        el.textContent = fmt.get(zone).format(now);
+        if (!fmt.has(el.dataset.zone)) fmt.set(el.dataset.zone, new Intl.DateTimeFormat('en-US', { timeZone: el.dataset.zone, hour: 'numeric', minute: '2-digit' }));
+        el.textContent = fmt.get(el.dataset.zone).format(now);
       } catch { el.textContent = ''; }
     }
-  }
+  };
   tick();
   setInterval(tick, 15000);
+}
+
+export function wireExtras() {
+  rememberVisit();
+  showRecent();
+  wireSteps();
+  liveTimes();
 }

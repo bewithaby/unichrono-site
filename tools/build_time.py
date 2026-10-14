@@ -4,6 +4,12 @@ city, and the data files the tool loads.
 
     tools/.venv/bin/python tools/build_time.py --db <cities.sqlite>
 
+Monthly, to rank the hub's Popular strip by real visits: download the
+"Pages" export from Search Console (Performance > Pages > Export > CSV) and,
+if you like, Bing Webmaster's page report, drop the CSVs in tools/popularity/
+(gitignored: the counts stay private), and rebuild. Only the resulting order
+is kept, in tools/popular.json.
+
 The source is the iOS app's city database (Unichrono/Resources/cities.sqlite
 in the private unichrono-ios repo). Every run rewrites the generated output
 from scratch; the hand-written tool code in time/js/ and time/time.css stays.
@@ -836,8 +842,8 @@ def zone_reference(now):
     return table(['Abbr', 'Zone', 'Standard', 'Daylight saving'], rows)
 
 
-HUB_INTRO = (
-    '<section class="city-facts"><h2>How the converter works</h2>'
+HUB_ABOUT = (
+    '<section class="city-facts about"><h2>About this converter</h2>'
     '<p>Type a time and a place the way you would say it: <b>8am Tokyo in London</b>, <b>3pm EST to IST</b>, '
     'an airport code such as <b>LHR</b>, or an offset such as <b>UTC+5:30</b>. Every city you add gets a row '
     'of hours, lined up so one column is one moment. Drag the slider or tap an hour to move every clock together; '
@@ -846,113 +852,148 @@ HUB_INTRO = (
     'right in the weeks when only one of them has changed its clocks. Pick a date to plan ahead; sunrise, sunset, '
     'the next clock change and public holidays for each city sit one tap away. When the time is set, send it as a '
     'link, add it to Google Calendar or Outlook, or download an .ics file. It all runs in your browser: no account, '
-    'no sign-up, and nothing you type is sent anywhere.</p>'
-    '<h2>Time zone abbreviations</h2>'
-    '<p class="tnote">The abbreviations people type most, and the clock each one means here.</p>{table}'
-    '</section>')
+    'no sign-up, and nothing you type is sent anywhere.</p></section>')
 
 
-def _words(*parts):
-    """Lowercase search text, accents folded, for the hub's filter box."""
-    return ' '.join(slugify(x).replace('-', ' ') for x in parts if x)
-
-
-# The hub's "Popular" strip, in order of Bing's 24-month search counts
-# (2026-10): time in india 809K, ist time 761K, EST time now 623K, ...
-POPULAR = [('india', 'Time in India'), ('ist', 'IST time now'), ('est', 'EST time now'), ('cst', 'CST time now'),
-           ('est-to-ist', 'EST to IST'), ('japan', 'Time in Japan'), ('ist-to-est', 'IST to EST'),
-           ('cst-to-ist', 'CST to IST'), ('pst-to-ist', 'PST to IST'), ('utc-to-est', 'UTC to EST'),
-           ('tokyo', 'Time in Tokyo'), ('est-to-pst', 'EST to PST'), ('gmt-to-ist', 'GMT to IST')]
+# The hub's "Popular" strip when there is no search data yet, in order of
+# Bing's 24-month search counts (2026-10): time in india 809K, ist time 761K ...
+POPULAR = ['india', 'ist', 'est', 'cst', 'est-to-ist', 'japan', 'ist-to-est', 'cst-to-ist', 'pst-to-ist',
+           'utc-to-est', 'tokyo', 'est-to-pst', 'gmt-to-ist']
+POPULAR_SIZE = 13
 CITIES_SHOWN = 30   # the rest of the city list sits behind "All cities"
+# Search Console / Bing "Pages" exports go here (gitignored: the counts are
+# private). The build ranks /time/ pages by real clicks and keeps only the
+# order, with no numbers, in tools/popular.json, which is committed.
+POPULARITY_DIR = Path(__file__).resolve().parent / 'popularity'
+POPULAR_FILE = Path(__file__).resolve().parent / 'popular.json'
 
 
-def directory(pages, slugs, pairs, countries, now):
-    """The hub's finder. Everything is on show, most-searched first, so a
-    visitor who only skims still sees their page; the filter box narrows it
-    for anyone who types. Every link is plain HTML; time/js/directory.js
-    only filters and adds the hand-off to the converter."""
-    zone_words = {}
-    for k, (abbr, name, zone, _) in ZONES.items():
-        std, dst = year_times(zone, now)
-        on = cities_on(zone, pages, now, limit=40)
-        zone_words[k] = _words(abbr, name, std[1], dst[1] if dst else '', zone.split('/')[-1],
-                               *{p['country'] for p in on}, *(p['name'] for p in on[:12]))
-    country_of = {slug: sorted([p for p in pages if p['cc'] == cc], key=lambda p: -p['pop'])
-                  for slug, (cc, _, _) in COUNTRIES.items()}
-    words_for = dict(zone_words)
-    for slug, (cc, called, _) in COUNTRIES.items():
-        mine = country_of[slug]
-        words_for[slug] = _words(mine[0]['country'], called, abbreviation(mine[0]['zone'], now),
-                                 *(p['name'] for p in mine[:6]))
-    for p in pages:
-        words_for[slugs[p['id']]] = _words(p['name'], p['country'], p['ascii'] or '', abbreviation(p['zone'], now))
-    for x, y in ZONE_PAIRS:
-        words_for[zone_slug(x, y)] = zone_words[x] + ' ' + zone_words[y]
+def _num(v):
+    try:
+        return float(str(v).replace(',', '').replace('%', '').strip() or 0)
+    except ValueError:
+        return 0.0
+
+
+def rank_exports(paths):
+    """{path: (clicks, impressions)} summed over Search Console and Bing page
+    exports. Columns are found by name, so either tool's CSV works."""
+    import csv
+    totals = {}
+    for path in paths:
+        with open(path, newline='', encoding='utf-8-sig') as f:
+            rows = list(csv.DictReader(f))
+        if not rows:
+            continue
+        cols = list(rows[0])
+        url = next((c for c in cols if str(rows[0][c]).startswith('http')), None)
+        clicks = next((c for c in cols if 'click' in c.lower()), None)
+        imps = next((c for c in cols if 'impression' in c.lower()), None)
+        if not url or not clicks:
+            continue
+        for r in rows:
+            m = re.match(r'https?://(?:www\.)?unichrono\.app(/time/[^?#]*)', r[url] or '')
+            if not m:
+                continue
+            path = m.group(1) if m.group(1).endswith('/') else m.group(1) + '/'
+            c0, i0 = totals.get(path, (0.0, 0.0))
+            totals[path] = (c0 + _num(r[clicks]), i0 + (_num(r[imps]) if imps else 0))
+    return totals
+
+
+def popular_slugs(labels, exports=None, saved=None):
+    """The Popular strip: pages with real clicks first, most clicked first,
+    then the Bing-volume list to fill it up. Only pages that exist count."""
+    if exports is None:
+        exports = sorted(POPULARITY_DIR.glob('*.csv')) if POPULARITY_DIR.exists() else []
+    ranked = []
+    if exports:
+        totals = rank_exports(exports)
+        ranked = [path.strip('/').split('/', 1)[1] for path, (c, i) in
+                  sorted(totals.items(), key=lambda kv: (-kv[1][0], -kv[1][1], kv[0])) if c > 0 and path != '/time/']
+    elif saved is not None:
+        ranked = saved
+    elif POPULAR_FILE.exists():
+        ranked = json.loads(POPULAR_FILE.read_text()).get('order', [])
+    out = []
+    for slug in ranked + POPULAR:
+        if slug in labels and slug not in out:
+            out.append(slug)
+        if len(out) == POPULAR_SIZE:
+            break
+    return out, ranked
+
+
+def directory(pages, slugs, pairs, labels, now):
+    """The hub's list. Everything is on show, most-searched first, so a
+    visitor who only skims still sees their page. Every link is plain HTML;
+    time/js/directory.js only adds the visitor's own recent pages and live times."""
     groups = []
-
+    pop, _ = popular_slugs(labels)
     groups.append(('popular', 'Popular', '<ul class="chips">' + ''.join(
-        f'<li data-s="{e(_words(label) + " " + words_for.get(slug, ""))}"><a class="chipl hot" href="/time/{slug}/">'
-        f'{e(label)}</a></li>' for slug, label in POPULAR) + '</ul>'))
+        f'<li><a class="chipl hot" href="/time/{slug}/">{e(labels[slug])}</a></li>' for slug in pop) + '</ul>'))
 
-    zchips = []
-    for k, (abbr, name, zone, _) in ZONES.items():
-        zchips.append(f'<li data-s="{e(zone_words[k])}"><a class="chipl" href="/time/{k}/" title="{e(name)} time now">'
-                      f'<b>{e(abbr)}</b> <span class="zname">{e(name)}</span>'
-                      f'<time class="znow" data-zone="{e(zone)}"></time></a></li>')
-    groups.append(('zones', 'Time zones now', '<ul class="chips">' + ''.join(zchips) + '</ul>'))
+    zchips = ''.join(f'<li><a class="chipl" href="/time/{k}/" title="{e(name)} time now"><b>{e(abbr)}</b> '
+                     f'<span class="zname">{e(name)}</span><time class="znow" data-zone="{e(zone)}"></time></a></li>'
+                     for k, (abbr, name, zone, _) in ZONES.items())
+    groups.append(('zones', 'Time zones now', f'<ul class="chips">{zchips}</ul>'
+                   '<details class="more"><summary>All abbreviations and offsets</summary>'
+                   + zone_reference(now) + '</details>'))
 
     rows = []
     order = ['est', 'ist', 'pst', 'cst', 'gmt', 'utc', 'cet', 'mst']
     for k in sorted(ZONES, key=lambda k: order.index(k) if k in order else 99):
         targets = [y for x, y in ZONE_PAIRS if x == k]
-        if not targets:
-            continue
-        items = ''.join(f'<li data-s="{e(zone_words[y])}"><a href="/time/{zone_slug(k, y)}/">'
-                        f'<span class="sr">{e(ZONES[k][0])} to </span>{e(ZONES[y][0])}</a></li>' for y in targets)
-        rows.append(f'<div class="convrow" data-s="{e(zone_words[k])}"><a class="zfrom" href="/time/{k}/" '
-                    f'title="{e(ZONES[k][1])}">{e(ZONES[k][0])}</a><span class="arrow" aria-hidden="true">→</span>'
-                    f'<ul class="links">{items}</ul></div>')
+        if targets:
+            items = ''.join(f'<li><a href="/time/{zone_slug(k, y)}/"><span class="sr">{e(ZONES[k][0])} to </span>'
+                            f'{e(ZONES[y][0])}</a></li>' for y in targets)
+            rows.append(f'<div class="convrow"><a class="zfrom" href="/time/{k}/" title="{e(ZONES[k][1])}">'
+                        f'{e(ZONES[k][0])}</a><span class="arrow" aria-hidden="true">→</span>'
+                        f'<ul class="links">{items}</ul></div>')
     groups.append(('conv', 'Convert between time zones', ''.join(rows)))
 
     cs = []
     for slug, (cc, called, _) in COUNTRIES.items():
-        mine = country_of[slug]
-        country, zone = mine[0]['country'], mine[0]['zone']
-        cs.append((country, f'<li data-s="{e(words_for[slug])}"><a class="chipl" href="/time/{slug}/">'
-                            f'{flag(cc)} {e(country)}<time class="znow" data-zone="{e(zone)}"></time></a></li>'))
+        top = max((p for p in pages if p['cc'] == cc), key=lambda p: p['pop'])
+        cs.append((top['country'], f'<li><a class="chipl" href="/time/{slug}/">{flag(cc)} {e(top["country"])}'
+                                   f'<time class="znow" data-zone="{e(top["zone"])}"></time></a></li>'))
     groups.append(('countries', 'Time by country', '<ul class="chips">' + ''.join(h for _, h in sorted(cs)) + '</ul>'))
 
     names = {}
     for p in pages:
         names[p['name']] = names.get(p['name'], 0) + 1
     label = lambda p: p['name'] + (f', {p["country"]}' if names[p['name']] > 1 else '')  # noqa: E731
-    city_li = lambda p: (f'<li data-s="{e(words_for[slugs[p["id"]]])}">'  # noqa: E731
-                         f'<a href="/time/{slugs[p["id"]]}/">{e(label(p))}</a></li>')
+    city_li = lambda p: f'<li><a href="/time/{slugs[p["id"]]}/">{e(label(p))}</a></li>'  # noqa: E731
     top = sorted(pages, key=lambda p: -p['pop'])[:CITIES_SHOWN]
     by_cont = {}
     for p in sorted(pages, key=lambda p: p['name']):
         by_cont.setdefault(continent(p['zone']), []).append(p)
-    city_html = ('<ul class="links">' + ''.join(city_li(p) for p in sorted(top, key=lambda p: p['name'])) + '</ul>'
-                 f'<details class="allcities"><summary>All {len(pages)} cities, by region</summary>'
-                 + ''.join(f'<div class="cont"><h4>{e(c)}</h4><ul class="links">'
-                           + ''.join(city_li(p) for p in by_cont[c]) + '</ul></div>' for c in sorted(by_cont))
-                 + '</details>')
-    groups.append(('cities', 'Cities', city_html))
+    groups.append(('cities', 'Cities',
+                   '<ul class="links">' + ''.join(city_li(p) for p in sorted(top, key=lambda p: p['name'])) + '</ul>'
+                   f'<details class="more"><summary>All {len(pages)} cities, by region</summary>'
+                   + ''.join(f'<div class="cont"><h4>{e(c)}</h4><ul class="links">'
+                             + ''.join(city_li(p) for p in by_cont[c]) + '</ul></div>' for c in sorted(by_cont))
+                   + '</details>'))
 
-    groups.append(('pairs', 'Time difference between cities', '<ul class="links">' + ''.join(
-        f'<li data-s="{e(_words(a["name"], b["name"], a["country"], b["country"], SHORT.get(a["name"], ""), SHORT.get(b["name"], "")))}">'
-        f'<a href="/time/{s}/">{e(SHORT.get(a["name"], a["name"]))} – {e(SHORT.get(b["name"], b["name"]))}</a></li>'
-        for s, a, b in pairs) + '</ul>'))
+    # City pairs as rows, one per first city, like the conversions above.
+    by_first = {}
+    for sl, a, b in pairs:
+        by_first.setdefault(a['id'], (a, []))[1].append((sl, b))
+    short = lambda p: SHORT.get(p['name'], p['name'])  # noqa: E731
+    prow = ''.join(f'<div class="convrow wide"><span class="zfrom">{e(short(a))}</span>'
+                   f'<span class="arrow" aria-hidden="true">→</span><ul class="links">'
+                   + ''.join(f'<li><a href="/time/{sl}/"><span class="sr">{e(short(a))} and </span>{e(short(b))}</a></li>'
+                             for sl, b in items) + '</ul></div>'
+                   for a, items in by_first.values())
+    groups.append(('pairs', 'Time difference between cities', prow))
 
-    body = ''.join(f'<div class="dgroup" data-g="{g}" role="region" aria-label="{e(t)}"><h3>{e(t)}</h3>{h}</div>'
-                   for g, t, h in groups)
     return ('<section class="directory" id="find"><h2>Find your time zone, country or city</h2>'
-            '<label class="sr" for="dirq">Filter time zones, countries and cities</label>'
-            '<input id="dirq" class="dirq" type="search" autocomplete="off" spellcheck="false" '
-            'placeholder="Type IST, Japan, Tokyo…">'
-            '<button type="button" class="handoff" hidden></button>'
-            f'{body}<p class="dempty" hidden>No page for that yet, but the converter knows 34,804 places, '
-            'every time zone abbreviation and any UTC offset.</p></section>')
+            '<div class="dgroup" data-g="recent" role="region" aria-label="Your recent pages" hidden>'
+            '<h3>Your recent pages <button type="button" class="linkbtn" id="recentclear">Clear</button></h3>'
+            '<ul class="chips" id="recent"></ul></div>'
+            + ''.join(f'<div class="dgroup" data-g="{g}" role="region" aria-label="{e(t)}"><h3>{e(t)}</h3>{h}</div>'
+                      for g, t, h in groups)
+            + '</section>')
 
 
 def redirect_page(target):
@@ -1051,6 +1092,21 @@ def build(db, root=ROOT, now=None):
         if hs:
             (data / 'holidays' / f'{cc}.json').write_text(json.dumps(hs, ensure_ascii=False, separators=(',', ':')))
 
+    # Short names for every page the hub can link to (Popular uses them).
+    labels = {slugs[p['id']]: f'Time in {SHORT.get(p["name"], p["name"])}' for p in indexed}
+    labels.update({k: f'{z[0]} time now' for k, z in ZONES.items()})
+    labels.update({c: f'Time in {"the " if v[1].startswith("the ") else ""}{v[1].removeprefix("the ")}'
+                   for c, v in COUNTRIES.items()})
+    labels.update({zone_slug(x, y): f'{ZONES[x][0]} to {ZONES[y][0]}' for x, y in ZONE_PAIRS})
+    labels.update({s_: f'{SHORT.get(a["name"], a["name"])} – {SHORT.get(b["name"], b["name"])}' for s_, a, b in pairs})
+    order, ranked = popular_slugs(labels)
+    if ranked and POPULARITY_DIR.exists() and any(POPULARITY_DIR.glob('*.csv')):
+        POPULAR_FILE.write_text(json.dumps({'updated': now.date().isoformat(), 'order': ranked[:60]}, indent=1) + '\n')
+    # What the converter's suggestions link to: zone pages by IANA zone, and the conversion pages.
+    (data / 'links.json').write_text(json.dumps(
+        {'zones': {z[2]: k for k, z in ZONES.items()}, 'pairs': [zone_slug(x, y) for x, y in ZONE_PAIRS]},
+        separators=(',', ':')))
+
     (out / 'index.html').write_text(render(
         template,
         title='World Clock &amp; Time Zone Converter – Meeting Planner | Unichrono',
@@ -1065,7 +1121,7 @@ def build(db, root=ROOT, now=None):
                'time zones, compare them hour by hour, '
                'pick a meeting time that works for everyone, and share it.</p>'
                '<p class="live" id="live" aria-live="off"></p></section>',
-        links=directory(indexed, slugs, pairs, COUNTRIES, now) + HUB_INTRO.replace('{table}', zone_reference(now)),
+        links=directory(indexed, slugs, pairs, labels, now) + HUB_ABOUT,
         preload='', robots='', cityindex=''))
 
     for c in pages:
