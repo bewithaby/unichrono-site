@@ -240,7 +240,9 @@ function renderLive() {
     if (next.textContent !== text) next.textContent = text;
   }
   const el = $('live');
-  const slug = document.body.dataset.preload;
+  // One preloaded place (city, zone or country page) gets the big live clock; a pair page does not.
+  const refs = (document.body.dataset.preload || '').split(',');
+  const slug = refs.length === 1 ? refs[0].split('|')[0] : '';
   const c = slug && allCities().find(c => c.ref === slug);
   if (!c) { el.textContent = ''; return; }
   const now = new Date();

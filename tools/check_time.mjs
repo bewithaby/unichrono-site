@@ -14,7 +14,7 @@ const browser = await chromium.launch({ executablePath: process.env.CHROMIUM });
 const failures = [];
 const fail = (where, what) => { failures.push(`${where}: ${what}`); };
 
-for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/', '/time/london-new-york/', '/time/est-to-ist/']) {
+for (const path of ['/time/', '/time/tokyo/', '/time/kolkata/', '/time/london-new-york/', '/time/est-to-ist/', '/time/india/']) {
   for (const [w, h] of [[390, 844], [1280, 900]]) {
     for (const scheme of ['dark', 'light']) {
       const where = `${path} ${w}px ${scheme}`;

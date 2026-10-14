@@ -187,7 +187,8 @@ class EndToEnd(unittest.TestCase):
         self.assertEqual(xml.count('<loc>https://unichrono.app/time/</loc>'), 1)
         self.assertEqual(xml.count('<loc>https://unichrono.app/time/tokyo/</loc>'), 1)
         self.assertEqual(xml.count('<loc>https://unichrono.app/</loc>'), 1)
-        self.assertEqual(xml.count('/time/'), self.stats['indexed'] + self.stats['pairs'] + self.stats['zone_pairs'] + 1)
+        self.assertEqual(xml.count('/time/'), self.stats['indexed'] + self.stats['pairs'] + self.stats['zone_pairs']
+                         + self.stats['zones'] + self.stats['country_pages'] + 1)
         self.assertIn('<loc>https://unichrono.app/time/est-to-ist/</loc>', xml)
         self.assertNotIn('/time/casey/', xml)
         self.assertIn('<loc>https://unichrono.app/time/london-new-york/</loc>', xml)
@@ -239,9 +240,27 @@ class EndToEnd(unittest.TestCase):
         self.assertIn('9 hours ahead of Coordinated Universal Time (UTC) all year', fixed)
         self.assertNotIn('dates the gap changes', fixed)
 
+    def test_zone_and_country_pages(self):
+        est = (self.root / 'time' / 'est' / 'index.html').read_text()
+        self.assertIn('<title>EST Time Now – Current Eastern Time (UTC−5 / UTC−4) | Unichrono</title>', est)
+        self.assertIn('data-preload="z:America/New_York|Eastern Time"', est)
+        self.assertIn('href="/time/new-york/"', est)
+        self.assertIn('href="/time/ist-to-est/"', est)
+        india = (self.root / 'time' / 'india' / 'index.html').read_text()
+        self.assertIn('<title>Time in India Now – IST (UTC+5:30) | Unichrono</title>', india)
+        self.assertIn('India keeps one time zone, IST (UTC+5:30), all year', india)
+        self.assertIn('href="/time/mumbai/"', india)
+        uk = (self.root / 'time' / 'uk' / 'index.html').read_text()
+        self.assertIn('<title>Time in the UK Now – GMT/BST | Unichrono</title>', uk)
+        self.assertIn('Clock changes in 2026 and 2027', uk)
+        rev = (self.root / 'time' / 'ist-to-est' / 'index.html').read_text()
+        self.assertIn('<h1>IST to <span class="grad">EST</span></h1>', rev)
+
     def test_hub(self):
         hub = (self.root / 'time' / 'index.html').read_text()
-        self.assertIn('<title>Time Zone Converter &amp; Meeting Planner – World Time | Unichrono</title>', hub)
+        self.assertIn('<title>World Clock &amp; Time Zone Converter – Meeting Planner | Unichrono</title>', hub)
+        self.assertIn('href="/time/india/"', hub)
+        self.assertIn('href="/time/est/"', hub)
         self.assertIn('<h2>How the converter works</h2>', hub)
         self.assertIn('<td>IST</td><td>India Standard Time</td><td>UTC+5:30</td><td>No change</td>', hub)
         self.assertIn('href="/time/est-to-ist/"', hub)

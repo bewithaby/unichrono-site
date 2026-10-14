@@ -112,7 +112,25 @@ ZONE_PAIRS = [('est', 'ist'), ('pst', 'ist'), ('cst', 'ist'), ('mst', 'ist'), ('
               ('est', 'gmt'), ('pst', 'gmt'), ('cst', 'gmt'), ('gmt', 'cet'), ('cet', 'est'), ('cet', 'pst'),
               ('utc', 'est'), ('utc', 'pst'), ('utc', 'cst'), ('utc', 'cet'), ('utc', 'jst'),
               ('aest', 'est'), ('aest', 'pst'), ('aest', 'gmt'), ('jst', 'est'), ('jst', 'pst'),
-              ('sgt', 'est'), ('pht', 'est'), ('pht', 'pst')]
+              ('sgt', 'est'), ('pht', 'est'), ('pht', 'pst'),
+              ('ist', 'est'), ('ist', 'pst'), ('ist', 'cst'), ('ist', 'gmt')]
+
+# "Time in India" pages, for countries that keep one clock: slug → (country
+# code, how a sentence names it, optional note). Bing's 24-month counts put
+# "time in india" at 809K and "time in japan" at 138K, far above any city.
+COUNTRIES = {
+    'india': ('IN', 'India', ''), 'japan': ('JP', 'Japan', ''), 'uk': ('GB', 'the UK', ''),
+    'china': ('CN', 'China', 'That is Beijing time, used across the whole country, '
+              'although in Xinjiang many people also keep a local time two hours behind it.'),
+    'philippines': ('PH', 'the Philippines', ''), 'uae': ('AE', 'the UAE', ''), 'pakistan': ('PK', 'Pakistan', ''),
+    'germany': ('DE', 'Germany', ''), 'france': ('FR', 'France', 'Mainland France; its overseas regions keep their own time.'),
+    'italy': ('IT', 'Italy', ''), 'south-korea': ('KR', 'South Korea', ''), 'saudi-arabia': ('SA', 'Saudi Arabia', ''),
+    'nigeria': ('NG', 'Nigeria', ''), 'egypt': ('EG', 'Egypt', ''), 'turkey': ('TR', 'Turkey', ''),
+    'vietnam': ('VN', 'Vietnam', ''), 'thailand': ('TH', 'Thailand', ''),
+    'netherlands': ('NL', 'the Netherlands', 'European Netherlands; the Caribbean islands keep their own time.'),
+    'ireland': ('IE', 'Ireland', ''), 'israel': ('IL', 'Israel', ''), 'south-africa': ('ZA', 'South Africa', ''),
+    'bangladesh': ('BD', 'Bangladesh', ''),
+}
 
 
 # ---------- pure helpers (unit-tested) ----------
@@ -663,13 +681,114 @@ def zone_pair_static(ka, kb, now):
                 + table(['', *(m for _, m in months)],
                         [(f'{x[1]}', *(overlap_text(x[2], y[2], d) for d, _ in months)) for x, y in ((A, B), (B, A))]))
     body.append('<h2>About these abbreviations</h2><ul class="changes">'
-                + ''.join(f'<li><b>{e(z[0])}</b>: {e(z[3])}</li>' for z in (A, B)) + '</ul>')
+                + ''.join(f'<li><a href="/time/{k}/"><b>{e(ZONES[k][0])}</b></a>: {e(ZONES[k][3])}</li>' for k in (ka, kb)) + '</ul>')
     others = [(x, y) for x, y in ZONE_PAIRS if (x, y) != (ka, kb) and {x, y} & {ka, kb}]
     body.append('<h2>More conversions</h2><ul class="links">'
                 + ''.join(f'<li><a href="/time/{zone_slug(x, y)}/">{e(ZONES[x][0])} to {e(ZONES[y][0])}</a></li>'
                           for x, y in others) + '</ul>')
     preload = f'z:{za}|{A[1]},z:{zb}|{B[1]}'
     return title, desc, head, '<section class="city-facts">' + '\n'.join(body) + '</section>', preload
+
+
+def clock_key(zone, now):
+    """Two zones with the same key show the same time every day of now's
+    year and the next: same offset now, same changes on the same instants."""
+    start = dt.datetime(now.year, 1, 1, tzinfo=dt.timezone.utc)
+    return offset_minutes(zone, start), tuple(transitions(zone, start, days=731, limit=8))
+
+
+def cities_on(zone, linkable, now, limit=24):
+    key = clock_key(zone, now)
+    return [p for p in sorted(linkable, key=lambda p: -p['pop']) if clock_key(p['zone'], now) == key][:limit]
+
+
+def conversions_with(keys):
+    return [(x, y) for x, y in ZONE_PAIRS if {x, y} & set(keys)]
+
+
+def conversion_links(pairs):
+    return ('<ul class="links">' + ''.join(f'<li><a href="/time/{zone_slug(x, y)}/">{e(ZONES[x][0])} to '
+                                          f'{e(ZONES[y][0])}</a></li>' for x, y in pairs) + '</ul>')
+
+
+def facts_html(zone, now):
+    std, dst = year_times(zone, now)
+    facts = [('Time zone', zone), ('UTC offset', offset_label(std[0]) + (f' / {offset_label(dst[0])}' if dst else '')),
+             ('Abbreviation', std[1] + (f' / {dst[1]}' if dst else '')),
+             ('Daylight saving', 'Yes' if dst else 'No')]
+    return '<dl class="facts">' + ''.join(f'<div><dt>{e(k)}</dt><dd>{e(v)}</dd></div>' for k, v in facts) + '</dl>'
+
+
+def changes_html(zone, now):
+    changes = clock_changes(zone, now)
+    if not changes:
+        return ''
+    return (f'<h2>Clock changes in {now.year} and {now.year + 1}</h2><ul class="changes">'
+            + ''.join(f'<li>{e(t)}</li>' for _, t in changes) + '</ul>')
+
+
+def zone_page(key, linkable, slugs, now):
+    """(title, description, head, body, preload) for /time/<abbr>/."""
+    abbr, name, zone, note = ZONES[key]
+    std, dst = year_times(zone, now)
+    span = offset_label(std[0]) + (f' / {offset_label(dst[0])}' if dst else '')
+    title = f'{abbr} Time Now – Current {name} ({span})'
+    if dst:
+        lead = (f'{name} is {_named(*std)} in standard time and {_named(*dst)} while daylight saving time is on. '
+                f'The clock above shows the time there right now.')
+    else:
+        lead = 'It does not change its clocks.'
+        lead, note = note, lead   # the note already names the zone and its offset
+    head = (f'<section class="city-static"><p class="kicker">Time zone</p>'
+            f'<h1><span class="grad">{e(abbr)}</span> time now</h1>\n'
+            f'<p class="live" id="live" aria-live="off"></p>\n'
+            f'<p class="zone-para">{e(lead)} {e(note)}</p>\n'
+            f'<p class="zone-next" id="zone-next" data-zone="{e(zone)}"></p>\n' + facts_html(zone, now) + '</section>')
+    body = [changes_html(zone, now)]
+    cities = cities_on(zone, linkable, now)
+    if cities:
+        body.append(f'<h2>Cities on {e(name)}</h2><ul class="links">{link_list(cities, slugs)}</ul>')
+    body.append(f'<h2>Convert {e(abbr)}</h2>' + conversion_links(conversions_with([key])))
+    desc = (f'The current {name} ({abbr}) time, live to the second. {span}'
+            + (', every clock change this year and next' if dst else ', no daylight saving')
+            + f', the cities that use it, and {abbr} conversions.')
+    return title, desc, head, '<section class="city-facts">' + '\n'.join(b for b in body if b) + '</section>', \
+        f'z:{zone}|{name}'
+
+
+def country_page(slug, pages, linkable, slugs, now):
+    """(title, description, head, body, preload) for /time/<country>/."""
+    cc, called, note = COUNTRIES[slug]
+    mine = sorted([p for p in pages if p['cc'] == cc], key=lambda p: -p['pop'])
+    zone, country = mine[0]['zone'], mine[0]['country']
+    std, dst = year_times(zone, now)
+    label = zone_label(zone, now)
+    title = f'Time in {called} Now – {label}'
+    cap = called[0].upper() + called[1:]
+    keys = [k for k, z in ZONES.items() if clock_key(z[2], now) == clock_key(zone, now)]
+    if dst:
+        lead = (f'{cap} keeps one time zone: {_named(*std)} in standard time and '
+                f'{_named(*dst)} during daylight saving time.')
+    else:
+        lead = f'{cap} keeps one time zone, {_named(*std)}, all year, with no daylight saving.'
+    head = (f'<section class="city-static"><p class="kicker">World time</p>'
+            f'<h1>Time in <span class="grad">{e(called)}</span></h1>\n'
+            f'<p class="live" id="live" aria-live="off"></p>\n'
+            f'<p class="zone-para">{e(lead)} {e(note)}</p>\n'
+            f'<p class="zone-next" id="zone-next" data-zone="{e(zone)}"></p>\n' + facts_html(zone, now) + '</section>')
+    body = [changes_html(zone, now)]
+    big = [p for p in linkable if p['cc'] == cc]
+    by_slug = {slugs[p['id']]: p for p in linkable}
+    if big:
+        body.append(f'<h2>City time pages in {e(called)}</h2><ul class="links">{link_list(big, slugs)}</ul>')
+        body.append(overlap_section(dict(big[0], name=called), by_slug, slugs[big[0]['id']], now))
+    if keys:
+        body.append(f'<h2>Convert {e(ZONES[keys[0]][0])}</h2>' + conversion_links(conversions_with(keys)))
+    desc = (f'The current time in {called}, live to the second: {label}. '
+            + ('Every clock change this year and next, ' if dst else 'No daylight saving. ')
+            + f'{"the" if dst else "The"} main cities and working hours shared with London, New York and Sydney.')
+    return title, desc, head, '<section class="city-facts">' + '\n'.join(b for b in body if b) + '</section>', \
+        f'z:{zone}|{country}'
 
 
 def zone_reference(now):
@@ -679,7 +798,9 @@ def zone_reference(now):
         std, dst = year_times(zone, now)
         rows.append((abbr, name, offset_label(std[0]),
                      f'{dst[1]} ({offset_label(dst[0])})' if dst else 'No change'))
-    return table(['Abbr', 'Zone', 'Standard', 'Daylight saving'], rows)
+    return (table(['Abbr', 'Zone', 'Standard', 'Daylight saving'], rows)
+            + '<h2>Time zones now</h2><ul class="links">'
+            + ''.join(f'<li><a href="/time/{k}/">{e(z[0])} time now</a></li>' for k, z in ZONES.items()) + '</ul>')
 
 
 HUB_INTRO = (
@@ -698,7 +819,7 @@ HUB_INTRO = (
     '</section>')
 
 
-def city_index(pages, slugs, pairs=(), zone_pairs=()):
+def city_index(pages, slugs, pairs=(), zone_pairs=(), countries=()):
     """The hub's list. Two cities with one name show their country."""
     names = {}
     for p in pages:
@@ -708,6 +829,9 @@ def city_index(pages, slugs, pairs=(), zone_pairs=()):
     for p in sorted(pages, key=lambda p: p['name']):
         groups.setdefault(continent(p['zone']), []).append(p)
     out = ['<section class="city-index">']
+    if countries:
+        out.append('<h2>Time by country</h2><ul class="links">'
+                   + ''.join(f'<li><a href="/time/{s}/">{e(n)}</a></li>' for s, n in countries) + '</ul>')
     if zone_pairs:
         out.append('<h2>Time zone conversions</h2><ul class="links">'
                    + ''.join(f'<li><a href="/time/{zone_slug(x, y)}/">{e(ZONES[x][0])} to {e(ZONES[y][0])}</a></li>'
@@ -822,20 +946,21 @@ def build(db, root=ROOT, now=None):
 
     (out / 'index.html').write_text(render(
         template,
-        title='Time Zone Converter &amp; Meeting Planner – World Time | Unichrono',
-        description=e('Free time zone converter and meeting planner. Type "3pm EST to IST" or "8am Tokyo in London", '
+        title='World Clock &amp; Time Zone Converter – Meeting Planner | Unichrono',
+        description=e('Free world clock, time zone converter and meeting planner. Type "3pm EST to IST" or "8am Tokyo in London", '
                       'compare cities hour by hour, and find a time that suits everyone. No sign-up.'),
         canonical=f'{SITE}/time/', jsonld=json.dumps({
             '@context': 'https://schema.org', '@type': 'WebApplication', 'name': 'Unichrono World Time',
             'url': f'{SITE}/time/', 'applicationCategory': 'UtilitiesApplication', 'operatingSystem': 'Any',
             'offers': {'@type': 'Offer', 'price': '0'}}, indent=1),
-        static='<section class="city-static"><p class="kicker">World time</p><h1>Time Zone <span class="grad">Converter</span> '
-               '&amp; Meeting Planner</h1>'
-               '<p class="zone-para">Convert a time between any cities or time zones, compare them hour by hour, '
+        static='<section class="city-static"><p class="kicker">World time</p><h1>World Clock &amp; Time Zone <span class="grad">Converter</span></h1>'
+               '<p class="zone-para">See the time in every city you care about, convert a time between any cities or '
+               'time zones, compare them hour by hour, '
                'pick a meeting time that works for everyone, and share it.</p>'
                '<p class="live" id="live" aria-live="off"></p></section>',
         links=HUB_INTRO.replace('{table}', zone_reference(now)), preload='', robots='',
-        cityindex=city_index(indexed, slugs, [(s, a['name'], b['name']) for s, a, b in pairs], ZONE_PAIRS)))
+        cityindex=city_index(indexed, slugs, [(s, a['name'], b['name']) for s, a, b in pairs], ZONE_PAIRS,
+                             [(c, next(p['country'] for p in pages if p['cc'] == COUNTRIES[c][0])) for c in COUNTRIES])))
 
     for c in pages:
         slug = slugs[c['id']]
@@ -876,6 +1001,17 @@ def build(db, root=ROOT, now=None):
                                'url': f'{SITE}/time/{s}/'}, indent=1, ensure_ascii=False),
             static=head, links=body, preload=e(preload), cityindex='', robots=''))
 
+    extra = [(k, zone_page(k, indexed, slugs, now)) for k in ZONES]
+    extra += [(c, country_page(c, pages, indexed, slugs, now)) for c in COUNTRIES]
+    for slug, (title, desc, head, body, preload) in extra:
+        assert not (out / slug).exists(), f'{slug} clashes with a city page'
+        (out / slug).mkdir()
+        (out / slug / 'index.html').write_text(render(
+            template, title=e(f'{title} | Unichrono'), description=e(desc), canonical=f'{SITE}/time/{slug}/',
+            jsonld=json.dumps({'@context': 'https://schema.org', '@type': 'WebPage', 'name': title,
+                               'url': f'{SITE}/time/{slug}/'}, indent=1, ensure_ascii=False),
+            static=head, links=body, preload=e(preload), cityindex='', robots=''))
+
     taken = {p.name for p in out.iterdir()}
     for old, new in json.loads(REDIRECTS.read_text()).items() if REDIRECTS.exists() else ():
         assert new in taken, f'redirect {old} -> {new}: no such page'
@@ -885,9 +1021,11 @@ def build(db, root=ROOT, now=None):
 
     update_sitemap(root, [f'{SITE}/time/'] + [f'{SITE}/time/{slugs[p["id"]]}/' for p in indexed]
                    + [f'{SITE}/time/{s}/' for s, _, _ in pairs]
-                   + [f'{SITE}/time/{zone_slug(a, b)}/' for a, b in ZONE_PAIRS], now.date().isoformat())
+                   + [f'{SITE}/time/{zone_slug(a, b)}/' for a, b in ZONE_PAIRS]
+                   + [f'{SITE}/time/{k}/' for k in ZONES] + [f'{SITE}/time/{c}/' for c in COUNTRIES],
+                   now.date().isoformat())
     update_llms(root)
-    return {'pages': len(pages), 'indexed': len(indexed), 'pairs': len(pairs), 'zone_pairs': len(ZONE_PAIRS), 'countries': len({c['cc'] for c in cities}),
+    return {'pages': len(pages), 'indexed': len(indexed), 'pairs': len(pairs), 'zone_pairs': len(ZONE_PAIRS), 'zones': len(ZONES), 'country_pages': len(COUNTRIES), 'countries': len({c['cc'] for c in cities}),
             'page_countries': len({p['cc'] for p in pages})}
 
 

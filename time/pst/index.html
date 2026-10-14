@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PST Time Now – Current Pacific Time (UTC−8 / UTC−7) | Unichrono</title>
+<meta name="description" content="The current Pacific Time (PST) time, live to the second. UTC−8 / UTC−7, every clock change this year and next, the cities that use it, and PST conversions.">
+<link rel="canonical" href="https://unichrono.app/time/pst/">
+
+<link rel="icon" href="/img/icon.png">
+<meta name="theme-color" content="#0E1220">
+<meta property="og:title" content="PST Time Now – Current Pacific Time (UTC−8 / UTC−7) | Unichrono">
+<meta property="og:description" content="The current Pacific Time (PST) time, live to the second. UTC−8 / UTC−7, every clock change this year and next, the cities that use it, and PST conversions.">
+<meta property="og:url" content="https://unichrono.app/time/pst/">
+<meta property="og:site_name" content="Unichrono">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://unichrono.app/img/og-unichrono-1200x630.jpg">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebPage",
+ "name": "PST Time Now – Current Pacific Time (UTC−8 / UTC−7)",
+ "url": "https://unichrono.app/time/pst/"
+}
+</script>
+<script>try{var t=localStorage.getItem('uc-theme')||JSON.parse(localStorage.getItem('uc.time.theme')||'null')||sessionStorage.getItem('uc-theme-now');if(t==='paper')t='light';if(t!=='light'&&t!=='dark')t='light';document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/uc.css">
+<link rel="stylesheet" href="/time/time.css">
+<script type="module" src="/time/js/app.js"></script>
+</head>
+<body data-preload="z:America/Los_Angeles|Pacific Time">
+
+<header>
+  <div class="wrap hd">
+    <a class="logo" href="/"><img src="/img/icon.png" alt="">Unichrono</a>
+    <button class="menub" id="menub" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav id="nav">
+      <a href="/">Home</a>
+      <a href="/time/" class="here">Convert time</a>
+      <a href="/help.html">Help</a>
+      <a href="/about.html">About</a>
+      <a class="btn" href="/#get">Get the app</a>
+    </nav>
+    <button class="themeb" id="themeb" type="button" aria-label="Switch to light theme"></button>
+    <a class="btn" href="/#get">Get the app</a>
+  </div>
+</header>
+
+<main class="wrap tmain">
+<section class="city-static"><p class="kicker">Time zone</p><h1><span class="grad">PST</span> time now</h1>
+<p class="live" id="live" aria-live="off"></p>
+<p class="zone-para">Pacific Time is PST (UTC−8) in standard time and PDT (UTC−7) while daylight saving time is on. The clock above shows the time there right now. US Pacific Time (Los Angeles). In summer it is PDT; people often say PST all year, and this page follows the clock, not the label.</p>
+<p class="zone-next" id="zone-next" data-zone="America/Los_Angeles"></p>
+<dl class="facts"><div><dt>Time zone</dt><dd>America/Los_Angeles</dd></div><div><dt>UTC offset</dt><dd>UTC−8 / UTC−7</dd></div><div><dt>Abbreviation</dt><dd>PST / PDT</dd></div><div><dt>Daylight saving</dt><dd>Yes</dd></div></dl></section>
+
+<section class="tool" id="tool" aria-label="World time converter">
+  <div class="smart">
+    <label class="sr" for="q">Type a time or a place</label>
+    <input id="q" type="text" autocomplete="off" spellcheck="false" enterkeyhint="go"
+           placeholder="Try &quot;8am Tokyo in London&quot;, &quot;LHR&quot;, &quot;PST&quot;, &quot;UTC+5:30&quot;">
+    <div id="preview" class="preview" aria-live="polite"></div>
+    <ul id="sugg" class="sugg" role="listbox" aria-label="Places"></ul>
+  </div>
+
+  <div class="bar">
+    <label class="sr" for="date">Date</label>
+    <input id="date" type="date">
+    <button id="now" class="chip" type="button">Now</button>
+    <span id="clock" class="clockline"></span>
+    <span class="grow"></span>
+    <button id="fmt" class="chip" type="button" aria-pressed="false">24h</button>
+    <button id="theme" class="chip" type="button">Light</button>
+  </div>
+
+  <div class="gridwrap" id="gridwrap">
+    <div id="grid" class="grid" tabindex="0" role="application"
+         aria-label="Hour grid. Left and right arrows move the selected hour."></div>
+  </div>
+  <div class="gridfoot">
+    <button id="addcity" class="chip" type="button">+ Add city</button>
+    <button id="reset" class="linkbtn" type="button" hidden>Reset to defaults</button>
+  </div>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <label class="sr" for="slider">Selected time</label>
+  <input id="slider" class="slider" type="range" min="0" max="1439" step="15">
+  <p id="sel" class="sel" aria-live="polite"></p>
+
+  <div class="meet" id="meet"></div>
+
+  <div class="actions">
+    <a id="gcal" class="chip" target="_blank" rel="noopener">Google Calendar</a>
+    <a id="ocal" class="chip" target="_blank" rel="noopener">Outlook</a>
+    <button id="ics" class="chip" type="button">Apple / .ics</button>
+    <button id="copy" class="chip" type="button">Copy times</button>
+    <button id="share" class="chip accent" type="button">Share link</button>
+  </div>
+
+  <aside id="detail" class="detail" hidden aria-live="polite"></aside>
+  <noscript><p>The converter needs JavaScript. The city facts above work without it.</p></noscript>
+</section>
+
+<section class="city-facts"><h2>Clock changes in 2026 and 2027</h2><ul class="changes"><li>Sun 8 Mar 2026: clocks go forward 1 hour at 2:00 am, to PDT (UTC−7)</li><li>Sun 1 Nov 2026: clocks go back 1 hour at 2:00 am, to PST (UTC−8)</li><li>Sun 14 Mar 2027: clocks go forward 1 hour at 2:00 am, to PDT (UTC−7)</li><li>Sun 7 Nov 2027: clocks go back 1 hour at 2:00 am, to PST (UTC−8)</li></ul>
+<h2>Cities on Pacific Time</h2><ul class="links"><li><a href="/time/los-angeles/">Los Angeles</a></li><li><a href="/time/san-francisco/">San Francisco</a></li><li><a href="/time/seattle/">Seattle</a></li><li><a href="/time/las-vegas/">Las Vegas</a></li></ul>
+<h2>Convert PST</h2><ul class="links"><li><a href="/time/pst-to-ist/">PST to IST</a></li><li><a href="/time/est-to-pst/">EST to PST</a></li><li><a href="/time/cst-to-pst/">CST to PST</a></li><li><a href="/time/mst-to-pst/">MST to PST</a></li><li><a href="/time/pst-to-gmt/">PST to GMT</a></li><li><a href="/time/cet-to-pst/">CET to PST</a></li><li><a href="/time/utc-to-pst/">UTC to PST</a></li><li><a href="/time/aest-to-pst/">AEST to PST</a></li><li><a href="/time/jst-to-pst/">JST to PST</a></li><li><a href="/time/pht-to-pst/">PHT to PST</a></li><li><a href="/time/ist-to-pst/">IST to PST</a></li></ul></section>
+
+<p class="appnote">Want this on your home screen, Lock Screen or watch? <a href="/#get">Unichrono for Android, iPhone, iPad and Mac</a> — free.</p>
+
+
+</main>
+
+<footer>
+  <div class="wrap frow">
+    <span>© 2026 Spiny Valley Labs</span>
+    <span class="flinks">
+      <a href="/">Home</a><a href="/help.html">Help</a><a href="/privacy-policy.html">Privacy</a><a href="/#feedback">Feedback</a>
+    </span>
+  </div>
+</footer>
+<script src="/assets/theme.js"></script>
+</body>
+</html>
