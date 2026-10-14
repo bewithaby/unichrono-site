@@ -10,6 +10,7 @@ import { encodeState, decodeState, shareRefs, MAX_CITIES } from './share.js';
 import { googleURL, outlookURL, icsText, timesText } from './calendar.js';
 import { makeStore } from './store.js';
 import { clockOffset, clockText } from './clock.js';
+import { wireDirectory } from './directory.js';
 import { timeText, dayText, diffText, dayColumns, homeZone, stepColumn, nextChangeText } from './format.js';
 import { renderGrid, updateTimes, columnOf, flag } from './grid.js';
 
@@ -619,6 +620,7 @@ async function checkClock() {
 
 async function start() {
   wire();
+  wireDirectory();
   await loadPages();
   state.home = homeCity();
   state.h24 = store.get('h24', false) === true;

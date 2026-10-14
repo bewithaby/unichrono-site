@@ -276,6 +276,20 @@ class EndToEnd(unittest.TestCase):
         self.assertIn('href="/time/est-to-ist/"', hub)
         self.assertIn('href="/time/london-new-york/"', hub)
 
+    def test_hub_finder(self):
+        hub = (self.root / 'time' / 'index.html').read_text()
+        self.assertIn('id="dirq"', hub)
+        for g in ('conv', 'zones', 'countries', 'cities', 'pairs'):
+            self.assertIn(f'class="dgroup" data-g="{g}"', hub)
+        # Every indexed page is still linked from the hub, now inside the finder.
+        for slug in ('tokyo', 'india', 'est', 'est-to-ist', 'london-new-york', 'ist-to-jst'):
+            self.assertIn(f'href="/time/{slug}/"', hub)
+        self.assertLess(hub.index('href="/time/est-to-ist/"'), hub.index('href="/time/gst-to-ist/"'))
+        self.assertIn('<span class="sr">EST to </span>IST', hub)
+        phil = (self.root / 'time' / 'philippines' / 'index.html').read_text()
+        self.assertIn('PHT (UTC+8)', phil)
+        self.assertNotIn('PST (UTC+8)', phil)
+
     def test_renamed_slugs_redirect(self):
         stub = (self.root / 'time' / 'zuerich' / 'index.html').read_text()
         self.assertIn('<meta http-equiv="refresh" content="0; url=/time/zurich/">', stub)

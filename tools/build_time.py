@@ -236,7 +236,13 @@ def offset_minutes(zone, when):
     return int(when.astimezone(ZoneInfo(zone)).utcoffset().total_seconds() // 60)
 
 
+# tzdata names Manila's zone "PST", which reads as US Pacific; people search PHT.
+ABBR_OVERRIDES = {'Asia/Manila': 'PHT'}
+
+
 def abbreviation(zone, when):
+    if zone in ABBR_OVERRIDES:
+        return ABBR_OVERRIDES[zone]
     name = when.astimezone(ZoneInfo(zone)).tzname() or ''
     return name if re.fullmatch(r'[A-Z]{2,5}', name) else offset_label(offset_minutes(zone, when))
 
@@ -827,9 +833,7 @@ def zone_reference(now):
         std, dst = year_times(zone, now)
         rows.append((abbr, name, offset_label(std[0]),
                      f'{dst[1]} ({offset_label(dst[0])})' if dst else 'No change'))
-    return (table(['Abbr', 'Zone', 'Standard', 'Daylight saving'], rows)
-            + '<h2>Time zones now</h2><ul class="links">'
-            + ''.join(f'<li><a href="/time/{k}/">{e(z[0])} time now</a></li>' for k, z in ZONES.items()) + '</ul>')
+    return table(['Abbr', 'Zone', 'Standard', 'Daylight saving'], rows)
 
 
 HUB_INTRO = (
@@ -848,33 +852,89 @@ HUB_INTRO = (
     '</section>')
 
 
-def city_index(pages, slugs, pairs=(), zone_pairs=(), countries=()):
-    """The hub's list. Two cities with one name show their country."""
+def _words(*parts):
+    """Lowercase search text, accents folded, for the hub's filter box."""
+    return ' '.join(slugify(x).replace('-', ' ') for x in parts if x)
+
+
+def directory(pages, slugs, pairs, countries, now):
+    """The hub's finder: one filter box over five groups (conversions, zones,
+    countries, cities, city pairs). Every link is plain HTML, so crawlers and
+    no-JavaScript visitors see all of it; time/js/directory.js adds the
+    filtering and turns the group headings into tabs."""
+    zone_words = {}
+    for k, (abbr, name, zone, _) in ZONES.items():
+        std, dst = year_times(zone, now)
+        on = cities_on(zone, pages, now, limit=40)
+        zone_words[k] = _words(abbr, name, std[1], dst[1] if dst else '', zone.split('/')[-1],
+                               *{p['country'] for p in on}, *(p['name'] for p in on[:12]))
+    groups = []
+
+    rows = []
+    # Most-searched "from" zones first (Bing, 2026-10: EST, IST, PST, CST lead).
+    for k in sorted(ZONES, key=lambda k: ['est', 'ist', 'pst', 'cst', 'gmt', 'utc', 'cet', 'mst'].index(k)
+                    if k in ('est', 'ist', 'pst', 'cst', 'gmt', 'utc', 'cet', 'mst') else 99):
+        targets = [y for x, y in ZONE_PAIRS if x == k]
+        if not targets:
+            continue
+        items = ''.join(f'<li data-s="{e(zone_words[y])}"><a href="/time/{zone_slug(k, y)}/">'
+                        f'<span class="sr">{e(ZONES[k][0])} to </span>{e(ZONES[y][0])}</a></li>' for y in targets)
+        rows.append(f'<div class="convrow" data-s="{e(zone_words[k])}"><a class="zfrom" href="/time/{k}/" '
+                    f'title="{e(ZONES[k][1])}">{e(ZONES[k][0])}</a><span class="arrow" aria-hidden="true">→</span>'
+                    f'<ul class="links">{items}</ul></div>')
+    groups.append(('conv', 'Conversions', '<p class="tnote">Pick the zone you are converting from, then the one '
+                   'you are converting to.</p>' + ''.join(rows)))
+
+    cards = []
+    for k, (abbr, name, zone, _) in ZONES.items():
+        std, dst = year_times(zone, now)
+        span = offset_label(std[0]) + (f' / {offset_label(dst[0])}' if dst else '')
+        cards.append(f'<li data-s="{e(zone_words[k])}"><a class="zcard" href="/time/{k}/"><b>{e(abbr)}</b>'
+                     f'<span>{e(name)}</span><small>{e(span)}</small>'
+                     f'<time class="znow" data-zone="{e(zone)}"></time></a></li>')
+    groups.append(('zones', 'Time zones', '<ul class="zgrid">' + ''.join(cards) + '</ul>'))
+
+    cs = []
+    for slug, (cc, called, _) in COUNTRIES.items():
+        mine = sorted([p for p in pages if p['cc'] == cc], key=lambda p: -p['pop'])
+        country = mine[0]['country'] if mine else called
+        zone = mine[0]['zone'] if mine else ''
+        cs.append((country, f'<li data-s="{e(_words(country, called, abbreviation(zone, now) if zone else "", *(p["name"] for p in mine[:6])))}">'
+                  f'<a class="zcard" href="/time/{slug}/"><b>{flag(cc)} {e(country)}</b>'
+                  f'<small>{e(zone_label(zone, now)) if zone else ""}</small>'
+                  f'<time class="znow" data-zone="{e(zone)}"></time></a></li>'))
+    groups.append(('countries', 'Countries', '<ul class="zgrid">' + ''.join(h for _, h in sorted(cs)) + '</ul>'))
+
     names = {}
     for p in pages:
         names[p['name']] = names.get(p['name'], 0) + 1
     label = lambda p: p['name'] + (f', {p["country"]}' if names[p['name']] > 1 else '')  # noqa: E731
-    groups = {}
+    by_cont = {}
     for p in sorted(pages, key=lambda p: p['name']):
-        groups.setdefault(continent(p['zone']), []).append(p)
-    out = ['<section class="city-index">']
-    if countries:
-        out.append('<h2>Time by country</h2><ul class="links">'
-                   + ''.join(f'<li><a href="/time/{s}/">{e(n)}</a></li>' for s, n in countries) + '</ul>')
-    if zone_pairs:
-        out.append('<h2>Time zone conversions</h2><ul class="links">'
-                   + ''.join(f'<li><a href="/time/{zone_slug(x, y)}/">{e(ZONES[x][0])} to {e(ZONES[y][0])}</a></li>'
-                             for x, y in zone_pairs) + '</ul>')
-    if pairs:
-        out.append('<h2>Time differences</h2><ul class="links">'
-                   + ''.join(f'<li><a href="/time/{s}/">{e(x)} – {e(y)}</a></li>' for s, x, y in pairs) + '</ul>')
-    out.append('<h2>City time pages</h2>')
-    for name in sorted(groups):
-        out.append(f'<h3>{e(name)}</h3><ul class="links">'
-                   + ''.join(f'<li><a href="/time/{slugs[p["id"]]}/">{e(label(p))}</a></li>' for p in groups[name])
-                   + '</ul>')
-    out.append('</section>')
-    return '\n'.join(out)
+        by_cont.setdefault(continent(p['zone']), []).append(p)
+    city_html = ''.join(
+        f'<div class="cont"><h4>{e(c)}</h4><ul class="links">'
+        + ''.join(f'<li data-s="{e(_words(p["name"], p["country"], p["ascii"] or "", abbreviation(p["zone"], now)))}">'
+                  f'<a href="/time/{slugs[p["id"]]}/">{e(label(p))}</a></li>' for p in by_cont[c])
+        + '</ul></div>' for c in sorted(by_cont))
+    groups.append(('cities', 'Cities', city_html))
+
+    groups.append(('pairs', 'City pairs', '<ul class="links">' + ''.join(
+        f'<li data-s="{e(_words(a["name"], b["name"], a["country"], b["country"], SHORT.get(a["name"], ""), SHORT.get(b["name"], "")))}">'
+        f'<a href="/time/{s}/">{e(SHORT.get(a["name"], a["name"]))} – {e(SHORT.get(b["name"], b["name"]))}</a></li>'
+        for s, a, b in pairs) + '</ul>'))
+
+    tabs = ''.join(f'<button type="button" class="dtab" data-g="{g}" aria-pressed="{str(i == 0).lower()}">{e(t)}</button>'
+                   for i, (g, t, _) in enumerate(groups))
+    body = ''.join(f'<div class="dgroup" data-g="{g}" role="region" aria-label="{e(t)}"><h3>{e(t)}</h3>{h}</div>'
+                   for g, t, h in groups)
+    return ('<section class="directory" id="find"><h2>Find your time zone, country or city</h2>'
+            '<label class="sr" for="dirq">Filter time zones, countries and cities</label>'
+            '<input id="dirq" class="dirq" type="search" autocomplete="off" spellcheck="false" '
+            'placeholder="Type IST, Japan, Tokyo…">'
+            f'<div class="dtabs" role="group" aria-label="Show" hidden>{tabs}</div>'
+            f'{body}<p class="dempty" hidden>Nothing matches. Try the converter above: it knows 34,000 places.</p>'
+            '</section>')
 
 
 def redirect_page(target):
@@ -987,9 +1047,8 @@ def build(db, root=ROOT, now=None):
                'time zones, compare them hour by hour, '
                'pick a meeting time that works for everyone, and share it.</p>'
                '<p class="live" id="live" aria-live="off"></p></section>',
-        links=HUB_INTRO.replace('{table}', zone_reference(now)), preload='', robots='',
-        cityindex=city_index(indexed, slugs, [(s, a['name'], b['name']) for s, a, b in pairs], ZONE_PAIRS,
-                             [(c, next(p['country'] for p in pages if p['cc'] == COUNTRIES[c][0])) for c in COUNTRIES])))
+        links=directory(indexed, slugs, pairs, COUNTRIES, now) + HUB_INTRO.replace('{table}', zone_reference(now)),
+        preload='', robots='', cityindex=''))
 
     for c in pages:
         slug = slugs[c['id']]
