@@ -279,7 +279,11 @@ class EndToEnd(unittest.TestCase):
     def test_hub_finder(self):
         hub = (self.root / 'time' / 'index.html').read_text()
         self.assertIn('id="dirq"', hub)
-        for g in ('conv', 'zones', 'countries', 'cities', 'pairs'):
+        self.assertIn('class="handoff"', hub)
+        self.assertNotIn('dtab', hub)  # no tabs: every group is on show
+        self.assertLess(hub.index('data-g="popular"'), hub.index('data-g="zones"'))
+        self.assertIn('<a class="chipl hot" href="/time/india/">Time in India</a>', hub)
+        for g in ('popular', 'conv', 'zones', 'countries', 'cities', 'pairs'):
             self.assertIn(f'class="dgroup" data-g="{g}"', hub)
         # Every indexed page is still linked from the hub, now inside the finder.
         for slug in ('tokyo', 'india', 'est', 'est-to-ist', 'london-new-york', 'ist-to-jst'):

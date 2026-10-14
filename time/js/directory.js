@@ -1,6 +1,6 @@
-// The hub's finder (/time/ "Find your time zone, country or city"). The page
-// ships every link as plain HTML; this only filters them and shows one group
-// at a time. Without JavaScript all five groups are simply listed.
+// The hub's finder (/time/ "Find your time zone, country or city"). Every
+// group is on show and every link is plain HTML; this filters them as the
+// visitor types and hands the text to the converter, which knows every place.
 
 /** Lowercase, accents folded, so "zurich" finds "Zürich" and "sao" finds "São". */
 export function fold(text) {
@@ -13,15 +13,23 @@ export function matches(itemText, query) {
   return fold(query).split(' ').filter(Boolean).every(w => words.includes(` ${w}`));
 }
 
+/** The finder's text, put into the converter's box as if typed there. */
+function handOff(text) {
+  const q = document.getElementById('q');
+  if (!q) return;
+  q.value = text;
+  document.getElementById('tool')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  q.focus({ preventScroll: true });
+  q.dispatchEvent(new Event('input', { bubbles: true }));
+}
+
 export function wireDirectory(root = document.getElementById('find')) {
   if (!root) return;
   const input = root.querySelector('#dirq');
-  const tabs = [...root.querySelectorAll('.dtab')];
   const groups = [...root.querySelectorAll('.dgroup')];
   const empty = root.querySelector('.dempty');
-  let current = groups[0]?.dataset.g;
-  root.querySelector('.dtabs').hidden = false;
-  root.classList.add('js');
+  const hand = root.querySelector('.handoff');
+  const all = root.querySelector('.allcities');
 
   function show() {
     const q = input.value.trim();
@@ -42,41 +50,41 @@ export function wireDirectory(root = document.getElementById('find')) {
           hits += kept;
         }
       } else {
+        // While searching, the short city list steps aside so a match is never shown twice.
         for (const li of g.querySelectorAll('li[data-s]')) {
-          const on = !q || matches(li.dataset.s, q) || matches(li.textContent, q);
+          const inAll = !!li.closest('.allcities');
+          const on = (!q || matches(li.dataset.s, q) || matches(li.textContent, q)) && (!q || inAll || g.dataset.g !== 'cities');
           li.hidden = !on;
           hits += on;
         }
         for (const c of g.querySelectorAll('.cont')) c.hidden = !c.querySelector('li:not([hidden])');
       }
-      // Typing searches every group at once; an empty box shows the chosen tab.
-      g.hidden = q ? !hits : g.dataset.g !== current;
+      g.hidden = !!q && !hits;
       any ||= !g.hidden;
     }
+    if (all) {
+      if (q) { all.dataset.wasOpen ??= String(all.open); all.open = true; }
+      else if (all.dataset.wasOpen !== undefined) { all.open = all.dataset.wasOpen === 'true'; delete all.dataset.wasOpen; }
+    }
     root.classList.toggle('searching', !!q);
-    empty.hidden = any;
+    hand.hidden = !q;
+    hand.textContent = q ? `Search “${q}” in the converter →` : '';
+    empty.hidden = any || !q;
   }
 
-  for (const t of tabs) {
-    t.addEventListener('click', () => {
-      current = t.dataset.g;
-      for (const x of tabs) x.setAttribute('aria-pressed', String(x === t));
-      input.value = '';
-      show();
-    });
-  }
   input.addEventListener('input', show);
+  input.addEventListener('keydown', e => { if (e.key === 'Enter' && input.value.trim()) handOff(input.value.trim()); });
+  hand.addEventListener('click', () => handOff(input.value.trim()));
   show();
 
-  // Live times on the zone and country cards.
+  // Live times on the zone and country chips.
   const fmt = new Map();
   function tick() {
     const now = new Date();
     for (const el of root.querySelectorAll('.znow[data-zone]')) {
       const zone = el.dataset.zone;
-      if (!zone) continue;
       try {
-        if (!fmt.has(zone)) fmt.set(zone, new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: 'numeric', minute: '2-digit', weekday: 'short' }));
+        if (!fmt.has(zone)) fmt.set(zone, new Intl.DateTimeFormat('en-US', { timeZone: zone, hour: 'numeric', minute: '2-digit' }));
         el.textContent = fmt.get(zone).format(now);
       } catch { el.textContent = ''; }
     }
