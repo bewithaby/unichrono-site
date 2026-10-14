@@ -229,8 +229,23 @@ class EndToEnd(unittest.TestCase):
         self.assertNotIn('/time/casey/', xml)
         self.assertIn('<loc>https://unichrono.app/time/london-new-york/</loc>', xml)
 
-    def test_llms_line_once(self):
-        self.assertEqual((self.root / 'llms.txt').read_text().count('/time/'), 1)
+    def test_llms_section(self):
+        text = (self.root / 'llms.txt').read_text()
+        self.assertEqual(text.count('## World time converter'), 1)
+        self.assertIn('[EST to IST](https://unichrono.app/time/est-to-ist/)', text)
+        self.assertIn('[India](https://unichrono.app/time/india/)', text)
+        self.assertIn('[UK](https://unichrono.app/time/uk/)', text)
+        self.assertIn('[Tokyo](https://unichrono.app/time/tokyo/)', text)
+        self.assertNotIn('/time/casey/', text)
+
+    def test_llms_section_replaced_not_stacked(self):
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / 'llms.txt'
+            path.write_text((self.root / 'llms.txt').read_text())
+            b.update_llms(Path(d), b.LLMS_START + '\nX\n' + b.LLMS_END)
+            text = path.read_text()
+        self.assertEqual(text.count('## World time converter'), 0)
+        self.assertEqual(text.count(b.LLMS_END), 1)
 
     def test_city_page_static_content(self):
         html = (self.root / 'time' / 'tokyo' / 'index.html').read_text()
