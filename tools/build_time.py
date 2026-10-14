@@ -113,7 +113,11 @@ ZONE_PAIRS = [('est', 'ist'), ('pst', 'ist'), ('cst', 'ist'), ('mst', 'ist'), ('
               ('utc', 'est'), ('utc', 'pst'), ('utc', 'cst'), ('utc', 'cet'), ('utc', 'jst'),
               ('aest', 'est'), ('aest', 'pst'), ('aest', 'gmt'), ('jst', 'est'), ('jst', 'pst'),
               ('sgt', 'est'), ('pht', 'est'), ('pht', 'pst'),
-              ('ist', 'est'), ('ist', 'pst'), ('ist', 'cst'), ('ist', 'gmt')]
+              ('ist', 'est'), ('ist', 'pst'), ('ist', 'cst'), ('ist', 'gmt'),
+              # Reverses and gaps from the popular-conversion lists of seven converter sites (2026-10).
+              ('pst', 'est'), ('cst', 'est'), ('mst', 'est'), ('gmt', 'est'), ('gmt', 'pst'), ('est', 'utc'),
+              ('pst', 'utc'), ('est', 'cet'), ('est', 'jst'), ('est', 'aest'), ('pst', 'aest'),
+              ('ist', 'utc'), ('ist', 'cet'), ('ist', 'aest'), ('ist', 'jst')]
 
 # "Time in India" pages, for countries that keep one clock: slug → (country
 # code, how a sentence names it, optional note). Bing's 24-month counts put
@@ -427,25 +431,49 @@ def gap_sentence(a, b, minutes):
     return f'{b} is {hours(minutes)} {"ahead of" if minutes > 0 else "behind"} {a}'
 
 
-def pair_segments(za, zb, now):
-    """[(first local day, last local day or None, b minus a in minutes)] over
-    now's year and the next: the gap only moves when one side changes clocks."""
+def _raw_segments(za, zb, now):
+    """[(first instant, gap minutes, zone that moved)] over now's year and the next."""
     start = dt.datetime(now.year, 1, 1, tzinfo=dt.timezone.utc)
     end = dt.datetime(now.year + 2, 1, 1, tzinfo=dt.timezone.utc)
     changes = sorted(
         [(t, z) for z in {za, zb} for t, _ in transitions(z, start, days=731, limit=8) if t < end])
     gap = lambda t: offset_minutes(zb, t) - offset_minutes(za, t)  # noqa: E731
-    segs, first = [], start.date()
-    cur = gap(start)
+    segs = [(start, gap(start), za)]
     for t, z in changes:
-        g = gap(t)
-        if g == cur:
+        if gap(t) != segs[-1][1]:
+            segs.append((t, gap(t), z))
+    return segs, end
+
+
+def brief_gaps(za, zb, now):
+    """True when the gap jumps for only a few hours: US Eastern and Pacific both
+    change at 2 am local, three hours apart, so for those hours they are 2 or 4
+    hours apart instead of 3."""
+    segs, end = _raw_segments(za, zb, now)
+    nxt = [t for t, _, _ in segs[1:]] + [end]
+    return any(n - t < dt.timedelta(days=1) for (t, _, _), n in zip(segs, nxt))
+
+
+def pair_segments(za, zb, now):
+    """[(first local day, last local day or None, b minus a in minutes)] over
+    now's year and the next: the gap only moves when one side changes clocks.
+    Gaps that last less than a day (see brief_gaps) are left out."""
+    segs, end = _raw_segments(za, zb, now)
+    nxt = [t for t, _, _ in segs[1:]] + [end]
+    kept = []
+    for (t, g, z), n in zip(segs, nxt):
+        if n - t < dt.timedelta(days=1):
             continue
-        local = t.astimezone(ZoneInfo(z)).date()
-        segs.append((first, local - dt.timedelta(days=1), cur))
-        first, cur = local, g
-    segs.append((first, None, cur))
-    return segs
+        if kept and kept[-1][1] == g:
+            continue
+        kept.append((t, g, z))
+    out = []
+    for i, (t, g, z) in enumerate(kept):
+        first = t.astimezone(ZoneInfo(z)).date() if i else t.date()
+        if out:
+            out[-1] = (out[-1][0], first - dt.timedelta(days=1), out[-1][2])
+        out.append((first, None, g))
+    return out
 
 
 def related(c, pages, slugs, now):
@@ -637,8 +665,9 @@ def zone_pair_static(ka, kb, now):
         if g == 0:
             return 'the same time as' if of else 'the same time'
         return f'{hours(g)} {("ahead of" if of else "ahead") if g > 0 else "behind"}'
+    brief = ' (apart from a few hours on the nights the clocks change)' if brief_gaps(za, zb, now) else ''
     if same:
-        lead = f'{B[1]} ({B[0]}) is {rel(gaps[0][1])} {A[1]} ({A[0]}) all year.'
+        lead = f'{B[1]} ({B[0]}) is {rel(gaps[0][1])} {A[1]} ({A[0]}) all year{brief}.'
         short = lead
     else:
         lead = (f'{B[1]} is {rel(gaps[0][1])} {A[1]} in January, when the clocks read '

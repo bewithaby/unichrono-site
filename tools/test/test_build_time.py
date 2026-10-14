@@ -101,6 +101,16 @@ class Facts(unittest.TestCase):
         self.assertEqual(len(segs), 9)
         self.assertEqual(b.pair_segments('Asia/Tokyo', 'Asia/Seoul', NOW), [(dt.date(2026, 1, 1), None, 0)])
 
+    def test_us_zones_have_no_backwards_rows(self):
+        # Eastern and Pacific both change at 2 am local, three hours apart: the
+        # gap is 2 or 4 hours for those hours only, never for a whole day.
+        segs = b.pair_segments('America/Los_Angeles', 'America/New_York', NOW)
+        self.assertEqual(segs, [(dt.date(2026, 1, 1), None, 180)])
+        self.assertTrue(b.brief_gaps('America/Los_Angeles', 'America/New_York', NOW))
+        self.assertFalse(b.brief_gaps('Europe/London', 'Europe/Paris', NOW))
+        for f, l, _ in b.pair_segments('Europe/London', 'America/New_York', NOW):
+            self.assertTrue(l is None or l >= f)
+
 
 class Text(unittest.TestCase):
     def test_zone_paragraph_no_dst(self):

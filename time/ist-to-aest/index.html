@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>IST to AEST converter: India Standard Time to Australian Eastern Time | Unichrono</title>
+<meta name="description" content="Convert IST to AEST: 9 am IST is 2:30 pm AEST in January. AEST is 5 hours 30 min ahead of IST in January and 4 hours 30 min ahead in July. Hour-by-hour table, the dates the gap changes, and shared working hours.">
+<link rel="canonical" href="https://unichrono.app/time/ist-to-aest/">
+
+<link rel="icon" href="/img/icon.png">
+<meta name="theme-color" content="#0E1220">
+<meta property="og:title" content="IST to AEST converter: India Standard Time to Australian Eastern Time | Unichrono">
+<meta property="og:description" content="Convert IST to AEST: 9 am IST is 2:30 pm AEST in January. AEST is 5 hours 30 min ahead of IST in January and 4 hours 30 min ahead in July. Hour-by-hour table, the dates the gap changes, and shared working hours.">
+<meta property="og:url" content="https://unichrono.app/time/ist-to-aest/">
+<meta property="og:site_name" content="Unichrono">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="https://unichrono.app/img/og-unichrono-1200x630.jpg">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@type": "WebPage",
+ "name": "IST to AEST converter: India Standard Time to Australian Eastern Time",
+ "url": "https://unichrono.app/time/ist-to-aest/"
+}
+</script>
+<script>try{var t=localStorage.getItem('uc-theme')||JSON.parse(localStorage.getItem('uc.time.theme')||'null')||sessionStorage.getItem('uc-theme-now');if(t==='paper')t='light';if(t!=='light'&&t!=='dark')t='light';document.documentElement.dataset.theme=t}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300..900&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/uc.css">
+<link rel="stylesheet" href="/time/time.css">
+<script type="module" src="/time/js/app.js"></script>
+</head>
+<body data-preload="z:Asia/Kolkata|India Standard Time,z:Australia/Sydney|Australian Eastern Time">
+
+<header>
+  <div class="wrap hd">
+    <a class="logo" href="/"><img src="/img/icon.png" alt="">Unichrono</a>
+    <button class="menub" id="menub" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <nav id="nav">
+      <a href="/">Home</a>
+      <a href="/time/" class="here">Convert time</a>
+      <a href="/help.html">Help</a>
+      <a href="/about.html">About</a>
+      <a class="btn" href="/#get">Get the app</a>
+    </nav>
+    <button class="themeb" id="themeb" type="button" aria-label="Switch to light theme"></button>
+    <a class="btn" href="/#get">Get the app</a>
+  </div>
+</header>
+
+<main class="wrap tmain">
+<section class="city-static"><p class="kicker">Time zone converter</p><h1>IST to <span class="grad">AEST</span></h1>
+<p class="live" id="live" aria-live="off"></p>
+<p class="zone-para">Australian Eastern Time is 5 hours 30 min ahead of India Standard Time in January, when the clocks read IST (UTC+5:30) and AEDT (UTC+11), and 4 hours 30 min ahead in July, when they read IST (UTC+5:30) and AEST (UTC+10).</p></section>
+
+<section class="tool" id="tool" aria-label="World time converter">
+  <div class="smart">
+    <label class="sr" for="q">Type a time or a place</label>
+    <input id="q" type="text" autocomplete="off" spellcheck="false" enterkeyhint="go"
+           placeholder="Try &quot;8am Tokyo in London&quot;, &quot;LHR&quot;, &quot;PST&quot;, &quot;UTC+5:30&quot;">
+    <div id="preview" class="preview" aria-live="polite"></div>
+    <ul id="sugg" class="sugg" role="listbox" aria-label="Places"></ul>
+  </div>
+
+  <div class="bar">
+    <label class="sr" for="date">Date</label>
+    <input id="date" type="date">
+    <button id="now" class="chip" type="button">Now</button>
+    <span id="clock" class="clockline"></span>
+    <span class="grow"></span>
+    <button id="fmt" class="chip" type="button" aria-pressed="false">24h</button>
+    <button id="theme" class="chip" type="button">Light</button>
+  </div>
+
+  <div class="gridwrap" id="gridwrap">
+    <div id="grid" class="grid" tabindex="0" role="application"
+         aria-label="Hour grid. Left and right arrows move the selected hour."></div>
+  </div>
+  <div class="gridfoot">
+    <button id="addcity" class="chip" type="button">+ Add city</button>
+    <button id="reset" class="linkbtn" type="button" hidden>Reset to defaults</button>
+  </div>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <label class="sr" for="slider">Selected time</label>
+  <input id="slider" class="slider" type="range" min="0" max="1439" step="15">
+  <p id="sel" class="sel" aria-live="polite"></p>
+
+  <div class="meet" id="meet"></div>
+
+  <div class="actions">
+    <a id="gcal" class="chip" target="_blank" rel="noopener">Google Calendar</a>
+    <a id="ocal" class="chip" target="_blank" rel="noopener">Outlook</a>
+    <button id="ics" class="chip" type="button">Apple / .ics</button>
+    <button id="copy" class="chip" type="button">Copy times</button>
+    <button id="share" class="chip accent" type="button">Share link</button>
+  </div>
+
+  <aside id="detail" class="detail" hidden aria-live="polite"></aside>
+  <noscript><p>The converter needs JavaScript. The city facts above work without it.</p></noscript>
+</section>
+
+<section class="city-facts"><h2>IST to AEST, hour by hour</h2><p class="tnote">Each hour of the day in India Standard Time, and the time in Australian Eastern Time at that moment.</p><div class="tablewrap"><table class="ttable"><thead><tr><th>IST</th><th>AEDT / AEST, January</th><th>AEDT / AEST, July</th></tr></thead><tbody><tr><td>12:00 am</td><td>5:30 am</td><td>4:30 am</td></tr><tr><td>1:00 am</td><td>6:30 am</td><td>5:30 am</td></tr><tr><td>2:00 am</td><td>7:30 am</td><td>6:30 am</td></tr><tr><td>3:00 am</td><td>8:30 am</td><td>7:30 am</td></tr><tr><td>4:00 am</td><td>9:30 am</td><td>8:30 am</td></tr><tr><td>5:00 am</td><td>10:30 am</td><td>9:30 am</td></tr><tr><td>6:00 am</td><td>11:30 am</td><td>10:30 am</td></tr><tr><td>7:00 am</td><td>12:30 pm</td><td>11:30 am</td></tr><tr><td>8:00 am</td><td>1:30 pm</td><td>12:30 pm</td></tr><tr><td>9:00 am</td><td>2:30 pm</td><td>1:30 pm</td></tr><tr><td>10:00 am</td><td>3:30 pm</td><td>2:30 pm</td></tr><tr><td>11:00 am</td><td>4:30 pm</td><td>3:30 pm</td></tr><tr><td>12:00 pm</td><td>5:30 pm</td><td>4:30 pm</td></tr><tr><td>1:00 pm</td><td>6:30 pm</td><td>5:30 pm</td></tr><tr><td>2:00 pm</td><td>7:30 pm</td><td>6:30 pm</td></tr><tr><td>3:00 pm</td><td>8:30 pm</td><td>7:30 pm</td></tr><tr><td>4:00 pm</td><td>9:30 pm</td><td>8:30 pm</td></tr><tr><td>5:00 pm</td><td>10:30 pm</td><td>9:30 pm</td></tr><tr><td>6:00 pm</td><td>11:30 pm</td><td>10:30 pm</td></tr><tr><td>7:00 pm</td><td>12:30 am (next day)</td><td>11:30 pm</td></tr><tr><td>8:00 pm</td><td>1:30 am (next day)</td><td>12:30 am (next day)</td></tr><tr><td>9:00 pm</td><td>2:30 am (next day)</td><td>1:30 am (next day)</td></tr><tr><td>10:00 pm</td><td>3:30 am (next day)</td><td>2:30 am (next day)</td></tr><tr><td>11:00 pm</td><td>4:30 am (next day)</td><td>3:30 am (next day)</td></tr></tbody></table></div>
+<h2>When the gap changes in 2026 and 2027</h2><div class="tablewrap"><table class="ttable"><thead><tr><th>From</th><th>To</th><th>Difference</th></tr></thead><tbody><tr><td>Thu 1 Jan 2026</td><td>Sat 4 Apr 2026</td><td>Australian Eastern Time is 5 hours 30 min ahead of India Standard Time</td></tr><tr><td>Sun 5 Apr 2026</td><td>Sat 3 Oct 2026</td><td>Australian Eastern Time is 4 hours 30 min ahead of India Standard Time</td></tr><tr><td>Sun 4 Oct 2026</td><td>Sat 3 Apr 2027</td><td>Australian Eastern Time is 5 hours 30 min ahead of India Standard Time</td></tr><tr><td>Sun 4 Apr 2027</td><td>Sat 2 Oct 2027</td><td>Australian Eastern Time is 4 hours 30 min ahead of India Standard Time</td></tr><tr><td>Sun 3 Oct 2027</td><td>and after</td><td>Australian Eastern Time is 5 hours 30 min ahead of India Standard Time</td></tr></tbody></table></div>
+<h2>Working hours overlap</h2><p class="tnote">When 9 am – 5 pm on both sides meet, in each side's own time.</p><div class="tablewrap"><table class="ttable"><thead><tr><th></th><th>January</th><th>July</th></tr></thead><tbody><tr><td>India Standard Time</td><td>9:00 am – 11:30 am (2 hours 30 min)</td><td>9:00 am – 12:30 pm (3 hours 30 min)</td></tr><tr><td>Australian Eastern Time</td><td>2:30 pm – 5:00 pm (2 hours 30 min)</td><td>1:30 pm – 5:00 pm (3 hours 30 min)</td></tr></tbody></table></div>
+<h2>About these abbreviations</h2><ul class="changes"><li><a href="/time/ist/"><b>IST</b></a>: India Standard Time, UTC+5:30 all year. Ireland and Israel also use the letters IST for their own zones.</li><li><a href="/time/aest/"><b>AEST</b></a>: Australian Eastern Time (Sydney, Melbourne), AEDT in the southern summer. Brisbane stays on AEST all year.</li></ul>
+<h2>More conversions</h2><ul class="links"><li><a href="/time/est-to-ist/">EST to IST</a></li><li><a href="/time/pst-to-ist/">PST to IST</a></li><li><a href="/time/cst-to-ist/">CST to IST</a></li><li><a href="/time/mst-to-ist/">MST to IST</a></li><li><a href="/time/gmt-to-ist/">GMT to IST</a></li><li><a href="/time/cet-to-ist/">CET to IST</a></li><li><a href="/time/utc-to-ist/">UTC to IST</a></li><li><a href="/time/aest-to-ist/">AEST to IST</a></li><li><a href="/time/sgt-to-ist/">SGT to IST</a></li><li><a href="/time/jst-to-ist/">JST to IST</a></li><li><a href="/time/gst-to-ist/">GST to IST</a></li><li><a href="/time/aest-to-est/">AEST to EST</a></li><li><a href="/time/aest-to-pst/">AEST to PST</a></li><li><a href="/time/aest-to-gmt/">AEST to GMT</a></li><li><a href="/time/ist-to-est/">IST to EST</a></li><li><a href="/time/ist-to-pst/">IST to PST</a></li><li><a href="/time/ist-to-cst/">IST to CST</a></li><li><a href="/time/ist-to-gmt/">IST to GMT</a></li><li><a href="/time/est-to-aest/">EST to AEST</a></li><li><a href="/time/pst-to-aest/">PST to AEST</a></li><li><a href="/time/ist-to-utc/">IST to UTC</a></li><li><a href="/time/ist-to-cet/">IST to CET</a></li><li><a href="/time/ist-to-jst/">IST to JST</a></li></ul></section>
+
+<p class="appnote">Want this on your home screen, Lock Screen or watch? <a href="/#get">Unichrono for Android, iPhone, iPad and Mac</a> — free.</p>
+
+
+</main>
+
+<footer>
+  <div class="wrap frow">
+    <span>© 2026 Spiny Valley Labs</span>
+    <span class="flinks">
+      <a href="/">Home</a><a href="/help.html">Help</a><a href="/privacy-policy.html">Privacy</a><a href="/#feedback">Feedback</a>
+    </span>
+  </div>
+</footer>
+<script src="/assets/theme.js"></script>
+</body>
+</html>
