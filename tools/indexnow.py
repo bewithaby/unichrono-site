@@ -61,7 +61,9 @@ def main():
         return
     body = json.dumps({'host': 'unichrono.app', 'key': k, 'keyLocation': f'{SITE}/{k}.txt',
                        'urlList': urls[:10000]}).encode()
-    req = urllib.request.Request(ENDPOINT, body, {'Content-Type': 'application/json; charset=utf-8'})
+    # IndexNow's front end turns away Python's default user agent with a bare 403.
+    req = urllib.request.Request(ENDPOINT, body, {'Content-Type': 'application/json; charset=utf-8',
+                                                  'User-Agent': 'unichrono-site-indexnow/1.0'})
     with urllib.request.urlopen(req, timeout=30) as r:
         print(r.status, f'{len(urls)} URLs sent')   # 200 or 202 = accepted
 
