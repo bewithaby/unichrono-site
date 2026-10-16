@@ -22,6 +22,30 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
+  "@type": "VideoObject",
+  "@id": "https://unichrono.app/help.html#video",
+  "name": "Unichrono Tutorial: World Clock & Time Zone Converter App for iPhone, Android, Watch & Mac",
+  "description": "Every Unichrono feature in under 3 minutes: add cities, convert times, plan meetings across time zones, set alerts on another city's clock, and add world clock widgets.",
+  "thumbnailUrl": "https://unichrono.app/img/tour-poster.jpg",
+  "uploadDate": "2026-10-16",
+  "duration": "PT2M46S",
+  "embedUrl": "https://www.youtube.com/embed/s4zLh94ko-w",
+  "url": "https://youtu.be/s4zLh94ko-w",
+  "hasPart": [
+    {"@type": "Clip", "name": "Your cities", "startOffset": 0, "endOffset": 27, "url": "https://youtu.be/s4zLh94ko-w?t=0"},
+    {"@type": "Clip", "name": "Find the time", "startOffset": 27, "endOffset": 48, "url": "https://youtu.be/s4zLh94ko-w?t=27"},
+    {"@type": "Clip", "name": "Plan it", "startOffset": 48, "endOffset": 68, "url": "https://youtu.be/s4zLh94ko-w?t=48"},
+    {"@type": "Clip", "name": "Never miss it", "startOffset": 68, "endOffset": 87, "url": "https://youtu.be/s4zLh94ko-w?t=68"},
+    {"@type": "Clip", "name": "Widgets", "startOffset": 87, "endOffset": 110, "url": "https://youtu.be/s4zLh94ko-w?t=87"},
+    {"@type": "Clip", "name": "Everywhere", "startOffset": 110, "endOffset": 140, "url": "https://youtu.be/s4zLh94ko-w?t=110"},
+    {"@type": "Clip", "name": "Make it yours", "startOffset": 140, "endOffset": 153, "url": "https://youtu.be/s4zLh94ko-w?t=140"},
+    {"@type": "Clip", "name": "Private by design", "startOffset": 153, "endOffset": 166, "url": "https://youtu.be/s4zLh94ko-w?t=153"}
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
   "@type": "FAQPage",
   "@id": "https://unichrono.app/help.html#faq",
   "mainEntity": [
@@ -143,6 +167,7 @@
   <aside class="toc">
     <b>Contents</b>
     <div class="toc-grid">
+      <a href="#video">Video tour</a>
       <a href="#start">Getting started</a>
       <a href="#cities">Your city list</a>
       <a href="#groups">City groups</a>
@@ -171,6 +196,29 @@
   </aside>
 
   <main>
+    <section id="video">
+      <h2>Video tour</h2>
+      <p class="sub">Every feature in under three minutes. Jump straight to a chapter below.</p>
+      <div class="vtour" id="tourVideo">
+        <button class="vposter" type="button" data-yt="s4zLh94ko-w" aria-label="Play the Unichrono video tour, 2 minutes 46 seconds, on YouTube">
+          <img src="img/tour-poster.jpg" width="1280" height="720" loading="lazy" decoding="async" alt="Every time zone. One app. Unichrono on iPhone, Android and Apple Watch.">
+          <span class="vplay" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg></span>
+          <span class="vdur" aria-hidden="true">2:46</span>
+        </button>
+        <noscript><a href="https://youtu.be/s4zLh94ko-w" style="position:absolute;inset:auto 0 0;padding:12px;text-align:center;color:#fff;background:rgba(0,0,0,.6)">Watch on YouTube</a></noscript>
+      </div>
+      <ul class="vchap" aria-label="Chapters">
+        <li><button type="button" data-t="0"><b>0:00</b>Your cities</button></li>
+        <li><button type="button" data-t="27"><b>0:27</b>Find the time</button></li>
+        <li><button type="button" data-t="48"><b>0:48</b>Plan it</button></li>
+        <li><button type="button" data-t="68"><b>1:08</b>Never miss it</button></li>
+        <li><button type="button" data-t="87"><b>1:27</b>Widgets</button></li>
+        <li><button type="button" data-t="110"><b>1:50</b>Everywhere</button></li>
+        <li><button type="button" data-t="140"><b>2:20</b>Make it yours</button></li>
+        <li><button type="button" data-t="153"><b>2:33</b>Private by design</button></li>
+      </ul>
+    </section>
+
     <section id="start">
       <h2>Getting started</h2>
       <p class="sub">Two minutes from install to a live widget.</p>
@@ -711,6 +759,27 @@ document.getElementById('formBtn').href='https://docs.google.com/forms/d/e/1FAIp
 var mb=document.getElementById('menub'),nv=document.getElementById('nav');
 mb.addEventListener('click',function(){var o=nv.classList.toggle('open');mb.setAttribute('aria-expanded',o?'true':'false');});
 nv.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){nv.classList.remove('open');});});
+
+/* Video tour: the poster is the page's; YouTube (and its cookies) arrive only
+   when the visitor asks for the video. Chapter buttons start it at that point. */
+(function(){
+  var box=document.getElementById('tourVideo'); if(!box)return;
+  var id=box.querySelector('.vposter').dataset.yt, frame=null;
+  function play(t){
+    var src='https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&playsinline=1&rel=0&start='+(t||0);
+    if(frame){ frame.src=src; }
+    else{
+      frame=document.createElement('iframe');
+      frame.src=src; frame.title='Unichrono video tour';
+      frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen'; frame.allowFullscreen=true;
+      box.querySelector('.vposter').replaceWith(frame);
+    }
+  }
+  box.querySelector('.vposter').addEventListener('click',function(){play(0);},{once:true});
+  document.querySelectorAll('.vchap button').forEach(function(b){
+    b.addEventListener('click',function(){ play(+b.dataset.t); box.scrollIntoView({behavior:'smooth',block:'center'}); });
+  });
+})();
 
 /* TOC scrollspy */
 (function(){

@@ -123,3 +123,19 @@ footer{border-top:1px solid var(--line);padding:44px 0 56px}
   .hd>.btn{display:none}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+/* ---- help video tour: poster + play; the YouTube player loads only on tap ---- */
+.vtour{position:relative;width:100%;max-width:46em;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:var(--panel);border:1px solid var(--line);box-shadow:0 24px 60px -30px rgba(0,0,0,.7);margin:18px 0 14px}
+.vtour .vposter{all:unset;box-sizing:border-box;cursor:pointer;display:block;width:100%;height:100%;position:relative}
+.vtour .vposter img{display:block;width:100%;height:100%;object-fit:cover}
+/* sits in the poster's empty band right of the wordmark, clear of the headline and the phones */
+.vtour .vplay{position:absolute;left:48%;top:87%;width:clamp(44px,9%,76px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:var(--accent);color:#1a1206;display:grid;place-items:center;box-shadow:0 12px 32px rgba(0,0,0,.5);transition:transform .2s ease}
+.vtour .vplay svg{width:38%;height:38%;margin-left:6%}
+.vtour .vposter:hover .vplay,.vtour .vposter:focus-visible .vplay{transform:translate(-50%,-50%) scale(1.08)}
+.vtour .vposter:focus-visible{outline:2px solid var(--accent);outline-offset:-4px;border-radius:18px}
+.vtour .vdur{position:absolute;right:12px;bottom:12px;padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.65);color:#fff;font-size:12px;letter-spacing:.06em}
+.vtour iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vchap{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 6px;padding:0;list-style:none;max-width:46em}
+.vchap li{margin:0}
+.vchap button{all:unset;cursor:pointer;font-size:14px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel)}
+.vchap button:hover,.vchap button:focus-visible{border-color:var(--accent)}
+.vchap b{font-variant-numeric:tabular-nums;color:var(--accent);font-weight:700;margin-right:6px}

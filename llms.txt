@@ -55,9 +55,11 @@ freeze, cannot drift, and costs no battery.
 ## Pages
 
 - [Home](https://unichrono.app/): what the app does, with live demonstrations.
-- [User guide](https://unichrono.app/help.html): every feature explained, a
-  settings reference for every platform, and troubleshooting for the common
-  failures.
+- [User guide](https://unichrono.app/help.html): a 2:46 video tour with
+  chapters, every feature explained, a settings reference for every platform,
+  and troubleshooting for the common failures.
+- [Video tour](https://youtu.be/s4zLh94ko-w): every feature in under three
+  minutes, on YouTube.
 - [About](https://unichrono.app/about.html): why the app exists and what it
   deliberately refuses to do.
 - [Privacy policy](https://unichrono.app/privacy-policy.html): what is stored,
